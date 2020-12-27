@@ -44,7 +44,7 @@ namespace ColumnStore
             {
                 configData                     = new byte[SECTION_SETTINGS_LENGTH];
                 configData[0]                  = (byte) unit;
-                configData[1]                  = compressed ? 1 : 0;
+                configData[1]                  = (byte) (compressed ? 1 : 0);
                 Container[settingsSectionName] = configData;
             }
 
