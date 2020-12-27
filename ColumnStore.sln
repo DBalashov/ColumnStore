@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColumnStore", "ColumnStore\ColumnStore.csproj", "{45991102-7072-47DA-A4F0-A8AA5270B205}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColumnStore.Tests", "ColumnStore.Tests\ColumnStore.Tests.csproj", "{50C23907-B847-4D2A-8B84-94F7FEB118A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Examples", "Examples\Examples.csproj", "{937E2668-20B3-4D10-9E88-A7C7F3043C92}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{45991102-7072-47DA-A4F0-A8AA5270B205}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45991102-7072-47DA-A4F0-A8AA5270B205}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45991102-7072-47DA-A4F0-A8AA5270B205}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45991102-7072-47DA-A4F0-A8AA5270B205}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50C23907-B847-4D2A-8B84-94F7FEB118A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50C23907-B847-4D2A-8B84-94F7FEB118A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50C23907-B847-4D2A-8B84-94F7FEB118A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50C23907-B847-4D2A-8B84-94F7FEB118A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{937E2668-20B3-4D10-9E88-A7C7F3043C92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{937E2668-20B3-4D10-9E88-A7C7F3043C92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{937E2668-20B3-4D10-9E88-A7C7F3043C92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{937E2668-20B3-4D10-9E88-A7C7F3043C92}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

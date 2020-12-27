@@ -1,0 +1,4 @@
+*.nupkg
+**/Debug/**
+**/bin/**
+**/obj/**
