@@ -27,11 +27,12 @@ namespace ColumnStore
             set => throw new System.NotImplementedException();
         }
 
-        readonly MemoryStream stm = new MemoryStream();
+        readonly MemoryStream stm;
         readonly GZipStream   zstm;
 
-        public WriteStreamWrapper(bool withCompression)
+        public WriteStreamWrapper([NotNull] MemoryStream stm, bool withCompression)
         {
+            this.stm = stm;
             if (withCompression)
                 zstm = new GZipStream(stm, CompressionMode.Compress, true);
         }

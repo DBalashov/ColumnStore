@@ -46,6 +46,9 @@ namespace ColumnStore
         [CanBeNull]
         UntypedColumn filterByRange([NotNull] UntypedColumn unpacked, [NotNull] CDTRange range)
         {
+            if (range.To < unpacked.Keys.First() ||
+                range.From > unpacked.Keys.Last()) return null;
+            
             var indexFrom = Array.BinarySearch(unpacked.Keys, range.From);
             if (indexFrom < 0)
                 indexFrom = ~indexFrom;
@@ -54,10 +57,10 @@ namespace ColumnStore
             if (indexTo < 0)
                 indexTo = ~indexTo;
 
-            if (indexFrom > 0 || indexTo < unpacked.Keys.Length)
+            if (indexFrom >= 0 || indexTo < unpacked.Keys.Length)
             {
                 var newKeys   = new CDT[indexTo - indexFrom];
-                var newValues = Array.CreateInstance(unpacked.Values.GetValue(0).GetType(), newKeys.Length);
+                var newValues = unpacked.Values.CreateSameType(newKeys.Length);
                 Array.Copy(unpacked.Keys, indexFrom, newKeys, 0, indexTo - indexFrom);
                 Array.Copy(unpacked.Values, indexFrom, newValues, 0, indexTo - indexFrom);
 
@@ -75,7 +78,7 @@ namespace ColumnStore
 
             var totalLength = items.Sum(p => p.Keys.Length);
             var keys        = new CDT[totalLength];
-            var values      = Array.CreateInstance(items[0].Values.GetValue(0).GetType(), totalLength);
+            var values      = items[0].Values.CreateSameType(totalLength);
 
             var offset = 0;
             foreach (var item in items)

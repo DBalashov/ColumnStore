@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ColumnStore.Tests", "Column
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Examples", "Examples\Examples.csproj", "{937E2668-20B3-4D10-9E88-A7C7F3043C92}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSCLI", "CSCLI\CSCLI.csproj", "{1E0A9012-80DB-4103-AEE7-B7DC1F3F32B6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{937E2668-20B3-4D10-9E88-A7C7F3043C92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{937E2668-20B3-4D10-9E88-A7C7F3043C92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{937E2668-20B3-4D10-9E88-A7C7F3043C92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E0A9012-80DB-4103-AEE7-B7DC1F3F32B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E0A9012-80DB-4103-AEE7-B7DC1F3F32B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E0A9012-80DB-4103-AEE7-B7DC1F3F32B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E0A9012-80DB-4103-AEE7-B7DC1F3F32B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

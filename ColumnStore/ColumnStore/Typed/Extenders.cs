@@ -1,6 +1,7 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
 
@@ -14,7 +15,7 @@ namespace ColumnStore
         [NotNull]
         internal static byte[] Pack<V>([NotNull] this Dictionary<int, V> values, bool withCompression)
         {
-            using var stm = new WriteStreamWrapper(withCompression);
+            using var stm = new WriteStreamWrapper(new MemoryStream(), withCompression);
 
             stm.Write(BitConverter.GetBytes(values.Count), 0, 4);
 

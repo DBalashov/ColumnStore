@@ -1,5 +1,7 @@
 using System;
 
+#pragma warning disable 659
+
 namespace Examples
 {
     public class SimpleEntity

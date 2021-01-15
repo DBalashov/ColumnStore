@@ -31,7 +31,7 @@ namespace ColumnStore
         const int MIN_YEAR = 2000;
         const int MAX_YEAR = 2068;
 
-        static DateTime startDT = new DateTime(MIN_YEAR, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+        static DateTime startDT = new(MIN_YEAR, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 
         public readonly int Value;
 
@@ -86,7 +86,7 @@ namespace ColumnStore
         #region DateTime <-> CDT, TimeSpan <- CDT
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator CDT(DateTime dt) => new CDT(dt);
+        public static implicit operator CDT(DateTime dt) => new(dt);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator DateTime(CDT dt) => dt.Value == 0
@@ -132,13 +132,13 @@ namespace ColumnStore
 
         [ExcludeFromCodeCoverage]
         public override bool Equals(object obj) => obj is CDT cdt && cdt.Value == Value;
-        
+
         [ExcludeFromCodeCoverage]
-        public override int  GetHashCode()      => Value;
-        
+        public override int GetHashCode() => Value;
+
         public int CompareTo(object obj)   => obj is CDT cdt ? Value.CompareTo(cdt.Value) : -1;
         public int CompareTo(CDT    other) => Value.CompareTo(other.Value);
-        
+
 #if DEBUG
         public override string ToString() => ((DateTime) this).ToString("yyyy-MM-dd HH:mm:ss");
 #endif

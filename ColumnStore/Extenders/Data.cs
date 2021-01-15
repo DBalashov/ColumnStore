@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 
 namespace ColumnStore
@@ -30,9 +31,26 @@ namespace ColumnStore
         Int   = 2
     }
 
+    public static class ExtendersPublic
+    {
+        public static StoredDataType DetectDataType([NotNull] this Array a)
+        {
+            var v    = a.GetValue(0);
+            var type = v.GetType();
+            if (type == typeof(byte)) return StoredDataType.Byte;
+            if (type == typeof(int)) return StoredDataType.Int;
+            if (type == typeof(string)) return StoredDataType.String;
+            if (type == typeof(double)) return StoredDataType.Double;
+            if (type == typeof(Guid)) return StoredDataType.Guid;
+            if (type == typeof(DateTime)) return StoredDataType.DateTime;
+            if (type == typeof(TimeSpan)) return StoredDataType.TimeSpan;
+            throw new NotSupportedException(type.Name + " not supported");
+        }
+    }
+
     static class ExtendersSectionData
     {
-        static readonly Dictionary<StoredDataType, ReadWriteBase> readWriteHandlers = new Dictionary<StoredDataType, ReadWriteBase>()
+        static readonly Dictionary<StoredDataType, ReadWriteBase> readWriteHandlers = new()
         {
             [StoredDataType.Byte]     = new ReadWriteHandlerByte(),
             [StoredDataType.Double]   = new ReadWriteHandlerDouble(),
@@ -55,29 +73,15 @@ namespace ColumnStore
         internal static string BuildSectionName([NotNull] this string commonPath, [NotNull] string columnName, int rangeIndex) =>
             string.Join("/", commonPath, columnName, rangeIndex);
 
-        internal static StoredDataType DetectDataType([NotNull] this Array a)
-        {
-            var v    = a.GetValue(0);
-            var type = v.GetType();
-            if (type == typeof(byte)) return StoredDataType.Byte;
-            if (type == typeof(int)) return StoredDataType.Int;
-            if (type == typeof(string)) return StoredDataType.String;
-            if (type == typeof(double)) return StoredDataType.Double;
-            if (type == typeof(Guid)) return StoredDataType.Guid;
-            if (type == typeof(DateTime)) return StoredDataType.DateTime;
-            if (type == typeof(TimeSpan)) return StoredDataType.TimeSpan;
-            throw new NotSupportedException(type.Name + " not supported");
-        }
-
         [NotNull]
         internal static Array UnpackData([NotNull] this byte[] data, int offset = 0)
         {
-            var count    = BitConverter.ToInt32(data, offset);
+            var count = BitConverter.ToInt32(data, offset);
             offset += 4;
-            
+
             var dataType = (StoredDataType) BitConverter.ToUInt16(data, offset);
             offset += 2;
-            
+
             return readWriteHandlers[dataType].Unpack(data, count, offset);
         }
 
@@ -89,5 +93,10 @@ namespace ColumnStore
             targetStream.Write(BitConverter.GetBytes((ushort) dataType), 0, 2);
             readWriteHandlers[dataType].Pack(values, targetStream, range);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [NotNull]
+        internal static Array CreateSameType([NotNull] this Array arr, int length) =>
+            arr.Length == 0 ? throw new InvalidDataException("Array is empty") : Array.CreateInstance(arr.GetValue(0).GetType(), length);
     }
 }

@@ -6,11 +6,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="FileContainer" Version="2021.4.2" />
+      <ProjectReference Include="..\ColumnStore\ColumnStore.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ColumnStore\ColumnStore.csproj" />
+      <PackageReference Include="FileContainer" Version="2021.4.2" />
+      <PackageReference Include="CommandLineParser" Version="2.8.0" />
     </ItemGroup>
 
 </Project>

@@ -28,14 +28,15 @@ namespace ColumnStore
 
         [DebuggerStepThrough]
         [NotNull]
-        public static byte[] GZipUnpack([NotNull] this byte[] data)
+        public static byte[] GZipUnpack([NotNull] this byte[] data, int offset = 0)
         {
             var buff = pool.Rent(8192);
 
             using var stm = new MemoryStream();
-            using (var st1 = new MemoryStream(data))
+            using (var stmSource = new MemoryStream(data))
             {
-                using (var gz = new GZipStream(st1, CompressionMode.Decompress, true))
+                stmSource.Position = offset;
+                using (var gz = new GZipStream(stmSource, CompressionMode.Decompress, true))
                 {
                     int read = 0;
                     while ((read = gz.Read(buff, 0, buff.Length)) > 0)
@@ -43,7 +44,7 @@ namespace ColumnStore
                     gz.Close();
                 }
 
-                st1.Close();
+                stmSource.Close();
             }
 
             pool.Return(buff);

@@ -1,5 +1,5 @@
 using System;
-using System.Linq;
+using System.IO;
 using JetBrains.Annotations;
 
 namespace ColumnStore
@@ -9,10 +9,13 @@ namespace ColumnStore
         [NotNull]
         internal static byte[] Pack([NotNull] this UntypedColumn data, Range range = null, bool withCompression = false)
         {
-            using var stm = new WriteStreamWrapper(withCompression);
+            var stmTarget = new MemoryStream();
             range ??= new Range(0, data.Keys.Length);
 
-            stm.Write(BitConverter.GetBytes(range.Length), 0, 4);
+            stmTarget.Write(BitConverter.GetBytes(range.Length), 0, 4);
+            stmTarget.Write(BitConverter.GetBytes((int) data.Values.DetectDataType()), 0, 4);
+
+            using var stm = new WriteStreamWrapper(stmTarget, withCompression);
 
             var buff = data.Keys.PackStructs(range.From * 4, range.Length);
             stm.Write(buff, 0, range.Length * 4);
@@ -25,11 +28,17 @@ namespace ColumnStore
         [NotNull]
         internal static UntypedColumn Unpack([NotNull] this byte[] buff, bool withDecompression)
         {
-            if (withDecompression)
-                buff = buff.GZipUnpack();
-
             var count  = BitConverter.ToInt32(buff, 0);
             var offset = 4;
+
+            var dataType = BitConverter.ToInt32(buff, 4);
+            offset += 4;
+
+            if (withDecompression)
+            {
+                buff   = buff.GZipUnpack(offset);
+                offset = 0;
+            }
 
             var keys = buff.UnpackStructs<CDT>(offset, count);
             offset += count * 4;
@@ -37,7 +46,7 @@ namespace ColumnStore
             var values = buff.UnpackData(offset);
             return new UntypedColumn(keys, values);
         }
-        
+
         [NotNull]
         internal static UntypedColumn MergeWithReplace([NotNull] this UntypedColumn existing, [NotNull] Range range, [NotNull] UntypedColumn newData)
         {
@@ -55,7 +64,7 @@ namespace ColumnStore
             var restLength = existing.Keys.Length - secondPartIndexFrom - 1;
             var newLength  = firstPartIndexTo + range.Length + restLength;
             var newKeys    = new CDT[newLength];
-            var newValues  = Array.CreateInstance(newData.Values.GetValue(0).GetType(), newLength);
+            var newValues  = newData.Values.CreateSameType(newLength);
 
             var offset = 0;
 

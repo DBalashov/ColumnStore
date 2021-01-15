@@ -5,13 +5,13 @@ using JetBrains.Annotations;
 
 namespace ColumnStore
 {
-    public static class StructExtenders
+    static class StructExtenders
     {
         #region MapStructs
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [NotNull]
-        public static byte[] PackStructs<T>([NotNull] this T[] source, int offsetInBytes = 0, int? count = null) where T : struct
+        internal static byte[] PackStructs<T>([NotNull] this T[] source, int offsetInBytes = 0, int? count = null) where T : struct
         {
             using var p    = new PinnedHandle(source);
             var       dest = new byte[(count ?? source.Length) * Marshal.SizeOf(typeof(T))];
@@ -20,7 +20,7 @@ namespace ColumnStore
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void PackStructs<T>([NotNull] this T[] source, [NotNull] byte[] dest, int offsetInBytes) where T : struct
+        internal static void PackStructs<T>([NotNull] this T[] source, [NotNull] byte[] dest, int offsetInBytes) where T : struct
         {
             using var p = new PinnedHandle(source);
             Marshal.Copy(p.Address, dest, offsetInBytes, source.Length * Marshal.SizeOf(typeof(T)));
@@ -44,7 +44,7 @@ namespace ColumnStore
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [NotNull]
-        public static T[] UnpackStructs<T>([NotNull] this byte[] source, int offsetInBytes, int count) where T : struct
+        internal static T[] UnpackStructs<T>([NotNull] this byte[] source, int offsetInBytes, int count) where T : struct
         {
             var       dest = new T[count];
             using var p    = new PinnedHandle(dest);

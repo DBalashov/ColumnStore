@@ -31,7 +31,7 @@ namespace ColumnStore
 
         #region getActionSet
 
-        internal static Dictionary<PropertyInfo, object> actionSet = new Dictionary<PropertyInfo, object>();
+        internal static Dictionary<PropertyInfo, object> actionSet = new();
 
         [NotNull]
         internal static Action<T, V> getActionSet<T, V>([NotNull] this PropertyInfo property)
@@ -58,7 +58,7 @@ namespace ColumnStore
 
         #region getActionGet
 
-        internal static Dictionary<PropertyInfo, object> actionGet = new Dictionary<PropertyInfo, object>();
+        internal static Dictionary<PropertyInfo, object> actionGet = new();
 
         [NotNull]
         internal static Func<T, V> getActionGet<T, V>([NotNull] this PropertyInfo property)
