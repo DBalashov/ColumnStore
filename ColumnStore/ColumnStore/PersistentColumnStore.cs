@@ -6,6 +6,8 @@ namespace ColumnStore
 {
     public partial class PersistentColumnStore : IDisposable
     {
+        public static Type[] SupportedTypes => ReflectionExtenders.supportedTypes;
+
         const string SECTION_SETTINGS        = "___settings___";
         const int    SECTION_SETTINGS_LENGTH = 128;
 

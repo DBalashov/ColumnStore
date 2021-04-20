@@ -10,7 +10,7 @@ namespace ColumnStore
     // before: https://i.tk-chel.ru/denisio/202012/21_224148.png
     static class ReflectionExtenders
     {
-        static readonly Type[] supportedTypes = new[]
+        internal static readonly Type[] supportedTypes = new[]
         {
             typeof(byte),
             typeof(int),
@@ -22,12 +22,10 @@ namespace ColumnStore
         };
 
         [NotNull]
-        internal static Dictionary<string, PropertyInfo> GetProps([NotNull] this Type type)
-        {
-            return type.GetProperties()
-                       .Where(p => p.CanRead && p.CanWrite && supportedTypes.Contains(p.PropertyType))
-                       .ToDictionary(p => p.Name, StringComparer.InvariantCulture);
-        }
+        internal static Dictionary<string, PropertyInfo> GetProps([NotNull] this Type type) =>
+            type.GetProperties()
+                .Where(p => p.CanRead && p.CanWrite && supportedTypes.Contains(p.PropertyType))
+                .ToDictionary(p => p.Name, StringComparer.InvariantCulture);
 
         #region getActionSet
 
