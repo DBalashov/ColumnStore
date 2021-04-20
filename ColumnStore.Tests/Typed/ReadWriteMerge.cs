@@ -14,6 +14,7 @@ namespace ColumnStore.Tests.Typed
         {
             keys  = GetKeys();
             store = GetStore();
+            TestContext.WriteLine($"Keys: {keys.Length}");
         }
 
         void writeWithMerge<T>(Func<Dictionary<CDT, T>> getData)

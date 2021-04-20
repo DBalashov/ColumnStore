@@ -33,6 +33,8 @@ namespace ColumnStore.Tests.Untyped
                 values.Add("DateTimes_" + i, vDateTimes.Values.ToArray());
                 values.Add("TimeSpans_" + i, vTimeSpans.Values.ToArray());
             }
+            
+            TestContext.WriteLine($"Keys: {keys.Length}");
         }
         
         void checkRead(UntypedColumn c, UntypedColumn orig)

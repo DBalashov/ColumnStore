@@ -13,6 +13,7 @@ namespace ColumnStore.Tests.Typed
         public void Setup()
         {
             keys = GetKeys();
+            TestContext.WriteLine($"Keys: {keys.Length}");
         }
 
         void delete<T>(Func<Dictionary<CDT, T>> getData, Func<CDT, CDT, Dictionary<CDT, T>> getDataPart)

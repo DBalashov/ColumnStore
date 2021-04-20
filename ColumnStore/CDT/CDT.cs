@@ -66,7 +66,7 @@ namespace ColumnStore
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public CDT Add(TimeSpan ts) => new CDT(Value + (int) ts.TotalSeconds);
+        public CDT Add(TimeSpan ts) => new (Value + (int) ts.TotalSeconds);
 
         /// <summary> return next time unit from current (next minute, hour, month, ...) </summary>
         public CDT NextNearest(CDTUnit to)
@@ -74,11 +74,11 @@ namespace ColumnStore
             var dt = (DateTime) Trunc(to);
             return to switch
             {
-                CDTUnit.Minute => (CDT) dt.AddMinutes(1),
-                CDTUnit.Hour => (CDT) dt.AddHours(1),
-                CDTUnit.Day => (CDT) dt.AddDays(1),
-                CDTUnit.Month => (CDT) dt.AddMonths(1),
-                CDTUnit.Year => (CDT) dt.AddYears(1),
+                CDTUnit.Minute => dt.AddMinutes(1),
+                CDTUnit.Hour => dt.AddHours(1),
+                CDTUnit.Day => dt.AddDays(1),
+                CDTUnit.Month => dt.AddMonths(1),
+                CDTUnit.Year => dt.AddYears(1),
                 _ => throw new NotSupportedException(to.ToString())
             };
         }

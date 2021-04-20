@@ -13,6 +13,7 @@ namespace ColumnStore.Tests.Typed
         public void Setup()
         {
             keys = GetKeys();
+            TestContext.WriteLine($"Keys: {keys.Length}");
         }
 
         #region writeRead / readSimple / readRange

@@ -15,6 +15,7 @@ namespace ColumnStore.Tests.Entity
         {
             keys     = GetKeys();
             entities = keys.ToDictionary(p => p, p => new SimpleEntity(p));
+            TestContext.WriteLine($"Keys: {keys.Length}");
         }
 
         void checkRead<T>(PersistentColumnStore store, string columnName, Func<SimpleEntity, T> getProperty)
