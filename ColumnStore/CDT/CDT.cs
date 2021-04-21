@@ -21,7 +21,7 @@ namespace ColumnStore
     ///
     /// 1-second precision
     /// 
-    /// min value: 2010.1.1
+    /// min value: 2000.1.1
     /// max value: 2068.1.1
     /// 
     /// </summary>
@@ -31,17 +31,23 @@ namespace ColumnStore
         const int MIN_YEAR = 2000;
         const int MAX_YEAR = 2068;
 
-        static DateTime startDT = new(MIN_YEAR, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+        static readonly DateTime startDT = new(MIN_YEAR, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 
+        /// <summary> seconds since (2000,1,1) </summary>
         public readonly int Value;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public CDT(DateTime dt) =>
-            Value = dt.Year < MIN_YEAR || dt.Year > MAX_YEAR ? 0 : (int) dt.Subtract(startDT).TotalSeconds;
+        public CDT(DateTime dt) => Value = dt.Year is < MIN_YEAR or > MAX_YEAR ? 0 : (int) dt.Subtract(startDT).TotalSeconds;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal CDT(int value) =>
-            Value = value;
+        internal CDT(int value) => Value = value;
+
+        internal CDT(ushort date, int hour = 0, int minute = 0, int seconds = 0) :
+            this(new DateTime(MIN_YEAR + ((date >> 9) & 0b1_111_111),
+                              ((date >> 5) & 0b11_111) + 1,
+                              (date & 0b1111) + 1, hour, minute, seconds))
+        {
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public CDT(int year, int month, int day) =>
@@ -66,7 +72,7 @@ namespace ColumnStore
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public CDT Add(TimeSpan ts) => new (Value + (int) ts.TotalSeconds);
+        public CDT Add(TimeSpan ts) => new(Value + (int) ts.TotalSeconds);
 
         /// <summary> return next time unit from current (next minute, hour, month, ...) </summary>
         public CDT NextNearest(CDTUnit to)
@@ -81,6 +87,27 @@ namespace ColumnStore
                 CDTUnit.Year => dt.AddYears(1),
                 _ => throw new NotSupportedException(to.ToString())
             };
+        }
+
+        /// <summary>
+        /// component:  Y  M  D
+        /// bits       [7][5][4]
+        /// M - zero-based
+        /// D - zero-based
+        /// Y - year-MIN_YEAR
+        /// </summary>
+        public ushort Date
+        {
+            get
+            {
+                DateTime dt = this;
+
+                var y = dt.Year - MIN_YEAR;
+                var m = dt.Month - 1;
+                var d = dt.Day - 1;
+
+                return (ushort) (d & (m << 5) & (y << 9));
+            }
         }
 
         #region DateTime <-> CDT, TimeSpan <- CDT

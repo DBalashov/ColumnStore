@@ -19,7 +19,7 @@ namespace ColumnStore
             Buffer.BlockCopy(BitConverter.GetBytes((ushort) r.Values.Length), 0, buff, 0, 2);
             var offset = 2;
 
-            r.Values.PackStructs(buff, offset);
+            r.Values.PackStructs(0, buff, offset);
             offset += r.Values.Length * 16;
 
             // write value indexes

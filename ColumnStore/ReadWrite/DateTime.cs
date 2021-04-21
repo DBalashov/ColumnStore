@@ -12,8 +12,10 @@ namespace ColumnStore
             for (var i = range.From; i < range.To; i++)
                 v[i - range.From] = dt[i];
 
-            var buff = v.PackStructs();
+            var buff = poolBytes.Rent(v.Length * 4);
+            v.PackStructs(0, buff);
             targetStream.Write(buff, 0, buff.Length);
+            poolBytes.Return(buff);
         }
         
         public override Array Unpack(byte[] buff, int count, int offset)

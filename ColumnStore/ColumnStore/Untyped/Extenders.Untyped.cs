@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.IO;
 using JetBrains.Annotations;
 
@@ -6,6 +7,8 @@ namespace ColumnStore
 {
     static class ColumnUntypedExtenders
     {
+        static readonly ArrayPool<byte> poolBytes = ArrayPool<byte>.Shared;
+        
         [NotNull]
         internal static byte[] Pack([NotNull] this UntypedColumn data, Range range = null, bool withCompression = false)
         {
@@ -17,8 +20,10 @@ namespace ColumnStore
 
             using var stm = new WriteStreamWrapper(stmTarget, withCompression);
 
-            var buff = data.Keys.PackStructs(range.From * 4, range.Length);
+            var buff = poolBytes.Rent(range.Length * 4);
+            data.Keys.PackStructs(range.From*4, buff, 0, range.Length);
             stm.Write(buff, 0, range.Length * 4);
+            poolBytes.Return(buff);
 
             data.Values.PackData(stm, range);
 
