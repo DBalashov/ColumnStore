@@ -46,52 +46,43 @@ namespace ColumnStore.Tests.Typed
         }
 
         [Test]
-        public void DeleteByte()
-        {
+        public void DeleteByte() =>
             delete(() => GetBytes(keys),
                    (sd, ed) => GetBytes(keys, sd, ed));
-        }
 
         [Test]
-        public void DeleteDouble()
-        {
+        public void DeleteBoolean() =>
+            delete(() => GetBytes(keys),
+                   (sd, ed) => GetBytes(keys, sd, ed));
+
+        [Test]
+        public void DeleteDouble() =>
             delete(() => GetDoubles(keys),
                    (sd, ed) => GetDoubles(keys, sd, ed));
-        }
 
         [Test]
-        public void DeleteGuid()
-        {
+        public void DeleteGuid() =>
             delete(() => GetGuids(keys),
                    (sd, ed) => GetGuids(keys, sd, ed));
-        }
 
         [Test]
-        public void DeleteInt()
-        {
+        public void DeleteInt() =>
             delete(() => GetInts(keys),
                    (sd, ed) => GetInts(keys, sd, ed));
-        }
 
         [Test]
-        public void DeleteString()
-        {
+        public void DeleteString() =>
             delete(() => GetStrings(keys),
                    (sd, ed) => GetStrings(keys, sd, ed));
-        }
 
         [Test]
-        public void DeleteDateTime()
-        {
+        public void DeleteDateTime() =>
             delete(() => GetDateTimes(keys),
                    (sd, ed) => GetDateTimes(keys, sd, ed));
-        }
 
         [Test]
-        public void DeleteTimeSpan()
-        {
+        public void DeleteTimeSpan() =>
             delete(() => GetTimeSpans(keys),
                    (sd, ed) => GetTimeSpans(keys, sd, ed));
-        }
     }
 }

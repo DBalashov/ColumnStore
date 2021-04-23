@@ -44,6 +44,15 @@ namespace ColumnStore.Tests
                                   return (byte) (d.Minute + d.Second + d.Day);
                               });
 
+        protected Dictionary<CDT, bool> GetBoolean(CDT[] keys, CDT? from = null, CDT? to = null) =>
+            filter(keys, from, to)
+                .ToDictionary(p => p,
+                              p =>
+                              {
+                                  var d = (DateTime) p;
+                                  return (d.Minute + d.Second + d.Day) % d.Day > 0;
+                              });
+
         protected Dictionary<CDT, int> GetInts(CDT[] keys, CDT? from = null, CDT? to = null) =>
             filter(keys, from, to)
                 .ToDictionary(p => p,

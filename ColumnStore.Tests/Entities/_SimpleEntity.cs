@@ -1,4 +1,5 @@
 using System;
+
 #pragma warning disable 659
 
 namespace ColumnStore.Tests
@@ -12,6 +13,7 @@ namespace ColumnStore.Tests
         public TimeSpan ColumnTimeSpan { get; set; }
         public double   ColumnDouble   { get; set; }
         public byte     ColumnByte     { get; set; }
+        public bool     ColumnBool     { get; set; }
 
         public int      ColumnInt2      { get; set; }
         public Guid     ColumnGuid2     { get; set; }
@@ -20,6 +22,7 @@ namespace ColumnStore.Tests
         public TimeSpan ColumnTimeSpan2 { get; set; }
         public double   ColumnDouble2   { get; set; }
         public byte     ColumnByte2     { get; set; }
+        public bool     ColumnBool2     { get; set; }
 
         public int      ColumnInt3      { get; set; }
         public Guid     ColumnGuid3     { get; set; }
@@ -28,6 +31,7 @@ namespace ColumnStore.Tests
         public TimeSpan ColumnTimeSpan3 { get; set; }
         public double   ColumnDouble3   { get; set; }
         public byte     ColumnByte3     { get; set; }
+        public bool     ColumnBool3     { get; set; }
 
         public int      ColumnInt4      { get; set; }
         public Guid     ColumnGuid4     { get; set; }
@@ -36,6 +40,7 @@ namespace ColumnStore.Tests
         public TimeSpan ColumnTimeSpan4 { get; set; }
         public double   ColumnDouble4   { get; set; }
         public byte     ColumnByte4     { get; set; }
+        public bool     ColumnBool4     { get; set; }
 
         public int      ColumnInt5      { get; set; }
         public Guid     ColumnGuid5     { get; set; }
@@ -44,6 +49,7 @@ namespace ColumnStore.Tests
         public TimeSpan ColumnTimeSpan5 { get; set; }
         public double   ColumnDouble5   { get; set; }
         public byte     ColumnByte5     { get; set; }
+        public bool     ColumnBool5     { get; set; }
 
         public SimpleEntity()
         {
@@ -58,6 +64,7 @@ namespace ColumnStore.Tests
             ColumnTimeSpan = ColumnTimeSpan2 = ColumnTimeSpan3 = ColumnTimeSpan4 = ColumnTimeSpan5 = d.TimeOfDay;
             ColumnDateTime = ColumnDateTime2 = ColumnDateTime3 = ColumnDateTime4 = ColumnDateTime5 = d;
             ColumnInt      = ColumnInt2      = ColumnInt3      = ColumnInt4      = ColumnInt5      = d.Minute + d.Second + d.Day;
+            ColumnBool     = ColumnBool2     = ColumnBool3     = ColumnBool4     = ColumnBool5     = (d.Minute + d.Second + d.Day) % d.Day > 0;
         }
 
         public override bool Equals(object obj)
@@ -71,6 +78,11 @@ namespace ColumnStore.Tests
                    ColumnByte3 == o.ColumnByte3 &&
                    ColumnByte4 == o.ColumnByte4 &&
                    ColumnByte5 == o.ColumnByte5 &&
+                   ColumnBool == o.ColumnBool &&
+                   ColumnBool2 == o.ColumnBool2 &&
+                   ColumnBool3 == o.ColumnBool3 &&
+                   ColumnBool4 == o.ColumnBool4 &&
+                   ColumnBool5 == o.ColumnBool5 &&
                    ColumnInt == o.ColumnInt &&
                    ColumnInt2 == o.ColumnInt2 &&
                    ColumnInt3 == o.ColumnInt3 &&

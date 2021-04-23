@@ -5,6 +5,8 @@ using System.Linq.Expressions;
 using System.Reflection;
 using JetBrains.Annotations;
 
+// ReSharper disable AssignNullToNotNullAttribute
+
 namespace ColumnStore
 {
     // before: https://i.tk-chel.ru/denisio/202012/21_224148.png
@@ -12,6 +14,7 @@ namespace ColumnStore
     {
         internal static readonly Type[] supportedTypes = new[]
         {
+            typeof(bool),
             typeof(byte),
             typeof(int),
             typeof(Guid),

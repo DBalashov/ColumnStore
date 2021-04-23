@@ -14,7 +14,8 @@ namespace ColumnStore
         Guid     = 3,
         String   = 4,
         TimeSpan = 5,
-        Byte     = 6
+        Byte     = 6,
+        Boolean  = 7
     }
 
     public enum StoredPackType
@@ -38,6 +39,7 @@ namespace ColumnStore
             var v    = a.GetValue(0);
             var type = v.GetType();
             if (type == typeof(byte)) return StoredDataType.Byte;
+            if (type == typeof(bool)) return StoredDataType.Boolean;
             if (type == typeof(int)) return StoredDataType.Int;
             if (type == typeof(string)) return StoredDataType.String;
             if (type == typeof(double)) return StoredDataType.Double;
@@ -52,6 +54,7 @@ namespace ColumnStore
     {
         static readonly Dictionary<StoredDataType, ReadWriteBase> readWriteHandlers = new()
         {
+            [StoredDataType.Boolean]  = new ReadWriteHandlerBoolean(),
             [StoredDataType.Byte]     = new ReadWriteHandlerByte(),
             [StoredDataType.Double]   = new ReadWriteHandlerDouble(),
             [StoredDataType.DateTime] = new ReadWriteHandlerDateTime(),

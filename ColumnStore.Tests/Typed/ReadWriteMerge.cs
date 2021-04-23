@@ -27,45 +27,27 @@ namespace ColumnStore.Tests.Typed
         }
 
         [Test]
-        public void WriteByte()
-        {
-            writeWithMerge(() => GetBytes(keys));
-        }
+        public void WriteByte() => writeWithMerge(() => GetBytes(keys));
 
         [Test]
-        public void WriteDouble()
-        {
-            writeWithMerge(() => GetDoubles(keys));
-        }
+        public void WriteBoolean() => writeWithMerge(() => GetBoolean(keys));
 
         [Test]
-        public void WriteGuid()
-        {
-            writeWithMerge(() => GetGuids(keys));
-        }
+        public void WriteDouble() => writeWithMerge(() => GetDoubles(keys));
 
         [Test]
-        public void WriteInt()
-        {
-            writeWithMerge(() => GetInts(keys));
-        }
+        public void WriteGuid() => writeWithMerge(() => GetGuids(keys));
 
         [Test]
-        public void WriteString()
-        {
-            writeWithMerge(() => GetStrings(keys));
-        }
+        public void WriteInt() => writeWithMerge(() => GetInts(keys));
 
         [Test]
-        public void WriteDateTime()
-        {
-            writeWithMerge(() => GetDateTimes(keys));
-        }
+        public void WriteString() => writeWithMerge(() => GetStrings(keys));
 
         [Test]
-        public void WriteTimeSpan()
-        {
-            writeWithMerge(() => GetTimeSpans(keys));
-        }
+        public void WriteDateTime() => writeWithMerge(() => GetDateTimes(keys));
+
+        [Test]
+        public void WriteTimeSpan() => writeWithMerge(() => GetTimeSpans(keys));
     }
 }

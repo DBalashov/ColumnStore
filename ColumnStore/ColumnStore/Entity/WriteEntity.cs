@@ -33,6 +33,8 @@ namespace ColumnStore
                         buff = pack<E, int>(data, range.Value, prop.Value);
                     else if (prop.Value.PropertyType == typeof(byte))
                         buff = pack<E, byte>(data, range.Value, prop.Value);
+                    else if (prop.Value.PropertyType == typeof(bool))
+                        buff = pack<E, bool>(data, range.Value, prop.Value);
                     else if (prop.Value.PropertyType == typeof(double))
                         buff = pack<E, double>(data, range.Value, prop.Value);
                     else if (prop.Value.PropertyType == typeof(string))

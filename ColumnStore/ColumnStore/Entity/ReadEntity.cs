@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using JetBrains.Annotations;
 
@@ -15,7 +16,7 @@ namespace ColumnStore
         {
             if (from >= to)
                 throw new ArgumentException($"Invalid values: {from} >= {to}");
-            
+
             var r = new Dictionary<CDT, E>();
 
             var props = typeof(E).GetProps();
@@ -31,6 +32,8 @@ namespace ColumnStore
                         unpack<E, int>(data, range, r, prop.Value);
                     else if (prop.Value.PropertyType == typeof(byte))
                         unpack<E, byte>(data, range, r, prop.Value);
+                    else if (prop.Value.PropertyType == typeof(bool))
+                        unpack<E, bool>(data, range, r, prop.Value);
                     else if (prop.Value.PropertyType == typeof(double))
                         unpack<E, double>(data, range, r, prop.Value);
                     else if (prop.Value.PropertyType == typeof(string))
@@ -52,11 +55,16 @@ namespace ColumnStore
                           [NotNull] PropertyInfo prop) where T : class, new()
         {
             var setValue = prop.getActionSet<T, V>();
+
+            var ctor          = Expression.New(typeof(T));
+            var memberInit    = Expression.MemberInit(ctor);
+            var createFunctor = Expression.Lambda<Func<T>>(memberInit).Compile();
+
             foreach (var item in data.Unpack<V>(Compressed).Where(p => range.InRange(p.Key)))
             {
                 var key = new CDT(item.Key);
                 if (!target.TryGetValue(key, out var entity))
-                    target.Add(key, entity = new T());
+                    target.Add(key, entity = createFunctor());
 
                 setValue(entity, item.Value);
             }

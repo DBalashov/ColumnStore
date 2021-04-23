@@ -61,52 +61,43 @@ namespace ColumnStore.Tests.Typed
         #endregion
 
         [Test]
-        public void WriteByte()
-        {
+        public void WriteByte() =>
             writeRead(() => GetBytes(keys),
                       (sd, ed) => GetBytes(keys, sd, ed));
-        }
 
         [Test]
-        public void WriteDouble()
-        {
+        public void WriteBoolean() =>
+            writeRead(() => GetBoolean(keys),
+                      (sd, ed) => GetBoolean(keys, sd, ed));
+
+        [Test]
+        public void WriteDouble() =>
             writeRead(() => GetDoubles(keys),
                       (sd, ed) => GetDoubles(keys, sd, ed));
-        }
 
         [Test]
-        public void WriteGuid()
-        {
+        public void WriteGuid() =>
             writeRead(() => GetGuids(keys),
                       (sd, ed) => GetGuids(keys, sd, ed));
-        }
 
         [Test]
-        public void WriteInt()
-        {
+        public void WriteInt() =>
             writeRead(() => GetInts(keys),
                       (sd, ed) => GetInts(keys, sd, ed));
-        }
 
         [Test]
-        public void WriteString()
-        {
+        public void WriteString() =>
             writeRead(() => GetStrings(keys),
                       (sd, ed) => GetStrings(keys, sd, ed));
-        }
 
         [Test]
-        public void WriteDateTime()
-        {
+        public void WriteDateTime() =>
             writeRead(() => GetDateTimes(keys),
                       (sd, ed) => GetDateTimes(keys, sd, ed));
-        }
 
         [Test]
-        public void WriteTimeSpan()
-        {
+        public void WriteTimeSpan() =>
             writeRead(() => GetTimeSpans(keys),
                       (sd, ed) => GetTimeSpans(keys, sd, ed));
-        }
     }
 }

@@ -18,6 +18,7 @@ namespace ColumnStore.Tests.Untyped
 
             var vInts      = keys.Convert().ToDictionary(p => (CDT) p, p => p.Minute + p.Second + p.Day);
             var vBytes     = keys.Convert().ToDictionary(p => (CDT) p, p => (byte) (p.Minute + p.Second + p.Day));
+            var vBooleans  = keys.Convert().ToDictionary(p => (CDT) p, p => (p.Minute + p.Second + p.Day) % p.Day > 0);
             var vDoubles   = keys.Convert().ToDictionary(p => (CDT) p, p => p.TimeOfDay.TotalMilliseconds);
             var vTimeSpans = keys.Convert().ToDictionary(p => (CDT) p, p => p.TimeOfDay);
             var vStrings   = keys.Convert().ToDictionary(p => (CDT) p, p => "Item Address " + p.ToString("yyyyMMdd") + "/" + p.Month + "/" + p.Minute + "/" + p.Day);
@@ -32,11 +33,12 @@ namespace ColumnStore.Tests.Untyped
                 values.Add("Strings_" + i, vStrings.Values.ToArray());
                 values.Add("DateTimes_" + i, vDateTimes.Values.ToArray());
                 values.Add("TimeSpans_" + i, vTimeSpans.Values.ToArray());
+                values.Add("Boolean_" + i, vBooleans.Values.ToArray());
             }
-            
+
             TestContext.WriteLine($"Keys: {keys.Length}");
         }
-        
+
         void checkRead(UntypedColumn c, UntypedColumn orig)
         {
             Assert.IsNotNull(c);
@@ -57,8 +59,8 @@ namespace ColumnStore.Tests.Untyped
         public void WriteSingle()
         {
             var store = GetStore();
-            
-            var data  = values.ToDictionary(p => p.Key, p => new UntypedColumn(keys, p.Value));
+
+            var data = values.ToDictionary(p => p.Key, p => new UntypedColumn(keys, p.Value));
             store.WriteUntyped(data);
             TestContext.WriteLine($"Pages: {store.Container.TotalPages}, Length={store.Container.Length / 1024} KB");
 
@@ -80,9 +82,9 @@ namespace ColumnStore.Tests.Untyped
             var data = values.ToDictionary(p => p.Key, p => new UntypedColumn(keys, p.Value));
             store.WriteUntyped(data);
             TestContext.WriteLine($"Pages: {store.Container.TotalPages}, Length={store.Container.Length / 1024} KB");
-            
+
             var result = store.ReadUntyped(keys.First(), keys.Last().Add(TimeSpan.FromSeconds(1)), values.Keys.ToArray());
-            
+
             Assert.IsNotNull(result);
             Assert.IsFalse(result.Keys.Except(values.Keys).Any());
             Assert.IsFalse(values.Keys.Except(result.Keys).Any());
@@ -90,7 +92,7 @@ namespace ColumnStore.Tests.Untyped
             foreach (var item in result)
                 checkRead(item.Value, data[item.Key]);
         }
-        
+
         // todo add read as typed column
     }
 }

@@ -42,6 +42,9 @@ namespace ColumnStore.Tests.Entity
 
         [Test]
         public void WriteByteReadEntity() => checkRead(GetStore(), "ColumnByte", entity => entity.ColumnByte);
+        
+        [Test]
+        public void WriteBooleanReadEntity() => checkRead(GetStore(), "ColumnBool", entity => entity.ColumnBool);
 
         [Test]
         public void WriteDoubleReadEntity() => checkRead(GetStore(), "ColumnDouble", entity => entity.ColumnDouble);
