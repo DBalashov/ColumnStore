@@ -1,25 +1,11 @@
 using System;
-using System.Buffers;
-using System.IO;
 using JetBrains.Annotations;
 
 namespace ColumnStore
 {
-    abstract class ReadWriteBase
+    static class CompactUncompactExtenders
     {
-        protected static          ArrayPool<byte>  poolBytes  = ArrayPool<byte>.Shared;
-        protected static readonly ArrayPool<float> poolFloats = ArrayPool<float>.Shared;
-        protected static readonly ArrayPool<int>   poolInts   = ArrayPool<int>.Shared;
-
-        public abstract void Pack([NotNull] Array values, [NotNull] Stream targetStream, Range range);
-
-        [NotNull]
-        public abstract Array Unpack([NotNull] byte[] buff, int count, int offset);
-
-        #region CompactValues / UncompactValues
-
-        // todo write to stream
-        protected void CompactValues([NotNull] int[] values, [NotNull] byte[] targetBuff, int fromOffset, CompactType type)
+        internal static void CompactValues([NotNull] this int[] values, [NotNull] byte[] targetBuff, int fromOffset, CompactType type)
         {
             switch (type)
             {
@@ -60,7 +46,7 @@ namespace ColumnStore
         }
 
         [NotNull]
-        protected internal int[] UncompactValues([NotNull] byte[] buff, int offset, int count, CompactType compactType)
+        internal static int[] UncompactValues([NotNull] this byte[] buff, int offset, int count, CompactType compactType)
         {
             var r = new int[count];
             switch (compactType)
@@ -92,7 +78,5 @@ namespace ColumnStore
 
             return r;
         }
-
-        #endregion
     }
 }

@@ -84,6 +84,16 @@ namespace ColumnStore.Tests.Typed
         public void WriteInt() =>
             writeRead(() => GetInts(keys),
                       (sd, ed) => GetInts(keys, sd, ed));
+        
+        [Test]
+        public void WriteInt16() =>
+            writeRead(() => GetInt16s(keys),
+                      (sd, ed) => GetInt16s(keys, sd, ed));
+        
+        [Test]
+        public void WriteInt64() =>
+            writeRead(() => GetInt64s(keys),
+                      (sd, ed) => GetInt64s(keys, sd, ed));
 
         [Test]
         public void WriteString() =>

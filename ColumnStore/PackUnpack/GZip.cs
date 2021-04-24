@@ -12,20 +12,6 @@ namespace ColumnStore
     {
         static readonly ArrayPool<byte> pool = ArrayPool<byte>.Shared;
 
-        // [DebuggerStepThrough]
-        // [NotNull]
-        // public static byte[] GZipPack([NotNull] this byte[] buff)
-        // {
-        //     using var stm = new MemoryStream();
-        //     using (var gz = new GZipStream(stm, CompressionMode.Compress, true))
-        //     {
-        //         gz.Write(buff, 0, buff.Length);
-        //         gz.Flush();
-        //     }
-        //
-        //     return stm.ToArray();
-        // }
-
         [DebuggerStepThrough]
         [NotNull]
         public static byte[] GZipUnpack([NotNull] this byte[] data, int offset = 0)

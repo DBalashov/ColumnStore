@@ -57,6 +57,12 @@ namespace ColumnStore.Tests.Entity
 
         [Test]
         public void WriteEntityReadInt() => checkRead(GetStore(), "ColumnInt", entity => entity.ColumnInt);
+        
+        [Test]
+        public void WriteEntityReadInt16() => checkRead(GetStore(), "ColumnInt16", entity => entity.ColumnInt16);
+        
+        [Test]
+        public void WriteEntityReadInt64() => checkRead(GetStore(), "ColumnInt64", entity => entity.ColumnInt64);
 
         [Test]
         public void WriteEntityReadString() => checkRead(GetStore(), "ColumnString", entity => entity.ColumnString);

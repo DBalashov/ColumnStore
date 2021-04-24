@@ -62,6 +62,25 @@ namespace ColumnStore.Tests
                                   return d.Minute + d.Second + d.Day;
                               });
 
+        protected Dictionary<CDT, short> GetInt16s(CDT[] keys, CDT? from = null, CDT? to = null) =>
+            filter(keys, from, to)
+                .ToDictionary(p => p,
+                              p =>
+                              {
+                                  var d = (DateTime) p;
+                                  return (short) (d.Minute + d.Second + d.Day + 1);
+                              });
+
+        protected Dictionary<CDT, Int64> GetInt64s(CDT[] keys, CDT? from = null, CDT? to = null) =>
+            filter(keys, from, to)
+                .ToDictionary(p => p,
+                              p =>
+                              {
+                                  var   d = (DateTime) p;
+                                  Int64 x = d.Minute + d.Second + d.Day + 2;
+                                  return x | ((x + 3) << 32);
+                              });
+
         protected Dictionary<CDT, Guid> GetGuids(CDT[] keys, CDT? from = null, CDT? to = null) =>
             filter(keys, from, to)
                 .ToDictionary(p => p,

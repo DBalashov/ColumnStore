@@ -16,11 +16,16 @@ namespace ColumnStore
             // write dictionary values
             bw.Write((ushort) r.Values.Length);
             foreach (var item in r.Values)
-            {
-                var buff = Encoding.UTF8.GetBytes(item); //!!! -> byte[]
-                bw.Write((byte) buff.Length);
-                bw.Write(buff, 0, buff.Length);
-            }
+                if (item == null)
+                {
+                    bw.Write((short) -1);
+                }
+                else
+                {
+                    var buff = Encoding.UTF8.GetBytes(item);
+                    bw.Write((ushort) buff.Length);
+                    bw.Write(buff, 0, buff.Length);
+                }
 
             // write value indexes
             var compactType = r.Values.Length.GetCompactType();
@@ -28,7 +33,7 @@ namespace ColumnStore
 
             var requireBytes = range.Length * (1 << (int) compactType);
             var buffIndexes  = poolBytes.Rent(requireBytes);
-            CompactValues(r.Indexes, buffIndexes, 0, compactType);
+            r.Indexes.CompactValues(buffIndexes, 0, compactType);
             bw.Write(buffIndexes, 0, requireBytes);
             poolBytes.Return(buffIndexes);
         }
@@ -42,14 +47,20 @@ namespace ColumnStore
             var dictionaryValues = new string[dictionaryValuesCount];
             for (var i = 0; i < dictionaryValuesCount; i++)
             {
-                var length = buff[offset];
-                dictionaryValues[i] =  Encoding.UTF8.GetString(buff, offset + 1, length);
-                offset              += length + 1;
+                var length = BitConverter.ToInt16(buff, offset);
+                offset += 2;
+
+                if (length >= 0)
+                {
+                    dictionaryValues[i] =  Encoding.UTF8.GetString(buff, offset, length);
+                    offset              += length;
+                }
+                else dictionaryValues[i] = null;
             }
 
             // read value indexes
             var compactType = (CompactType) buff[offset++];
-            var indexes     = UncompactValues(buff, offset, count, compactType);
+            var indexes     = buff.UncompactValues(offset, count, compactType);
 
             var values = new string[count];
             for (var i = 0; i < count; i++)

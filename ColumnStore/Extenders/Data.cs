@@ -9,13 +9,15 @@ namespace ColumnStore
     public enum StoredDataType
     {
         Int      = 0,
-        Double   = 1,
-        DateTime = 2,
-        Guid     = 3,
-        String   = 4,
-        TimeSpan = 5,
-        Byte     = 6,
-        Boolean  = 7
+        Int16    = 1,
+        Int64    = 2,
+        Double   = 3,
+        DateTime = 4,
+        Guid     = 5,
+        String   = 6,
+        TimeSpan = 7,
+        Byte     = 8,
+        Boolean  = 9
     }
 
     public enum StoredPackType
@@ -32,7 +34,7 @@ namespace ColumnStore
         Int   = 2
     }
 
-    public static class ExtendersPublic
+    public static class Extenders
     {
         public static StoredDataType DetectDataType([NotNull] this Array a)
         {
@@ -41,6 +43,8 @@ namespace ColumnStore
             if (type == typeof(byte)) return StoredDataType.Byte;
             if (type == typeof(bool)) return StoredDataType.Boolean;
             if (type == typeof(int)) return StoredDataType.Int;
+            if (type == typeof(short)) return StoredDataType.Int16;
+            if (type == typeof(Int64)) return StoredDataType.Int64;
             if (type == typeof(string)) return StoredDataType.String;
             if (type == typeof(double)) return StoredDataType.Double;
             if (type == typeof(Guid)) return StoredDataType.Guid;
@@ -48,10 +52,7 @@ namespace ColumnStore
             if (type == typeof(TimeSpan)) return StoredDataType.TimeSpan;
             throw new NotSupportedException(type.Name + " not supported");
         }
-    }
 
-    static class ExtendersSectionData
-    {
         static readonly Dictionary<StoredDataType, ReadWriteBase> readWriteHandlers = new()
         {
             [StoredDataType.Boolean]  = new ReadWriteHandlerBoolean(),
@@ -61,7 +62,9 @@ namespace ColumnStore
             [StoredDataType.Guid]     = new ReadWriteHandlerGuid(),
             [StoredDataType.String]   = new ReadWriteHandlerString(),
             [StoredDataType.TimeSpan] = new ReadWriteHandlerTimeSpan(),
-            [StoredDataType.Int]      = new ReadWriteHandlerInt()
+            [StoredDataType.Int]      = new ReadWriteHandlerInt(),
+            [StoredDataType.Int16]    = new ReadWriteHandlerInt16(),
+            [StoredDataType.Int64]    = new ReadWriteHandlerInt64()
         };
 
         internal static CompactType GetCompactType(this int count) =>
@@ -94,6 +97,7 @@ namespace ColumnStore
 
             targetStream.Write(BitConverter.GetBytes(range.Length), 0, 4);
             targetStream.Write(BitConverter.GetBytes((ushort) dataType), 0, 2);
+            
             readWriteHandlers[dataType].Pack(values, targetStream, range);
         }
 

@@ -8,7 +8,7 @@ namespace ColumnStore
 {
     static class DictionarizeExtenders
     {
-        internal static DictionarizeResult<T> Dictionarize<T>([NotNull] this Array values, Range range)
+        internal static DictionarizeResult<T> Dictionarize<T>([NotNull] this Array values, [NotNull] Range range)
         {
             var v       = (T[]) values;
             var r       = new Dictionary<T, int>(); // value : index

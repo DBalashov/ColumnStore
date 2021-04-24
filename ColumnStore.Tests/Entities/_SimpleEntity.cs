@@ -7,6 +7,8 @@ namespace ColumnStore.Tests
     public class SimpleEntity
     {
         public int      ColumnInt      { get; set; }
+        public short    ColumnInt16    { get; set; }
+        public Int64    ColumnInt64    { get; set; }
         public Guid     ColumnGuid     { get; set; }
         public DateTime ColumnDateTime { get; set; }
         public string   ColumnString   { get; set; }
@@ -16,6 +18,8 @@ namespace ColumnStore.Tests
         public bool     ColumnBool     { get; set; }
 
         public int      ColumnInt2      { get; set; }
+        public short    ColumnInt16_2   { get; set; }
+        public Int64    ColumnInt64_2   { get; set; }
         public Guid     ColumnGuid2     { get; set; }
         public DateTime ColumnDateTime2 { get; set; }
         public string   ColumnString2   { get; set; }
@@ -25,6 +29,8 @@ namespace ColumnStore.Tests
         public bool     ColumnBool2     { get; set; }
 
         public int      ColumnInt3      { get; set; }
+        public short    ColumnInt16_3   { get; set; }
+        public Int64    ColumnInt64_3   { get; set; }
         public Guid     ColumnGuid3     { get; set; }
         public DateTime ColumnDateTime3 { get; set; }
         public string   ColumnString3   { get; set; }
@@ -34,6 +40,8 @@ namespace ColumnStore.Tests
         public bool     ColumnBool3     { get; set; }
 
         public int      ColumnInt4      { get; set; }
+        public short    ColumnInt16_4   { get; set; }
+        public Int64    ColumnInt64_4   { get; set; }
         public Guid     ColumnGuid4     { get; set; }
         public DateTime ColumnDateTime4 { get; set; }
         public string   ColumnString4   { get; set; }
@@ -43,6 +51,8 @@ namespace ColumnStore.Tests
         public bool     ColumnBool4     { get; set; }
 
         public int      ColumnInt5      { get; set; }
+        public short    ColumnInt16_5   { get; set; }
+        public Int64    ColumnInt64_5   { get; set; }
         public Guid     ColumnGuid5     { get; set; }
         public DateTime ColumnDateTime5 { get; set; }
         public string   ColumnString5   { get; set; }
@@ -64,7 +74,12 @@ namespace ColumnStore.Tests
             ColumnTimeSpan = ColumnTimeSpan2 = ColumnTimeSpan3 = ColumnTimeSpan4 = ColumnTimeSpan5 = d.TimeOfDay;
             ColumnDateTime = ColumnDateTime2 = ColumnDateTime3 = ColumnDateTime4 = ColumnDateTime5 = d;
             ColumnInt      = ColumnInt2      = ColumnInt3      = ColumnInt4      = ColumnInt5      = d.Minute + d.Second + d.Day;
-            ColumnBool     = ColumnBool2     = ColumnBool3     = ColumnBool4     = ColumnBool5     = (d.Minute + d.Second + d.Day) % d.Day > 0;
+            ColumnInt16    = ColumnInt16_2   = ColumnInt16_3   = ColumnInt16_4   = ColumnInt16_5   = (short) (d.Minute + d.Second + d.Day + 1);
+
+            Int64 x                     = d.Minute + d.Second + d.Day + 1;
+            ColumnInt64 = ColumnInt64_2 = ColumnInt64_3 = ColumnInt64_4 = ColumnInt64_5 = x | ((x + 2) << 32);
+
+            ColumnBool = ColumnBool2 = ColumnBool3 = ColumnBool4 = ColumnBool5 = (d.Minute + d.Second + d.Day) % d.Day > 0;
         }
 
         public override bool Equals(object obj)
@@ -88,6 +103,16 @@ namespace ColumnStore.Tests
                    ColumnInt3 == o.ColumnInt3 &&
                    ColumnInt4 == o.ColumnInt4 &&
                    ColumnInt5 == o.ColumnInt5 &&
+                   ColumnInt16 == o.ColumnInt16 &&
+                   ColumnInt16_2 == o.ColumnInt16_2 &&
+                   ColumnInt16_3 == o.ColumnInt16_3 &&
+                   ColumnInt16_4 == o.ColumnInt16_4 &&
+                   ColumnInt16_5 == o.ColumnInt16_5 &&
+                   ColumnInt64 == o.ColumnInt64 &&
+                   ColumnInt64_2 == o.ColumnInt64_2 &&
+                   ColumnInt64_3 == o.ColumnInt64_3 &&
+                   ColumnInt64_4 == o.ColumnInt64_4 &&
+                   ColumnInt64_5 == o.ColumnInt64_5 &&
                    Math.Abs(ColumnDouble - o.ColumnDouble) < EPSILON &&
                    Math.Abs(ColumnDouble2 - o.ColumnDouble2) < EPSILON &&
                    Math.Abs(ColumnDouble3 - o.ColumnDouble3) < EPSILON &&

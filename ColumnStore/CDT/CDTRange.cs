@@ -44,7 +44,7 @@ namespace ColumnStore
 #endif
     }
     
-    public class CDTRangeWithKey : CDTRange
+    public sealed class CDTRangeWithKey : CDTRange
     {
         public readonly CDT Key;
 

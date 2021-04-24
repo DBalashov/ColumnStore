@@ -24,7 +24,7 @@ namespace ColumnStore
 
             // write value indexes
             buff[offset++] = (byte) type;
-            CompactValues(r.Indexes, buff, offset, type);
+            r.Indexes.CompactValues(buff, offset, type);
 
             targetStream.Write(buff, 0, requireBytes);
             poolBytes.Return(buff);
@@ -41,7 +41,7 @@ namespace ColumnStore
             var values      = new Guid[count];
             var compactType = (CompactType) buff[offset++];
 
-            var indexes = UncompactValues(buff, offset, count, compactType);
+            var indexes = buff.UncompactValues(offset, count, compactType);
             for (var i = 0; i < indexes.Length; i++)
                 values[i] = dictionaryValues[indexes[i]];
             return values;

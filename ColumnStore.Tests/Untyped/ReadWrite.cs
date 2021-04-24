@@ -16,7 +16,14 @@ namespace ColumnStore.Tests.Untyped
             keys   = GetKeys();
             values = new Dictionary<string, Array>();
 
-            var vInts      = keys.Convert().ToDictionary(p => (CDT) p, p => p.Minute + p.Second + p.Day);
+            var vInts   = keys.Convert().ToDictionary(p => (CDT) p, p => p.Minute + p.Second + p.Day);
+            var vInt16s = keys.Convert().ToDictionary(p => (CDT) p, p => (short) (p.Minute + p.Second + p.Day));
+            var vInt64s = keys.Convert().ToDictionary(p => (CDT) p, p =>
+            {
+                Int64 x = p.Minute + p.Second + p.Day + 1;
+                return x | ((x + 2) << 32);
+            });
+
             var vBytes     = keys.Convert().ToDictionary(p => (CDT) p, p => (byte) (p.Minute + p.Second + p.Day));
             var vBooleans  = keys.Convert().ToDictionary(p => (CDT) p, p => (p.Minute + p.Second + p.Day) % p.Day > 0);
             var vDoubles   = keys.Convert().ToDictionary(p => (CDT) p, p => p.TimeOfDay.TotalMilliseconds);
@@ -27,6 +34,8 @@ namespace ColumnStore.Tests.Untyped
             for (var i = 0; i < 2; i++)
             {
                 values.Add("Ints_" + i, vInts.Values.ToArray());
+                values.Add("Int16s_" + i, vInt16s.Values.ToArray());
+                values.Add("Int64s_" + i, vInt64s.Values.ToArray());
                 values.Add("Bytes_" + i, vBytes.Values.ToArray());
                 values.Add("Doubles_" + i, vDoubles.Values.ToArray());
                 values.Add("Guids_" + i, vGuids.Values.ToArray());

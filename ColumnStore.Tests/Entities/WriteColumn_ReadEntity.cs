@@ -22,7 +22,7 @@ namespace ColumnStore.Tests.Entity
         {
             store.WriteEntity(entities);
             TestContext.WriteLine($"Pages: {store.Container.TotalPages}, Length={store.Container.Length / 1024} KB");
-            
+
             var items = store.Read<T>(keys.First(), keys.Last().Add(TimeSpan.FromSeconds(1)), columnName);
             Assert.IsNotNull(items);
             Assert.IsNotEmpty(items);
@@ -42,7 +42,7 @@ namespace ColumnStore.Tests.Entity
 
         [Test]
         public void WriteByteReadEntity() => checkRead(GetStore(), "ColumnByte", entity => entity.ColumnByte);
-        
+
         [Test]
         public void WriteBooleanReadEntity() => checkRead(GetStore(), "ColumnBool", entity => entity.ColumnBool);
 
@@ -54,6 +54,12 @@ namespace ColumnStore.Tests.Entity
 
         [Test]
         public void WriteIntReadEntity() => checkRead(GetStore(), "ColumnInt", entity => entity.ColumnInt);
+
+        [Test]
+        public void WriteInt16ReadEntity() => checkRead(GetStore(), "ColumnInt16", entity => entity.ColumnInt16);
+
+        [Test]
+        public void WriteInt64ReadEntity() => checkRead(GetStore(), "ColumnInt64", entity => entity.ColumnInt64);
 
         [Test]
         public void WriteStringReadEntity() => checkRead(GetStore(), "ColumnString", entity => entity.ColumnString);

@@ -41,6 +41,7 @@ namespace Examples
             // generate some data
             var dataInts      = keys.ToDictionary(p => (CDT) p, p => p.Minute + p.Second + p.Day);
             var dataBytes     = keys.ToDictionary(p => (CDT) p, p => (byte) (p.Minute + p.Second + p.Day));
+            var dataBools     = keys.ToDictionary(p => (CDT) p, p => (p.Minute + p.Second + p.Day) % p.Day > 0);
             var dataDoubles   = keys.ToDictionary(p => (CDT) p, p => p.TimeOfDay.TotalMilliseconds);
             var dataTimeSpans = keys.ToDictionary(p => (CDT) p, p => p.TimeOfDay);
             var dataStrings   = keys.ToDictionary(p => (CDT) p, p => "Item Address " + p.ToString("yyyyMMdd") + "/" + p.Month + "/" + p.Minute + "/" + p.Day);
@@ -61,6 +62,7 @@ namespace Examples
 
                     ps.Write("Ints", dataInts);
                     ps.Write("Bytes", dataBytes);
+                    ps.Write("Bools", dataBools);
                     ps.Write("Doubles", dataDoubles);
                     ps.Write("TimeSpans", dataTimeSpans);
                     ps.Write("Strings", dataStrings);
@@ -71,7 +73,6 @@ namespace Examples
                                       sw.ElapsedMilliseconds, pc.Length / 1048576.0,
                                       pc.Length / (keys.Length * 7.0));
 
-
                     var readFrom = keys[r.Next(keys.Length / 2)];
                     var readTo   = readFrom.AddDays(readDays);
 
@@ -79,6 +80,7 @@ namespace Examples
                     sw.Restart();
 
                     var valueInts      = ps.Read<int>(readFrom, readTo, "Ints");
+                    var valueBools     = ps.Read<bool>(readFrom, readTo, "Bools");
                     var valueBytes     = ps.Read<byte>(readFrom, readTo, "Bytes");
                     var valueDoubles   = ps.Read<double>(readFrom, readTo, "Doubles");
                     var valueTimeSpans = ps.Read<TimeSpan>(readFrom, readTo, "TimeSpans");
@@ -86,7 +88,8 @@ namespace Examples
                     var valueGuids     = ps.Read<Guid>(readFrom, readTo, "Guids");
                     var valueDateTimes = ps.Read<DateTime>(readFrom, readTo, "DateTimes");
 
-                    Console.WriteLine(", duration: {0} ms, {1} item(s)", sw.ElapsedMilliseconds, valueInts.Count);
+                    Console.WriteLine(", duration: {0} ms, {1} item(s)", sw.ElapsedMilliseconds,
+                                      (valueInts.Count + valueBytes.Count + valueBools.Count + valueDoubles.Count + valueTimeSpans.Count + valueStrings.Count + valueGuids.Count + valueDateTimes.Count) / 8);
                 }
             }
         }

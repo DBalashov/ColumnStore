@@ -28,7 +28,7 @@ namespace ColumnStore
 #endif
     }
     
-    class RangeWithKey : Range
+    sealed class RangeWithKey : Range
     {
         public readonly CDT Key;
 

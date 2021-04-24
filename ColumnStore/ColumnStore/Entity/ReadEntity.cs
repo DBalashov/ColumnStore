@@ -28,22 +28,16 @@ namespace ColumnStore
                     var data        = Container[sectionName];
                     if (data == null) continue;
 
-                    if (prop.Value.PropertyType == typeof(int))
-                        unpack<E, int>(data, range, r, prop.Value);
-                    else if (prop.Value.PropertyType == typeof(byte))
-                        unpack<E, byte>(data, range, r, prop.Value);
-                    else if (prop.Value.PropertyType == typeof(bool))
-                        unpack<E, bool>(data, range, r, prop.Value);
-                    else if (prop.Value.PropertyType == typeof(double))
-                        unpack<E, double>(data, range, r, prop.Value);
-                    else if (prop.Value.PropertyType == typeof(string))
-                        unpack<E, string>(data, range, r, prop.Value);
-                    else if (prop.Value.PropertyType == typeof(Guid))
-                        unpack<E, Guid>(data, range, r, prop.Value);
-                    else if (prop.Value.PropertyType == typeof(TimeSpan))
-                        unpack<E, TimeSpan>(data, range, r, prop.Value);
-                    else if (prop.Value.PropertyType == typeof(DateTime))
-                        unpack<E, DateTime>(data, range, r, prop.Value);
+                    if (prop.Value.PropertyType == typeof(int)) unpack<E, int>(data, range, r, prop.Value);
+                    else if (prop.Value.PropertyType == typeof(short)) unpack<E, short>(data, range, r, prop.Value);
+                    else if (prop.Value.PropertyType == typeof(Int64)) unpack<E, Int64>(data, range, r, prop.Value);
+                    else if (prop.Value.PropertyType == typeof(byte)) unpack<E, byte>(data, range, r, prop.Value);
+                    else if (prop.Value.PropertyType == typeof(bool)) unpack<E, bool>(data, range, r, prop.Value);
+                    else if (prop.Value.PropertyType == typeof(double)) unpack<E, double>(data, range, r, prop.Value);
+                    else if (prop.Value.PropertyType == typeof(string)) unpack<E, string>(data, range, r, prop.Value);
+                    else if (prop.Value.PropertyType == typeof(Guid)) unpack<E, Guid>(data, range, r, prop.Value);
+                    else if (prop.Value.PropertyType == typeof(TimeSpan)) unpack<E, TimeSpan>(data, range, r, prop.Value);
+                    else if (prop.Value.PropertyType == typeof(DateTime)) unpack<E, DateTime>(data, range, r, prop.Value);
                     else throw new NotSupportedException(prop.Value.PropertyType + " not supported");
                 }
             }

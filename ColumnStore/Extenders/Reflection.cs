@@ -9,7 +9,6 @@ using JetBrains.Annotations;
 
 namespace ColumnStore
 {
-    // before: https://i.tk-chel.ru/denisio/202012/21_224148.png
     static class ReflectionExtenders
     {
         internal static readonly Type[] supportedTypes = new[]
@@ -17,6 +16,8 @@ namespace ColumnStore
             typeof(bool),
             typeof(byte),
             typeof(int),
+            typeof(short),
+            typeof(Int64),
             typeof(Guid),
             typeof(DateTime),
             typeof(TimeSpan),
