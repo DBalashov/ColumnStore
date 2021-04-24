@@ -6,10 +6,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="FileContainer" Version="2021.4.20" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\ColumnStore\ColumnStore.csproj" />
     </ItemGroup>
 

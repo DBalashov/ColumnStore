@@ -14,8 +14,11 @@ namespace ColumnStore
         [NotNull] public string                 Path      { get; }
         [NotNull] public PagedContainerAbstract Container { get; }
 
-        public CDTUnit Unit       { get; private set; }
-        public bool    Compressed { get; private set; }
+        /// <summary> partition size </summary>
+        public CDTUnit Unit { get; private set; }
+
+        /// <summary> gzip-compress each partition ? </summary>
+        public bool Compressed { get; private set; }
 
         /// <summary> ColumnStore container </summary>
         /// <param name="unit">

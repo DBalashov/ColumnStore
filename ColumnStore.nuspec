@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
     <id>ColumnStore</id>
-    <version>2021.1.4</version>
+    <version>2021.4.24</version>
     <title>FileContainer</title>
     <authors>Denis Balashov and contributors</authors>
     <owners>Denis Balashov</owners>
@@ -11,12 +11,12 @@
     <description>Column-oriented storage for datetime/value columns</description>
     <summary>Column-oriented storage for datetime/value columns</summary>
     <releaseNotes></releaseNotes>
-    <copyright>© 2020 Denis Balashov</copyright>
+    <copyright>© 2020-2021 Denis Balashov</copyright>
     <language>en-US</language>
     <tags>column store,storage</tags>
     <dependencies>
       <group targetFramework=".NETStandard2.0">
-        <dependency id="FileContainer" version="(2020.12.27,)" />
+        <dependency id="FileContainer" version="(2021.4.20,)" />
       </group>
     </dependencies>
   </metadata>

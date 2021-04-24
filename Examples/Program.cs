@@ -9,12 +9,12 @@ namespace Examples
 {
     class Program
     {
-        static readonly Random   r         = new Random(Guid.NewGuid().GetHashCode());
-        static readonly int[]    pageSizes = new[] {2048, 4096, 8192, 16384};
+        static readonly Random   r         = new(Guid.NewGuid().GetHashCode());
+        static readonly int[]    pageSizes = {2048, 4096, 8192, 16384};
         static readonly int      every     = 1;
         const           int      readDays  = 63;
-        static readonly DateTime sd        = new DateTime(2020, 1, 1);
-        static readonly DateTime ed        = new DateTime(2021, 1, 1);
+        static readonly DateTime sd        = new(2020, 1, 1);
+        static readonly DateTime ed        = new(2021, 1, 1);
 
         static readonly DateTime[] keys = Enumerable.Range(0, (int) (ed.Subtract(sd).TotalMinutes / every))
                                                     .Select(p => sd.AddMinutes(p * every))
