@@ -70,10 +70,10 @@ namespace ColumnStore.Tests.Untyped
             var store = GetStore();
 
             var data = values.ToDictionary(p => p.Key, p => new UntypedColumn(keys, p.Value));
-            store.WriteUntyped(data);
+            store.Untyped.Write(data);
             TestContext.WriteLine($"Pages: {store.Container.TotalPages}, Length={store.Container.Length / 1024} KB");
 
-            var result = store.ReadUntyped(keys.First(), keys.Last().Add(TimeSpan.FromSeconds(1)), values.Keys.ToArray());
+            var result = store.Untyped.Read(keys.First(), keys.Last().Add(TimeSpan.FromSeconds(1)), values.Keys.ToArray());
 
             Assert.IsNotNull(result);
             Assert.IsFalse(result.Keys.Except(values.Keys).Any());
@@ -89,10 +89,10 @@ namespace ColumnStore.Tests.Untyped
             var store = GetStore();
 
             var data = values.ToDictionary(p => p.Key, p => new UntypedColumn(keys, p.Value));
-            store.WriteUntyped(data);
+            store.Untyped.Write(data);
             TestContext.WriteLine($"Pages: {store.Container.TotalPages}, Length={store.Container.Length / 1024} KB");
 
-            var result = store.ReadUntyped(keys.First(), keys.Last().Add(TimeSpan.FromSeconds(1)), values.Keys.ToArray());
+            var result = store.Untyped.Read(keys.First(), keys.Last().Add(TimeSpan.FromSeconds(1)), values.Keys.ToArray());
 
             Assert.IsNotNull(result);
             Assert.IsFalse(result.Keys.Except(values.Keys).Any());

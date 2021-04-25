@@ -20,6 +20,15 @@ namespace ColumnStore
         /// <summary> gzip-compress each partition ? </summary>
         public bool Compressed { get; private set; }
 
+        /// <summary> Access to Typed columns </summary>
+        [NotNull] public IColumnStoreTyped   Typed   { get; }
+        
+        /// <summary> Access to columns with map to entity </summary>
+        [NotNull] public IColumnStoreEntity  Entity  { get; }
+        
+        /// <summary> Access to Untyped columns </summary>
+        [NotNull] public IColumnStoreUntyped Untyped { get; }
+
         /// <summary> ColumnStore container </summary>
         /// <param name="unit">
         /// Range function.
@@ -39,6 +48,10 @@ namespace ColumnStore
             Path       = string.IsNullOrEmpty(commonPath) ? "" : commonPath.Trim('/');
 
             initSettings(unit, compressed);
+
+            Typed   = new ColumnStoreTyped(this);
+            Entity  = new ColumnStoreEntity(this);
+            Untyped = new ColumnStoreUntyped(this);
         }
 
         void initSettings(CDTUnit unit, bool compressed)

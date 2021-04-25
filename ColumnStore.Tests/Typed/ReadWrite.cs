@@ -23,7 +23,7 @@ namespace ColumnStore.Tests.Typed
             var store      = GetStore();
             var data       = getData();
             var columnName = typeof(T).Name;
-            store.Write(columnName, getData());
+            store.Typed.Write(columnName, getData());
             TestContext.WriteLine($"Pages: {store.Container.TotalPages}, Length={store.Container.Length / 1024} KB");
 
             readSimple(columnName, store, data);
@@ -35,7 +35,7 @@ namespace ColumnStore.Tests.Typed
             var sd = keys.First();
             var ed = keys.Last().Add(TimeSpan.FromSeconds(1));
 
-            var result = store.Read<T>(sd, ed, columnName);
+            var result = store.Typed.Read<T>(sd, ed, columnName);
             Assert.IsNotNull(result);
             Assert.IsNotEmpty(result);
 
@@ -49,7 +49,7 @@ namespace ColumnStore.Tests.Typed
             var part = getDataPart(keys.Skip(keys.Length / 2).First(),
                                    keys.Skip(keys.Length / 2 + keys.Length / 3).First());
             
-            var result = store.Read<T>(part.First().Key, part.Last().Key.Add(TimeSpan.FromSeconds(1)), columnName);
+            var result = store.Typed.Read<T>(part.First().Key, part.Last().Key.Add(TimeSpan.FromSeconds(1)), columnName);
             Assert.IsNotNull(result);
             Assert.IsNotEmpty(result.Keys);
             Assert.IsNotEmpty(result.Values);

@@ -9,9 +9,9 @@ namespace ColumnStore
     {
         public override void Pack(Array values, Stream targetStream, Range range)
         {
-            using var bw = new BinaryWriter(targetStream, Encoding.Default, true);
+            using var bw = new BinaryWriter(targetStream, Encoding.UTF8, true);
 
-            var r = values.Dictionarize<string>(range);
+            var r = values.Dictionarize<string>(range, "");
 
             // write dictionary values
             bw.Write((ushort) r.Values.Length);

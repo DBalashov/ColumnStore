@@ -5,34 +5,29 @@ using JetBrains.Annotations;
 
 namespace ColumnStore
 {
-    public partial class PersistentColumnStore
+    partial class ColumnStoreUntyped
     {
-        /// <summary> Write data to column data </summary>
-        /// <param name="columnName">case insensitive</param>
-        /// <exception cref="ArgumentException"></exception>
-        public void WriteUntyped([NotNull] string columnName, [NotNull] UntypedColumn newData)
+        public void Write([NotNull] string columnName, [NotNull] UntypedColumn newData)
         {
             if (newData == null)
                 throw new ArgumentException("Can't be null", nameof(newData));
 
             var entries = new Dictionary<string, byte[]>();
 
-            foreach (var range in newData.Keys.GetRange(Unit))
+            foreach (var range in newData.Keys.GetRange(ps.Unit))
             {
-                var sectionName = Path.BuildSectionName(columnName, range.Key.Value);
+                var sectionName = ps.Path.BuildSectionName(columnName, range.Key.Value);
 
-                var data = Container[sectionName];
+                var data = ps.Container[sectionName];
                 entries.Add(sectionName, data != null
-                                ? data.Unpack(Compressed).MergeWithReplace(range, newData).Pack(null, Compressed)
-                                : newData.Pack(range, Compressed));
+                                ? data.Unpack(ps.Compressed).MergeWithReplace(range, newData).Pack(null, ps.Compressed)
+                                : newData.Pack(range, ps.Compressed));
             }
 
-            Container.Put(entries);
+            ps.Container.Put(entries);
         }
-
-        /// <summary> Write data to multiple columns data </summary>
-        /// <param name="newData">keys must be case insensitive</param>
-        public void WriteUntyped([NotNull] Dictionary<string, UntypedColumn> newData)
+        
+        public void Write([NotNull] Dictionary<string, UntypedColumn> newData)
         {
             if (newData == null)
                 throw new ArgumentException("Can't be null", nameof(newData));
@@ -45,17 +40,17 @@ namespace ColumnStore
             {
                 var entries = new Dictionary<string, byte[]>(); // todo ^entries
 
-                foreach (var range in newDataItem.Value.Keys.GetRange(Unit))
+                foreach (var range in newDataItem.Value.Keys.GetRange(ps.Unit))
                 {
-                    var sectionName = Path.BuildSectionName(newDataItem.Key, range.Key.Value);
+                    var sectionName = ps.Path.BuildSectionName(newDataItem.Key, range.Key.Value);
 
-                    var data = Container[sectionName];
+                    var data = ps.Container[sectionName];
                     entries.Add(sectionName, data != null
-                                    ? data.Unpack(Compressed).MergeWithReplace(range, newDataItem.Value).Pack(null, Compressed)
-                                    : newDataItem.Value.Pack(range, Compressed));
+                                    ? data.Unpack(ps.Compressed).MergeWithReplace(range, newDataItem.Value).Pack(null, ps.Compressed)
+                                    : newDataItem.Value.Pack(range, ps.Compressed));
                 }
 
-                Container.Put(entries);
+                ps.Container.Put(entries);
             }
         }
     }

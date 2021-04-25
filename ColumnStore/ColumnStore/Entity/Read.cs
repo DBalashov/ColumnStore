@@ -7,12 +7,14 @@ using JetBrains.Annotations;
 
 namespace ColumnStore
 {
-    public partial class PersistentColumnStore
+    partial class ColumnStoreEntity : IColumnStoreEntity
     {
-        /// <summary> Read entities with all properties from container. Return empty dictionary if no data found for period </summary>
-        /// <exception cref="ArgumentException"></exception>
+        readonly PersistentColumnStore ps;
+        
+        internal ColumnStoreEntity([NotNull] PersistentColumnStore ps) => this.ps = ps;
+        
         [NotNull]
-        public Dictionary<CDT, E> ReadEntity<E>(CDT from, CDT to) where E : class, new()
+        public Dictionary<CDT, E> Read<E>(CDT from, CDT to) where E : class, new()
         {
             if (from >= to)
                 throw new ArgumentException($"Invalid values: {from} >= {to}");
@@ -20,12 +22,12 @@ namespace ColumnStore
             var r = new Dictionary<CDT, E>();
 
             var props = typeof(E).GetProps();
-            foreach (var range in new CDTRange(from, to).GetRanges(Unit))
+            foreach (var range in new CDTRange(from, to).GetRanges(ps.Unit))
             {
                 foreach (var prop in props)
                 {
-                    var sectionName = Path.BuildSectionName(prop.Key, range.Key.Value);
-                    var data        = Container[sectionName];
+                    var sectionName = ps.Path.BuildSectionName(prop.Key, range.Key.Value);
+                    var data        = ps.Container[sectionName];
                     if (data == null) continue;
 
                     if (prop.Value.PropertyType == typeof(int)) unpack<E, int>(data, range, r, prop.Value);
@@ -54,7 +56,7 @@ namespace ColumnStore
             var memberInit    = Expression.MemberInit(ctor);
             var createFunctor = Expression.Lambda<Func<T>>(memberInit).Compile();
 
-            foreach (var item in data.Unpack<V>(Compressed).Where(p => range.InRange(p.Key)))
+            foreach (var item in data.Unpack<V>(ps.Compressed).Where(p => range.InRange(p.Key)))
             {
                 var key = new CDT(item.Key);
                 if (!target.TryGetValue(key, out var entity))

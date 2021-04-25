@@ -24,10 +24,8 @@ namespace Examples
 
         static void Main(string[] args)
         {
-            // generate data
-
             Console.WriteLine("Keys: {0} (each {1} minutes), {2:u} - {3:u}", entities.Count, every, sd, ed);
-
+            
             testTyped(false);
             testTyped(true);
             testEntities(false);
@@ -60,14 +58,14 @@ namespace Examples
 
                     Console.Write("[{0,5}] Writing", pageSize);
 
-                    ps.Write("Ints", dataInts);
-                    ps.Write("Bytes", dataBytes);
-                    ps.Write("Bools", dataBools);
-                    ps.Write("Doubles", dataDoubles);
-                    ps.Write("TimeSpans", dataTimeSpans);
-                    ps.Write("Strings", dataStrings);
-                    ps.Write("Guids", dataGuids);
-                    ps.Write("DateTimes", dataDateTimes);
+                    ps.Typed.Write("Ints", dataInts);
+                    ps.Typed.Write("Bytes", dataBytes);
+                    ps.Typed.Write("Bools", dataBools);
+                    ps.Typed.Write("Doubles", dataDoubles);
+                    ps.Typed.Write("TimeSpans", dataTimeSpans);
+                    ps.Typed.Write("Strings", dataStrings);
+                    ps.Typed.Write("Guids", dataGuids);
+                    ps.Typed.Write("DateTimes", dataDateTimes);
 
                     Console.WriteLine(", duration: {0} ms, Length: {1:F2} MB, avg bytes/value: {2:F2}",
                                       sw.ElapsedMilliseconds, pc.Length / 1048576.0,
@@ -79,14 +77,14 @@ namespace Examples
                     Console.Write("[{0,5}] Reading, random period: {1} days, {2:u} - {3:u}", pageSize, readDays, readFrom, readTo);
                     sw.Restart();
 
-                    var valueInts      = ps.Read<int>(readFrom, readTo, "Ints");
-                    var valueBools     = ps.Read<bool>(readFrom, readTo, "Bools");
-                    var valueBytes     = ps.Read<byte>(readFrom, readTo, "Bytes");
-                    var valueDoubles   = ps.Read<double>(readFrom, readTo, "Doubles");
-                    var valueTimeSpans = ps.Read<TimeSpan>(readFrom, readTo, "TimeSpans");
-                    var valueStrings   = ps.Read<string>(readFrom, readTo, "Strings");
-                    var valueGuids     = ps.Read<Guid>(readFrom, readTo, "Guids");
-                    var valueDateTimes = ps.Read<DateTime>(readFrom, readTo, "DateTimes");
+                    var valueInts      = ps.Typed.Read<int>(readFrom, readTo, "Ints");
+                    var valueBools     = ps.Typed.Read<bool>(readFrom, readTo, "Bools");
+                    var valueBytes     = ps.Typed.Read<byte>(readFrom, readTo, "Bytes");
+                    var valueDoubles   = ps.Typed.Read<double>(readFrom, readTo, "Doubles");
+                    var valueTimeSpans = ps.Typed.Read<TimeSpan>(readFrom, readTo, "TimeSpans");
+                    var valueStrings   = ps.Typed.Read<string>(readFrom, readTo, "Strings");
+                    var valueGuids     = ps.Typed.Read<Guid>(readFrom, readTo, "Guids");
+                    var valueDateTimes = ps.Typed.Read<DateTime>(readFrom, readTo, "DateTimes");
 
                     Console.WriteLine(", duration: {0} ms, {1} item(s)", sw.ElapsedMilliseconds,
                                       (valueInts.Count + valueBytes.Count + valueBools.Count + valueDoubles.Count + valueTimeSpans.Count + valueStrings.Count + valueGuids.Count + valueDateTimes.Count) / 8);
@@ -109,7 +107,7 @@ namespace Examples
                     var sw = Stopwatch.StartNew();
 
                     Console.Write("[{0,5}] Writing", pageSize);
-                    ps.WriteEntity(entities);
+                    ps.Entity.Write(entities);
 
                     Console.WriteLine(", duration: {0} ms, Length: {1:F2} MB, avg bytes/value: {2:F2}",
                                       sw.ElapsedMilliseconds, pc.Length / 1048576.0,
@@ -121,7 +119,7 @@ namespace Examples
                     Console.Write("[{0,5}] Reading, random period: {1} days, {2:u} - {3:u}", pageSize, readDays, readFrom, readTo);
                     sw.Restart();
 
-                    var valueInts = ps.ReadEntity<SimpleEntity>(readFrom, readTo);
+                    var valueInts = ps.Entity.Read<SimpleEntity>(readFrom, readTo);
                     Console.WriteLine(", duration: {0} ms, {1} item(s)", sw.ElapsedMilliseconds, valueInts.Count);
                 }
             }

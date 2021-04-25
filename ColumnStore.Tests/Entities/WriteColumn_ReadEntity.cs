@@ -20,10 +20,10 @@ namespace ColumnStore.Tests.Entity
 
         void checkRead<T>(PersistentColumnStore store, string columnName, Func<SimpleEntity, T> getProperty)
         {
-            store.WriteEntity(entities);
+            store.Entity.Write(entities);
             TestContext.WriteLine($"Pages: {store.Container.TotalPages}, Length={store.Container.Length / 1024} KB");
 
-            var items = store.Read<T>(keys.First(), keys.Last().Add(TimeSpan.FromSeconds(1)), columnName);
+            var items = store.Typed.Read<T>(keys.First(), keys.Last().Add(TimeSpan.FromSeconds(1)), columnName);
             Assert.IsNotNull(items);
             Assert.IsNotEmpty(items);
             Assert.IsTrue(items.Count == entities.Count);

@@ -50,7 +50,7 @@ namespace CSCLI
 
                 using var c = new PersistentColumnStore(new PersistentReadonlyContainer(parms.FileName), CDTUnit.Month, false, commonPath);
 
-                var value = c.ReadUntyped(sd, ed, columnName).FirstOrDefault().Value;
+                var value = c.Untyped.Read(sd, ed, columnName).FirstOrDefault().Value;
                 if (value == null)
                 {
                     Console.WriteLine("No entry found");

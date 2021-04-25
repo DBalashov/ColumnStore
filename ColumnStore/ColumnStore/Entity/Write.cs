@@ -7,11 +7,9 @@ using JetBrains.Annotations;
 
 namespace ColumnStore
 {
-    public partial class PersistentColumnStore
+    partial class ColumnStoreEntity
     {
-        /// <summary> Write entities as column-based to container. Property of entity used as column name</summary>
-        /// <exception cref="ArgumentException"></exception>
-        public void WriteEntity<E>([NotNull] Dictionary<CDT, E> entities) where E : class
+        public void Write<E>([NotNull] Dictionary<CDT, E> entities) where E : class
         {
             if (entities == null)
                 throw new ArgumentException("Can't be null", nameof(entities));
@@ -21,12 +19,12 @@ namespace ColumnStore
             var props        = typeof(E).GetProps();
             var writeEntries = new Dictionary<string, byte[]>();
 
-            foreach (var range in entities.GroupToDictionary(p => p.Trunc(Unit).Value))
+            foreach (var range in entities.GroupToDictionary(p => p.Trunc(ps.Unit).Value))
             {
                 foreach (var prop in props)
                 {
-                    var sectionName = Path.BuildSectionName(prop.Key, range.Key);
-                    var data        = Container[sectionName];
+                    var sectionName = ps.Path.BuildSectionName(prop.Key, range.Key);
+                    var data        = ps.Container[sectionName];
 
                     byte[] buff;
                     if (prop.Value.PropertyType == typeof(int)) buff           = pack<E, int>(data, range.Value, prop.Value);
@@ -45,14 +43,14 @@ namespace ColumnStore
                 }
             }
 
-            Container.Put(writeEntries);
+            ps.Container.Put(writeEntries);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [NotNull]
         byte[] pack<E, V>([CanBeNull] byte[] data, [NotNull] KeyValue<E>[] newData, [NotNull] PropertyInfo prop) =>
             data != null
-                ? data.Unpack<V>(Compressed).MergeWithReplace(newData, prop).Pack(Compressed)
-                : newData.Pack<E, V>(prop, Compressed);
+                ? data.Unpack<V>(ps.Compressed).MergeWithReplace(newData, prop).Pack(ps.Compressed)
+                : newData.Pack<E, V>(prop, ps.Compressed);
     }
 }

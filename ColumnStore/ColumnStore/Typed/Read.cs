@@ -1,15 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
 
 namespace ColumnStore
 {
-    public partial class PersistentColumnStore
+    partial class ColumnStoreTyped : IColumnStoreTyped
     {
-        /// <summary> Read column data with type V from container. Return empty dictionary if column or no data found. </summary>
-        /// <param name="columnName">case insensitive column name</param>
-        /// <exception cref="ArgumentException"></exception>
+        readonly PersistentColumnStore ps;
+        
+        internal ColumnStoreTyped([NotNull] PersistentColumnStore ps) => this.ps = ps;
+
         [NotNull]
         public Dictionary<CDT, V> Read<V>(CDT from, CDT to, string columnName)
         {
@@ -21,14 +23,14 @@ namespace ColumnStore
             var r = new Dictionary<CDT, V>();
 
             var requireRange = new CDTRange(from, to);
-            foreach (var range in new CDTRange(from, to).GetRanges(Unit))
+            foreach (var range in new CDTRange(from, to).GetRanges(ps.Unit))
             {
-                var sectionName = Path.BuildSectionName(columnName, range.Key.Value);
+                var sectionName = ps.Path.BuildSectionName(columnName, range.Key.Value);
 
-                var data = Container[sectionName];
+                var data = ps.Container[sectionName];
                 if (data == null) continue;
 
-                var unpacked = data.Unpack<V>(Compressed);
+                var unpacked = data.Unpack<V>(ps.Compressed);
                 foreach (var item in unpacked.Where(p => requireRange.InRange(p.Key)))
                     r.Add(new CDT(item.Key), item.Value);
             }

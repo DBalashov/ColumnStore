@@ -5,13 +5,13 @@ using JetBrains.Annotations;
 
 namespace ColumnStore
 {
-    public partial class PersistentColumnStore
+    partial class ColumnStoreUntyped : IColumnStoreUntyped
     {
-        /// <summary> Read column(s) data from container. Return only founded data for existing column. </summary>
-        /// <param name="columnNames">case insensitive</param>
-        /// <exception cref="ArgumentException"></exception>
+        [NotNull] readonly PersistentColumnStore ps;
+        internal ColumnStoreUntyped([NotNull] PersistentColumnStore ps) => this.ps = ps;
+        
         [NotNull]
-        public Dictionary<string, UntypedColumn> ReadUntyped(CDT from, CDT to, params string[] columnNames)
+        public Dictionary<string, UntypedColumn> Read(CDT from, CDT to, params string[] columnNames)
         {
             if (from >= to)
                 throw new ArgumentException($"Invalid values: {from} >= {to}");
@@ -19,18 +19,18 @@ namespace ColumnStore
                 throw new ArgumentException("Column names contain invalid values", nameof(columnNames));
 
             var r      = new Dictionary<string, UntypedColumn>(StringComparer.InvariantCultureIgnoreCase);
-            var ranges = new CDTRange(from, to).GetRanges(Unit).ToArray();
+            var ranges = new CDTRange(from, to).GetRanges(ps.Unit).ToArray();
             foreach (var columnName in columnNames.Distinct())
             {
                 var acc = new List<UntypedColumn>();
                 foreach (var range in ranges)
                 {
-                    var sectionName = Path.BuildSectionName(columnName, range.Key.Value);
+                    var sectionName = ps.Path.BuildSectionName(columnName, range.Key.Value);
 
-                    var data = Container[sectionName];
+                    var data = ps.Container[sectionName];
                     if (data == null) continue;
 
-                    var unpacked = filterByRange(data.Unpack(Compressed), range);
+                    var unpacked = filterByRange(data.Unpack(ps.Compressed), range);
                     if (unpacked != null)
                         acc.Add(unpacked);
                 }

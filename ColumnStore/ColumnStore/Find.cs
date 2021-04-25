@@ -19,9 +19,11 @@ namespace ColumnStore
             foreach (var item in items.Where(p => p.Name != SECTION_SETTINGS))
             {
                 using (var stm = Container.GetStream(item.Name))
-                    stm.Read(buff, 0, 8); // 4+4 = length + datatype // hack :(
+                    stm.Read(buff, 0, 4 + 4); // length + datatype // hack :(
 
-                r.Add(new ColumnStoreEntry(item, BitConverter.ToInt32(buff, 0), (StoredDataType) BitConverter.ToInt32(buff, 4)));
+                r.Add(new ColumnStoreEntry(item,
+                                           BitConverter.ToInt32(buff, 0),
+                                           (StoredDataType) BitConverter.ToInt32(buff, 4)));
             }
 
             return r.ToArray();
@@ -30,11 +32,14 @@ namespace ColumnStore
 
     public class ColumnStoreEntry
     {
-        [NotNull] public string         Name     { get; }
-        public           DateTime       Modified { get; }
-        public           int            Length   { get; }
-        public           int            Count    { get; }
-        public           StoredDataType DataType { get; }
+        [NotNull] public string Name { get; }
+
+        /// <summary> UTC </summary>
+        public DateTime Modified { get; }
+
+        public int            Length   { get; }
+        public int            Count    { get; }
+        public StoredDataType DataType { get; }
 
         [NotNull] public string CommonPath   { get; }
         [NotNull] public string ColumnName   { get; }

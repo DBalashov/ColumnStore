@@ -21,12 +21,12 @@ namespace ColumnStore.Tests.Entity
         void checkRead<T>(PersistentColumnStore store, string columnName, Func<SimpleEntity, T> getProperty)
         {
             var values = entities.ToDictionary(p => p.Key, p => getProperty(p.Value));
-            store.Write(columnName, values);
+            store.Typed.Write(columnName, values);
             TestContext.WriteLine($"Pages: {store.Container.TotalPages}, Length={store.Container.Length / 1024} KB");
             
             var sd = keys.First();
             var ed = keys.Last().Add(TimeSpan.FromSeconds(1));
-            var result  = store.ReadEntity<SimpleEntity>(sd, ed);
+            var result  = store.Entity.Read<SimpleEntity>(sd, ed);
             Assert.IsNotNull(result);
             Assert.IsNotEmpty(result);
             Assert.IsTrue(result.Count == values.Count);

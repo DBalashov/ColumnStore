@@ -8,14 +8,14 @@ namespace ColumnStore
 {
     static class DictionarizeExtenders
     {
-        internal static DictionarizeResult<T> Dictionarize<T>([NotNull] this Array values, [NotNull] Range range)
+        internal static DictionarizeResult<T> Dictionarize<T>([NotNull] this Array values, [NotNull] Range range, [NotNull] T nullReplaceTo = default(T))
         {
             var v       = (T[]) values;
             var r       = new Dictionary<T, int>(); // value : index
             var indexes = new int[range.Length];
             for (var i = range.From; i < range.To; i++)
             {
-                var item = v[i];
+                var item = v[i] ?? nullReplaceTo;
                 if (!r.TryGetValue(item, out var index))
                 {
                     index = r.Count;

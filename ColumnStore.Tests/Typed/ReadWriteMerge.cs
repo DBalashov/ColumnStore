@@ -21,8 +21,8 @@ namespace ColumnStore.Tests.Typed
         {
             var d          = getData();
             var columnName = typeof(T).Name;
-            store.Write(columnName, d);
-            store.Write(columnName, d);
+            store.Typed.Write(columnName, d);
+            store.Typed.Write(columnName, d);
             TestContext.WriteLine($"Pages: {store.Container.TotalPages}, Length={store.Container.Length / 1024} KB");
         }
 

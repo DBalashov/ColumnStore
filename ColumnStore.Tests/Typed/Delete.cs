@@ -21,7 +21,7 @@ namespace ColumnStore.Tests.Typed
             var columnName = typeof(T).Name;
             var store      = GetStore();
             var data       = getData();
-            store.Write(columnName, data);
+            store.Typed.Write(columnName, data);
             TestContext.WriteLine($"Pages: {store.Container.TotalPages}, Length={store.Container.Length / 1024} KB");
             
             var part = getDataPart(keys.Skip(keys.Length / 2).First(),
@@ -31,15 +31,15 @@ namespace ColumnStore.Tests.Typed
             store.Delete<T>(columnName, range);
             TestContext.WriteLine($"Pages: {store.Container.TotalPages}, Length={store.Container.Length / 1024} KB");
             
-            var absentItems = store.Read<T>(range.From, range.To, columnName);
+            var absentItems = store.Typed.Read<T>(range.From, range.To, columnName);
             Assert.IsNotNull(absentItems);
 
-            var before = store.Read<T>(data.First().Key, range.From, columnName);
+            var before = store.Typed.Read<T>(data.First().Key, range.From, columnName);
             Assert.IsNotNull(before);
             Assert.IsNotEmpty(before);
             Assert.IsTrue(before.Keys.All(c => c < range.From));
 
-            var after = store.Read<T>(range.To, keys.Last(), columnName);
+            var after = store.Typed.Read<T>(range.To, keys.Last(), columnName);
             Assert.IsNotNull(after);
             Assert.IsNotEmpty(after);
             Assert.IsTrue(after.Keys.All(c => c >= range.To));
