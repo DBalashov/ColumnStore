@@ -19,11 +19,11 @@ namespace ColumnStore
 
         public override void Pack(Array values, Stream targetStream, Range range)
         {
-            var byteCount = range.Length / 8 + (range.Length % 8 > 0 ? 1 : 0);
+            var byteCount = range.Length() / 8 + (range.Length() % 8 > 0 ? 1 : 0);
             var buff      = poolBytes.Rent(byteCount);
             var bools     = (bool[]) values;
 
-            for (int i = range.From, index = 0; i < range.To; i++, index++)
+            for (int i = range.Start.Value, index = 0; i < range.End.Value; i++, index++)
             {
                 var byteIndex = index >> 3; // /8
                 var bitIndex  = index % 8;

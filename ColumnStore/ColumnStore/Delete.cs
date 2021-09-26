@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+#pragma warning disable 8604
+
 namespace ColumnStore
 {
     // todo remove T
@@ -16,14 +18,14 @@ namespace ColumnStore
             if (string.IsNullOrEmpty(columnName))
                 throw new ArgumentException("Can't be null", nameof(columnName));
 
-            var needForWrite = new Dictionary<string, Dictionary<int, T>>(StringComparer.InvariantCultureIgnoreCase);
+            var needForWrite = new Dictionary<string, Dictionary<int, T>?>(StringComparer.InvariantCultureIgnoreCase);
             foreach (var range in ranges)
             {
                 foreach (var portion in range.GetRanges(Unit))
                 {
                     var sectionName = Path.BuildSectionName(columnName, portion.Key.Value);
 
-                    if (!needForWrite.TryGetValue(sectionName, out var existingData))
+                    if (!needForWrite.TryGetValue(sectionName, out var existingData) || existingData == null)
                     {
                         var data = Container[sectionName];
                         if (data == null) continue;

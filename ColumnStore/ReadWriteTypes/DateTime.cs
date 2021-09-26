@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace ColumnStore
 {
@@ -7,23 +8,20 @@ namespace ColumnStore
     {
         public override void Pack(Array values, Stream targetStream, Range range)
         {
-            var v      = new CDT[range.Length];
-            var dt     = (DateTime[]) values;
-            for (var i = range.From; i < range.To; i++)
-                v[i - range.From] = dt[i];
+            var v  = new CDT[range.Length()];
+            var dt = (DateTime[])values;
+            for (var i = range.Start.Value; i < range.End.Value; i++)
+                v[i - range.Start.Value] = dt[i];
 
-            var buff = poolBytes.Rent(v.Length * 4);
-            v.PackStructs(0, buff);
-            targetStream.Write(buff, 0, buff.Length);
-            poolBytes.Return(buff);
+            targetStream.Write(MemoryMarshal.Cast<CDT, byte>(v));
         }
-        
+
         public override Array Unpack(byte[] buff, int count, int offset)
         {
-            var r     = new DateTime[count];
-            var items = buff.UnpackStructs<CDT>(offset, count);
+            var r    = new DateTime[count];
+            var span = MemoryMarshal.Cast<byte, CDT>(buff.AsSpan(offset, count * 4));
             for (var i = 0; i < r.Length; i++)
-                r[i] = items[i];
+                r[i] = span[i];
             return r;
         }
     }

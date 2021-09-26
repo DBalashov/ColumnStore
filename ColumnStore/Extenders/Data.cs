@@ -37,7 +37,7 @@ namespace ColumnStore
     {
         public static StoredDataType DetectDataType(this Array a)
         {
-            var v    = a.GetValue(0);
+            var v    = a.GetValue(0)!;
             var type = v.GetType();
             if (type == typeof(byte)) return StoredDataType.Byte;
             if (type == typeof(bool)) return StoredDataType.Boolean;
@@ -94,7 +94,7 @@ namespace ColumnStore
         {
             var dataType = values.DetectDataType();
 
-            targetStream.Write(BitConverter.GetBytes(range.Length), 0, 4);
+            targetStream.Write(BitConverter.GetBytes(range.Length()), 0, 4);
             targetStream.Write(BitConverter.GetBytes((ushort)dataType), 0, 2);
 
             readWriteHandlers[dataType].Pack(values, targetStream, range);
@@ -102,6 +102,6 @@ namespace ColumnStore
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Array CreateSameType(this Array arr, int length) =>
-            arr.Length == 0 ? throw new InvalidDataException("Array is empty") : Array.CreateInstance(arr.GetValue(0).GetType(), length);
+            arr.Length == 0 ? throw new InvalidDataException("Array is empty") : Array.CreateInstance(arr.GetValue(0)!.GetType(), length);
     }
 }

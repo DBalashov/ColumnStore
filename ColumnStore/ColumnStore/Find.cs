@@ -17,7 +17,10 @@ namespace ColumnStore
             foreach (var item in items.Where(p => p.Name != SECTION_SETTINGS))
             {
                 using (var stm = Container.GetStream(item.Name))
-                    stm.Read(buff, 0, 4 + 4); // length + datatype // hack :(
+                {
+                    if (stm != null)
+                        stm.Read(buff, 0, 4 + 4); // length + datatype // hack :(
+                }
 
                 r.Add(new ColumnStoreEntry(item,
                                            BitConverter.ToInt32(buff, 0),

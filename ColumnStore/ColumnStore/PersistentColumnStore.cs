@@ -39,7 +39,7 @@ namespace ColumnStore
         /// Can be set ONLY for new commonPath data. Will read from container for existing data.
         /// </param>
         /// <param name="commonPath">prefix for ALL columns (writing/reading) in PersistentColumnStore instance. For example "/Cars/12312" </param>
-        public PersistentColumnStore(PagedContainerAbstract container, CDTUnit unit = CDTUnit.Month, bool compressed = false, string commonPath = null)
+        public PersistentColumnStore(PagedContainerAbstract container, CDTUnit unit = CDTUnit.Month, bool compressed = false, string? commonPath = null)
         {
             Container  = container ?? throw new ArgumentException("Can't be null", nameof(container));
             Unit       = unit;

@@ -4,8 +4,9 @@ namespace ColumnStore
 {
     static class CompactUncompactExtenders
     {
-        internal static void CompactValues(this int[] values, byte[] targetBuff, int fromOffset, CompactType type)
+        internal static void CompactValues(this int[] values, Span<byte> targetBuff, CompactType type)
         {
+            var fromOffset = 0;
             switch (type)
             {
                 case CompactType.Byte:
@@ -44,23 +45,29 @@ namespace ColumnStore
             }
         }
 
-        internal static int[] UncompactValues(this byte[] buff, int offset, int count, CompactType compactType)
+        internal static int[] UncompactValues(this Span<byte> buff, int count, CompactType compactType)
         {
-            var r = new int[count];
             switch (compactType)
             {
                 case CompactType.Byte:
-                    for (var i = 0; i < count; i++, offset++)
-                        r[i] = buff[offset];
-                    break;
+                {
+                    var r = new int[count];
+                    for (var i = 0; i < count; i++)
+                        r[i] = buff[i];
+
+                    return r;
+                }
 
                 case CompactType.Short:
+                {
+                    var offset = 0;
+                    var r      = new int[count];
                     for (var i = 0; i < count; i++, offset += 2)
                         r[i] = ((int)buff[offset]) |
                                (((int)buff[offset + 1]) << 8);
-
-                    break;
-
+                    return r;
+                }
+                
                 // case CompactType.Int:
                 //     for (var i = 0; i < count; i++, offset += 4)
                 //         r[i] = ((int) buff[offset]) |
@@ -73,8 +80,6 @@ namespace ColumnStore
                 default:
                     throw new NotSupportedException(compactType + " not supported");
             }
-
-            return r;
         }
     }
 }

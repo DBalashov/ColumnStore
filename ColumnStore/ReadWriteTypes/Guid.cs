@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace ColumnStore
 {
@@ -12,19 +13,19 @@ namespace ColumnStore
 
             var type = r.Values.Length.GetCompactType();
             var requireBytes = 2 + 16 * r.Values.Length +
-                               1 + range.Length * (1 << (int) type);
+                               1 + range.Length() * (1 << (int)type);
+
             var buff = poolBytes.Rent(requireBytes);
+            var span = buff.AsSpan();
 
-            // write dictionary values
-            Buffer.BlockCopy(BitConverter.GetBytes((ushort) r.Values.Length), 0, buff, 0, 2);
-            var offset = 2;
+            BitConverter.TryWriteBytes(span, (ushort)r.Values.Length);
+            var spanValues = MemoryMarshal.Cast<Guid, byte>(r.Values);
+            spanValues.CopyTo(span.Slice(2));
 
-            r.Values.PackStructs(0, buff, offset);
-            offset += r.Values.Length * 16;
+            span    = span.Slice(2 + spanValues.Length);
+            span[0] = (byte)type;
 
-            // write value indexes
-            buff[offset++] = (byte) type;
-            r.Indexes.CompactValues(buff, offset, type);
+            r.Indexes.CompactValues(span.Slice(1), type);
 
             targetStream.Write(buff, 0, requireBytes);
             poolBytes.Return(buff);
@@ -32,16 +33,16 @@ namespace ColumnStore
 
         public override Array Unpack(byte[] buff, int count, int offset)
         {
-            var dictionaryValuesCount = BitConverter.ToUInt16(buff, offset);
-            offset += 2;
+            var span                  = buff.AsSpan(offset);
+            var dictionaryValuesCount = BitConverter.ToUInt16(span);
 
-            var dictionaryValues = buff.UnpackStructs<Guid>(offset, dictionaryValuesCount);
-            offset += dictionaryValuesCount * 16;
+            var dictionaryValues = MemoryMarshal.Cast<byte, Guid>(span.Slice(2)).Slice(0, dictionaryValuesCount);
+            span = span.Slice(2 + dictionaryValuesCount * 16);
 
             var values      = new Guid[count];
-            var compactType = (CompactType) buff[offset++];
+            var compactType = (CompactType)span[0];
 
-            var indexes = buff.UncompactValues(offset, count, compactType);
+            var indexes = span.Slice(1).UncompactValues(count, compactType);
             for (var i = 0; i < indexes.Length; i++)
                 values[i] = dictionaryValues[indexes[i]];
             return values;

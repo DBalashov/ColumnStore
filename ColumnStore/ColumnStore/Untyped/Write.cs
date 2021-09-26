@@ -19,8 +19,8 @@ namespace ColumnStore
 
                 var data = ps.Container[sectionName];
                 entries.Add(sectionName, data != null
-                                ? data.Unpack(ps.Compressed).MergeWithReplace(range, newData).Pack(null, ps.Compressed)
-                                : newData.Pack(range, ps.Compressed));
+                                ? data.Unpack(ps.Compressed).MergeWithReplace(range.Range, newData).Pack(null, ps.Compressed)
+                                : newData.Pack(range.Range, ps.Compressed));
             }
 
             ps.Container.Put(entries);
@@ -45,8 +45,8 @@ namespace ColumnStore
 
                     var data = ps.Container[sectionName];
                     entries.Add(sectionName, data != null
-                                    ? data.Unpack(ps.Compressed).MergeWithReplace(range, newDataItem.Value).Pack(null, ps.Compressed)
-                                    : newDataItem.Value.Pack(range, ps.Compressed));
+                                    ? data.Unpack(ps.Compressed).MergeWithReplace(range.Range, newDataItem.Value).Pack(null, ps.Compressed)
+                                    : newDataItem.Value.Pack(range.Range, ps.Compressed));
                 }
 
                 ps.Container.Put(entries);

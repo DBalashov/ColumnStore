@@ -12,7 +12,7 @@ namespace ColumnStore
             if (compactType <= CompactType.Short)
             {
                 var requireBytes = 2 + r.Values.Length * elementSize +
-                                   1 + range.Length * (1 << (int)compactType);
+                                   1 + range.Length() * (1 << (int)compactType);
 
                 var buff   = poolBytes.Rent(requireBytes);
                 var offset = 0;
@@ -20,26 +20,26 @@ namespace ColumnStore
                 // write dictionary values
                 Buffer.BlockCopy(BitConverter.GetBytes((ushort)r.Values.Length), 0, buff, offset, 2);
                 offset += 2;
-
+                
                 Buffer.BlockCopy(r.Values, 0, buff, offset, r.Values.Length * elementSize);
                 offset += r.Values.Length * elementSize;
 
                 // write value indexes
                 buff[offset++] = (byte)compactType;
-                r.Indexes.CompactValues(buff, offset, compactType);
+                r.Indexes.CompactValues(buff.AsSpan().Slice(offset), compactType);
                 targetStream.Write(buff, 0, requireBytes);
                 poolBytes.Return(buff);
             }
             else
             {
-                var requireBytes = 1 + elementSize * range.Length;
+                var requireBytes = 1 + elementSize * range.Length();
                 var buff         = poolBytes.Rent(requireBytes);
 
                 int offset = 0;
                 buff[offset++] = (byte)compactType;
 
                 // write values
-                Buffer.BlockCopy(values, range.From * elementSize, buff, offset, range.Length * elementSize);
+                Buffer.BlockCopy(values, range.Start.Value * elementSize, buff, offset, range.Length() * elementSize);
                 targetStream.Write(buff, 0, requireBytes);
                 poolBytes.Return(buff);
             }
@@ -59,7 +59,7 @@ namespace ColumnStore
 
             if (compactType <= CompactType.Short)
             {
-                var indexes = buff.UncompactValues(offset, count, compactType);
+                var indexes = buff.AsSpan(offset).UncompactValues(count, compactType);
                 for (var i = 0; i < indexes.Length; i++)
                     values[i] = dictionaryValues[indexes[i]];
             }

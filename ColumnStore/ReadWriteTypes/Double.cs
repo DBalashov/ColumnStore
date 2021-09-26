@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace ColumnStore
 {
@@ -7,37 +8,29 @@ namespace ColumnStore
     {
         public override void Pack(Array values, Stream targetStream, Range range)
         {
-            var requireBytes = range.Length * 4;
-            var buff         = poolBytes.Rent(requireBytes);
-
-            if (!(values.GetValue(range.From) is float))
+            if (values.GetValue(range.Start.Value) is not float)
             {
-                var doubles = (double[]) values;
-                var v       = poolFloats.Rent(range.Length);
-                for (var i = range.From; i < range.To; i++)
-                    v[i - range.From] = (float) doubles[i];
+                var doubles = (double[])values;
+                var v       = poolFloats.Rent(range.Length());
+                for (var i = range.Start.Value; i < range.End.Value; i++)
+                    v[i - range.Start.Value] = (float)doubles[i];
 
-                Buffer.BlockCopy(v, 0, buff, 0, requireBytes);
+                targetStream.Write(MemoryMarshal.Cast<float, byte>(v));
                 poolFloats.Return(v);
             }
-            else Buffer.BlockCopy(values, range.From * 4, buff, 0, requireBytes);
-
-            targetStream.Write(buff, 0, requireBytes);
-            poolBytes.Return(buff);
+            else
+            {
+                targetStream.Write(MemoryMarshal.Cast<float, byte>(((float[])values).AsSpan(new Range(range.Start.Value * 4, range.End))));
+            }
         }
 
         public override Array Unpack(byte[] buff, int count, int offset)
         {
-            var values = poolFloats.Rent(count);
-            Buffer.BlockCopy(buff, offset, values, 0, count * 4);
-
-            var floats = new double[count];
+            var span = MemoryMarshal.Cast<byte, float>(buff.AsSpan(offset, count * 4));
+            var r    = new double[count];
             for (var i = 0; i < count; i++)
-                floats[i] = values[i];
-
-            poolFloats.Return(values);
-
-            return floats;
+                r[i] = span[i];
+            return r;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace ColumnStore
                 throw new ArgumentException($"Keys.Length != Values.Length ({Keys.Length} != {Values.Length})");
 
             if (Keys.Length == 0)
-                throw new ArgumentException($"Empty keys/values not allowed");
+                throw new ArgumentException("Empty keys/values not allowed");
 
             if (Values.Rank > 1)
                 throw new ArgumentException($"Values can't be multidimensional ({Values.Rank})");

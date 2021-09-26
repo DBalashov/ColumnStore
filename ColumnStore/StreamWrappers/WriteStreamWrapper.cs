@@ -5,7 +5,7 @@ namespace ColumnStore
 {
     class WriteStreamWrapper : Stream
     {
-        public override void Flush() => ((Stream)zstm ?? stm).Flush();
+        public override void Flush() => (zstm as Stream ?? stm).Flush();
 
         public override int Read(byte[] buffer, int offset, int count) => throw new System.NotImplementedException();
 
@@ -13,12 +13,12 @@ namespace ColumnStore
 
         public override void SetLength(long value) => throw new System.NotImplementedException();
 
-        public override void Write(byte[] buffer, int offset, int count) => ((Stream)zstm ?? stm).Write(buffer, offset, count);
+        public override void Write(byte[] buffer, int offset, int count) => (zstm as Stream ?? stm).Write(buffer, offset, count);
 
         public override bool CanRead  => false;
         public override bool CanSeek  => false;
         public override bool CanWrite => true;
-        public override long Length   => ((Stream)zstm ?? stm).Length;
+        public override long Length   => (zstm as Stream ?? stm).Length;
 
         public override long Position
         {
@@ -27,7 +27,7 @@ namespace ColumnStore
         }
 
         readonly MemoryStream stm;
-        readonly GZipStream   zstm;
+        readonly GZipStream?  zstm;
 
         public WriteStreamWrapper(MemoryStream stm, bool withCompression)
         {

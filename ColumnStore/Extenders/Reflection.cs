@@ -4,13 +4,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-// ReSharper disable AssignNullToNotNullAttribute
-
 namespace ColumnStore
 {
     static class ReflectionExtenders
     {
-        internal static readonly Type[] supportedTypes = new[]
+        internal static readonly Type[] supportedTypes =
         {
             typeof(bool),
             typeof(byte),
@@ -24,7 +22,6 @@ namespace ColumnStore
             typeof(string),
         };
 
-
         internal static Dictionary<string, PropertyInfo> GetProps(this Type type) =>
             type.GetProperties()
                 .Where(p => p.CanRead && p.CanWrite && supportedTypes.Contains(p.PropertyType))
@@ -33,7 +30,7 @@ namespace ColumnStore
         #region getActionSet
 
         internal static Dictionary<PropertyInfo, object> actionSet = new();
-        
+
         internal static Action<T, V> getActionSet<T, V>(this PropertyInfo property)
         {
             lock (actionSet)
@@ -44,9 +41,9 @@ namespace ColumnStore
                 var parmInstance = Expression.Parameter(typeof(T));
                 var parmValue    = Expression.Parameter(typeof(V));
 
-                var bodyInstance = Expression.Convert(parmInstance, property.DeclaringType);
+                var bodyInstance = Expression.Convert(parmInstance, property.DeclaringType!);
                 var bodyValue    = Expression.Convert(parmValue, property.PropertyType);
-                var bodyCall     = Expression.Call(bodyInstance, property.GetSetMethod(), bodyValue);
+                var bodyCall     = Expression.Call(bodyInstance, property.GetSetMethod()!, bodyValue);
 
                 o = Expression.Lambda<Action<T, V>>(bodyCall, parmInstance, parmValue).Compile();
                 actionSet.Add(property, o);
@@ -59,7 +56,7 @@ namespace ColumnStore
         #region getActionGet
 
         internal static Dictionary<PropertyInfo, object> actionGet = new();
-        
+
         internal static Func<T, V> getActionGet<T, V>(this PropertyInfo property)
         {
             lock (actionGet)
@@ -68,7 +65,7 @@ namespace ColumnStore
                     return (Func<T, V>)o;
 
                 var parmInstance     = Expression.Parameter(typeof(T));
-                var bodyToObjectType = Expression.Convert(parmInstance, property.DeclaringType);
+                var bodyToObjectType = Expression.Convert(parmInstance, property.DeclaringType!);
                 var bodyGetType      = Expression.Property(bodyToObjectType, property.Name);
                 var bodyCall         = Expression.Convert(bodyGetType, typeof(V));
 

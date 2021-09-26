@@ -6,7 +6,7 @@ namespace ColumnStore
     [ExcludeFromCodeCoverage]
     class RLEPackUnpackHandlerShorts : RLEPackUnpackHandler
     {
-        internal override byte[] Pack(Array source)
+        internal override byte[]? Pack(Array source)
         {
             if (source.Length == 0)
                 return null;

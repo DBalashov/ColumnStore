@@ -1,40 +1,23 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace ColumnStore
 {
-    class Range
+    readonly struct RangeWithKey
     {
-        /// <summary> included </summary>
-        public readonly int From;
-
-        /// <summary> not included </summary>
-        public readonly int To;
-
-        public readonly int Length;
-
-        /// <param name="from">included</param>
-        /// <param name="to">not included</param>
-        internal Range(int from, int to)
-        {
-            From   = from;
-            To     = to;
-            Length = to - from;
-        }
-
-#if DEBUG
-        public override string ToString() => $"{From} - {To}: {Length}";
-#endif
-    }
-
-    sealed class RangeWithKey : Range
-    {
-        public readonly CDT Key;
-
+        public readonly CDT   Key;
+        public readonly Range Range;
+        
         /// <param name="key"></param>
         /// <param name="from">included</param>
         /// <param name="to">not included</param>
-        internal RangeWithKey(CDT key, int from, int to) : base(from, to) => Key = key;
+        internal RangeWithKey(CDT key, int from, int to)
+        {
+            Key   = key;
+            Range = new Range(from, to);
+        }
 
 #if DEBUG
         public override string ToString() => $"{Key}: {base.ToString()}";
@@ -63,5 +46,8 @@ namespace ColumnStore
 
             yield return new RangeWithKey(key, startIndex, values.Length);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Length(this Range r) => r.End.Value - r.Start.Value;
     }
 }

@@ -5,13 +5,7 @@ namespace ColumnStore
 {
     class ReadWriteHandlerByte : ReadWriteBase
     {
-        public override void Pack(Array values, Stream targetStream, Range range)
-        {
-            var buff   = poolBytes.Rent(range.Length);
-            Buffer.BlockCopy(values, range.From, buff, 0, range.Length);
-            targetStream.Write(buff, 0, range.Length);
-            poolBytes.Return(buff);
-        }
+        public override void Pack(Array values, Stream targetStream, Range range) => targetStream.Write(((byte[])values).AsSpan(range));
 
         public override Array Unpack(byte[] buff, int count, int offset)
         {
