@@ -31,7 +31,7 @@ namespace ColumnStore
         }
     }
 
-    public class ColumnStoreEntry
+    public sealed class ColumnStoreEntry
     {
         public string Name { get; }
 

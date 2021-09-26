@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace ColumnStore
 {
-    public class CDTRange
+    public readonly struct CDTRange
     {
         public readonly CDT From;
         public readonly CDT To;
@@ -20,23 +20,23 @@ namespace ColumnStore
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool InRange(int value) => From.Value <= value && value < To.Value;
 
-        public IEnumerable<CDTRangeWithKey> GetRanges(CDTUnit unit)
+        public IEnumerable<CDTKeyRange> GetRanges(CDTUnit unit)
         {
             var from = From.NextNearest(unit);
-            yield return new CDTRangeWithKey(From.Trunc(unit), From, new CDT(Math.Min(from.Value, To.Value)));
+            yield return new CDTKeyRange(From.Trunc(unit), From, new CDT(Math.Min(from.Value, To.Value)));
 
             var to = To.Trunc(unit);
 
             while (from < to)
             {
                 var next = from.NextNearest(unit);
-                yield return new CDTRangeWithKey(from, from, next);
+                yield return new CDTKeyRange(from, from, next);
 
                 from = next;
             }
 
             if (from < To)
-                yield return new CDTRangeWithKey(from, from, To);
+                yield return new CDTKeyRange(from, from, To);
         }
 
 #if DEBUG
@@ -44,11 +44,16 @@ namespace ColumnStore
 #endif
     }
     
-    public sealed class CDTRangeWithKey : CDTRange
+    public readonly struct CDTKeyRange
     {
-        public readonly CDT Key;
+        public readonly CDT      Key;
+        public readonly CDTRange Range;
 
-        public CDTRangeWithKey(CDT key, CDT sd, CDT ed) : base(sd, ed) => Key = key;
+        public CDTKeyRange(CDT key, CDT sd, CDT ed)
+        {
+            Key   = key;
+            Range = new CDTRange(sd, ed);
+        }
 
 #if DEBUG
         public override string ToString() => Key + ":  " + base.ToString();

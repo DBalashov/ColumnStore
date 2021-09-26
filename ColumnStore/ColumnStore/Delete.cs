@@ -34,7 +34,7 @@ namespace ColumnStore
                     }
 
                     var newData = new Dictionary<int, T>(existingData.Count);
-                    foreach (var item in existingData.Where(p => !portion.InRange(p.Key)))
+                    foreach (var item in existingData.Where(p => !portion.Range.InRange(p.Key)))
                         newData.Add(item.Key, item.Value);
 
                     if (!newData.Any())

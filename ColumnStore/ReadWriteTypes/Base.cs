@@ -14,6 +14,6 @@ namespace ColumnStore
 
         public abstract void Pack(Array values, Stream targetStream, Range range);
         
-        public abstract Array Unpack(byte[] buff, int count, int offset);
+        public abstract Array Unpack(Span<byte> buff, int count);
     }
 }

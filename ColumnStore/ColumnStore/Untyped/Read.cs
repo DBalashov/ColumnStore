@@ -28,7 +28,7 @@ namespace ColumnStore
                     var data = ps.Container[sectionName];
                     if (data == null) continue;
 
-                    var unpacked = filterByRange(data.Unpack(ps.Compressed), range);
+                    var unpacked = filterByRange(data.Unpack(ps.Compressed), range.Range);
                     if (unpacked != null)
                         acc.Add(unpacked);
                 }

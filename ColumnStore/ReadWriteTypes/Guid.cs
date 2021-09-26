@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 namespace ColumnStore
 {
     // todo nullable bitmap
-    class ReadWriteHandlerGuid : ReadWriteBase
+    sealed class ReadWriteHandlerGuid : ReadWriteBase
     {
         public override void Pack(Array values, Stream targetStream, Range range)
         {
@@ -16,7 +16,7 @@ namespace ColumnStore
                                1 + range.Length() * (1 << (int)type);
 
             var buff = poolBytes.Rent(requireBytes);
-            var span = buff.AsSpan();
+            var span = buff.AsSpan(0, requireBytes);
 
             BitConverter.TryWriteBytes(span, (ushort)r.Values.Length);
             var spanValues = MemoryMarshal.Cast<Guid, byte>(r.Values);
@@ -31,18 +31,17 @@ namespace ColumnStore
             poolBytes.Return(buff);
         }
 
-        public override Array Unpack(byte[] buff, int count, int offset)
+        public override Array Unpack(Span<byte> buff, int count)
         {
-            var span                  = buff.AsSpan(offset);
-            var dictionaryValuesCount = BitConverter.ToUInt16(span);
+            var dictionaryValuesCount = BitConverter.ToUInt16(buff);
 
-            var dictionaryValues = MemoryMarshal.Cast<byte, Guid>(span.Slice(2)).Slice(0, dictionaryValuesCount);
-            span = span.Slice(2 + dictionaryValuesCount * 16);
+            var dictionaryValues = MemoryMarshal.Cast<byte, Guid>(buff.Slice(2)).Slice(0, dictionaryValuesCount);
+            buff = buff.Slice(2 + dictionaryValuesCount * 16);
 
             var values      = new Guid[count];
-            var compactType = (CompactType)span[0];
+            var compactType = (CompactType)buff[0];
 
-            var indexes = span.Slice(1).UncompactValues(count, compactType);
+            var indexes = buff.Slice(1).UncompactValues(count, compactType);
             for (var i = 0; i < indexes.Length; i++)
                 values[i] = dictionaryValues[indexes[i]];
             return values;

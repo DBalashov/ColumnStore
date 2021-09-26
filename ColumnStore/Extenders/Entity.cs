@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace ColumnStore
 {
     static class EntityExtenders
     {
-        static readonly ArrayPool<byte> poolBytes = ArrayPool<byte>.Shared;
         static readonly ArrayPool<int>  poolInts  = ArrayPool<int>.Shared;
 
         internal static byte[] Pack<E, V>(this KeyValue<E>[] newData, PropertyInfo prop, bool withCompression)
@@ -29,11 +29,8 @@ namespace ColumnStore
                 storedValues[index++] = getValue(item.Value);
             }
 
-            var buff = poolBytes.Rent(newData.Length * 4);
-            Buffer.BlockCopy(storedKeys, 0, buff, 0, newData.Length * 4);
-            stm.Write(buff, 0, newData.Length * 4);
+            stm.Write(MemoryMarshal.Cast<int, byte>(storedKeys.AsSpan(0, newData.Length)));
             poolInts.Return(storedKeys);
-            poolBytes.Return(buff);
 
             storedValues.PackData(stm, new Range(0, newData.Length));
             return stm.ToArray();

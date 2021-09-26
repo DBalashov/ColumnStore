@@ -45,8 +45,7 @@ namespace ColumnStore
             return r;
         }
 
-        void unpack<T, V>(byte[]       data, CDTRangeWithKey range, Dictionary<CDT, T> target,
-                          PropertyInfo prop) where T : class, new()
+        void unpack<T, V>(byte[] data, CDTKeyRange keyRange, Dictionary<CDT, T> target, PropertyInfo prop) where T : class, new()
         {
             var setValue = prop.getActionSet<T, V>();
 
@@ -54,7 +53,7 @@ namespace ColumnStore
             var memberInit    = Expression.MemberInit(ctor);
             var createFunctor = Expression.Lambda<Func<T>>(memberInit).Compile();
 
-            foreach (var item in data.Unpack<V>(ps.Compressed).Where(p => range.InRange(p.Key)))
+            foreach (var item in data.Unpack<V>(ps.Compressed).Where(p => keyRange.Range.InRange(p.Key)))
             {
                 var key = new CDT(item.Key);
                 if (!target.TryGetValue(key, out var entity))

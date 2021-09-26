@@ -3,15 +3,15 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace ColumnStore
 {
     static class ColumnTypedExtenders
     {
-        static readonly ArrayPool<byte> poolBytes = ArrayPool<byte>.Shared;
         static readonly ArrayPool<int>  poolInts  = ArrayPool<int>.Shared;
 
-        internal static byte[] Pack<V>( this Dictionary<int, V> values, bool withCompression)
+        internal static byte[] Pack<V>(this Dictionary<int, V> values, bool withCompression)
         {
             using var stm = new WriteStreamWrapper(new MemoryStream(), withCompression);
 
@@ -28,18 +28,15 @@ namespace ColumnStore
                 offset++;
             }
 
-            var buff = poolBytes.Rent(values.Count * 4);
-            Buffer.BlockCopy(storedKeys, 0, buff, 0, values.Count * 4);
-            stm.Write(buff, 0, values.Count * 4);
-            poolBytes.Return(buff);
+            stm.Write(MemoryMarshal.Cast<int, byte>(storedKeys.AsSpan(0, values.Count)));
             poolInts.Return(storedKeys);
 
             storedValues.PackData(stm, new Range(0, storedValues.Length));
 
             return stm.ToArray();
         }
-        
-        internal static Dictionary<int, V> Unpack<V>( this byte[] buff, bool withDecompression)
+
+        internal static Dictionary<int, V> Unpack<V>(this byte[] buff, bool withDecompression)
         {
             if (withDecompression)
                 buff = buff.GZipUnpack();
@@ -47,25 +44,18 @@ namespace ColumnStore
             var count  = BitConverter.ToInt32(buff, 0);
             var offset = 4;
 
-            var keys = poolInts.Rent(count);
-            Buffer.BlockCopy(buff, offset, keys, 0, count * 4);
+            var keys = MemoryMarshal.Cast<byte, int>(buff.AsSpan(offset, count * 4));
             offset += count * 4;
 
-            var dataBuff = poolBytes.Rent(buff.Length - offset);
-            Buffer.BlockCopy(buff, offset, dataBuff, 0, buff.Length - offset);
-            var values = (V[]) dataBuff.UnpackData();
-            poolBytes.Return(dataBuff);
-
+            var values = (V[])buff.AsSpan(offset, buff.Length - offset).UnpackData();
             var r = new Dictionary<int, V>(count);
             for (var i = 0; i < count; i++)
                 r.Add(keys[i], values[i]);
 
-            poolInts.Return(keys);
-
             return r;
         }
-        
-        internal static Dictionary<int, V> MergeWithReplace<V>( this Dictionary<int, V> existing,  KeyValue<V>[] newData)
+
+        internal static Dictionary<int, V> MergeWithReplace<V>(this Dictionary<int, V> existing, KeyValue<V>[] newData)
         {
             var range = new CDTRange(new CDT(newData.First().Key), new CDT(newData.Last().Key));
             var r     = new Dictionary<int, V>();

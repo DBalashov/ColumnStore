@@ -5,7 +5,7 @@ using System.Text;
 namespace ColumnStore
 {
     // todo nullable bitmap
-    class ReadWriteHandlerString : ReadWriteBase
+    sealed class ReadWriteHandlerString : ReadWriteBase
     {
         public override void Pack(Array values, Stream targetStream, Range range)
         {
@@ -33,26 +33,27 @@ namespace ColumnStore
 
             var requireBytes = range.Length() * (1 << (int)compactType);
             var buffIndexes  = poolBytes.Rent(requireBytes);
-            r.Indexes.CompactValues(buffIndexes.AsSpan(), compactType);
-            bw.Write(buffIndexes, 0, requireBytes);
+            var span         = buffIndexes.AsSpan(0, requireBytes);
+            r.Indexes.CompactValues(span, compactType);
+            bw.Write(span);
             poolBytes.Return(buffIndexes);
         }
 
-        public override Array Unpack(byte[] buff, int count, int offset)
+        public override Array Unpack(Span<byte> buff, int count)
         {
             // read dictionary values
-            var dictionaryValuesCount = BitConverter.ToUInt16(buff, offset);
-            offset += 2;
+            var dictionaryValuesCount = BitConverter.ToUInt16(buff);
+            var offset                = 2;
 
             var dictionaryValues = new string?[dictionaryValuesCount];
             for (var i = 0; i < dictionaryValuesCount; i++)
             {
-                var length = BitConverter.ToInt16(buff, offset);
+                var length = BitConverter.ToInt16(buff.Slice(offset));
                 offset += 2;
 
                 if (length >= 0)
                 {
-                    dictionaryValues[i] =  Encoding.UTF8.GetString(buff, offset, length);
+                    dictionaryValues[i] =  Encoding.UTF8.GetString(buff.Slice(offset, length));
                     offset              += length;
                 }
                 else dictionaryValues[i] = null;
@@ -60,7 +61,7 @@ namespace ColumnStore
 
             // read value indexes
             var compactType = (CompactType)buff[offset++];
-            var indexes     = buff.AsSpan(offset).UncompactValues(count, compactType);
+            var indexes     = buff.Slice(offset).UncompactValues(count, compactType);
 
             var values = new string?[count];
             for (var i = 0; i < count; i++)

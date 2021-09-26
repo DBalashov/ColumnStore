@@ -79,15 +79,11 @@ namespace ColumnStore
             string.Join("/", commonPath, columnName, rangeIndex);
 
 
-        internal static Array UnpackData(this byte[] data, int offset = 0)
+        internal static Array UnpackData(this Span<byte> data)
         {
-            var count = BitConverter.ToInt32(data, offset);
-            offset += 4;
-
-            var dataType = (StoredDataType)BitConverter.ToUInt16(data, offset);
-            offset += 2;
-
-            return readWriteHandlers[dataType].Unpack(data, count, offset);
+            var count = BitConverter.ToInt32(data);
+            var dataType = (StoredDataType)BitConverter.ToUInt16(data.Slice(4));
+            return readWriteHandlers[dataType].Unpack(data.Slice(6), count);
         }
 
         internal static void PackData(this Array values, Stream targetStream, Range range)

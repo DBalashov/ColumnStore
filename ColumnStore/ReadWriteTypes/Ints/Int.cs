@@ -3,12 +3,12 @@ using System.IO;
 
 namespace ColumnStore
 {
-    class ReadWriteHandlerInt : IntBase
+    sealed class ReadWriteHandlerInt : IntBase
     {
         public override void Pack(Array values, Stream targetStream, Range range) =>
             packIntXX(values, targetStream, range, values.Dictionarize<int>(range), 4);
 
-        public override Array Unpack(byte[] buff, int count, int offset) =>
-            unpackIntXX(buff, count, offset, poolInts, 4);
+        public override Array Unpack(Span<byte> buff, int count) =>
+            unpackIntXX(buff, count, poolInts, 4);
     }
 }

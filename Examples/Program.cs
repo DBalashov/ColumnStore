@@ -7,31 +7,6 @@ using FileContainer;
 
 namespace Examples
 {
-    /*
-Keys: 527040 (each 1 minutes), 2020-01-01 00:00:00Z - 2021-01-01 00:00:00Z
-
-Writing typed arrays, compressed: NO, page size: 2048, 4096, 8192, 16384
-[ 2048] Writing, duration: 1250 ms, Length: 27,12 MB, avg bytes/value: 7,71
-[ 2048] Reading, random period: 63 days, 2020-06-21 22:36:00Z - 2020-08-23 22:36:00Z, duration: 75 ms, 90720 item(s)
-[ 4096] Writing, duration: 804 ms, Length: 27,21 MB, avg bytes/value: 7,73
-[ 4096] Reading, random period: 63 days, 2020-01-13 19:30:00Z - 2020-03-16 19:30:00Z, duration: 84 ms, 90720 item(s)
-[ 8192] Writing, duration: 777 ms, Length: 27,42 MB, avg bytes/value: 7,79
-[ 8192] Reading, random period: 63 days, 2020-03-25 10:22:00Z - 2020-05-27 10:22:00Z, duration: 116 ms, 90720 item(s)
-[16384] Writing, duration: 726 ms, Length: 27,73 MB, avg bytes/value: 7,88
-[16384] Reading, random period: 63 days, 2020-05-16 15:50:00Z - 2020-07-18 15:50:00Z
-[16384] Reading, random period: 63 days, 2020-05-16 15:50:00Z - 2020-07-18 15:50:00Z, duration: 39 ms, 90720 item(s)
-
-Writing entities, compressed: NO, page size: 2048, 4096, 8192, 16384
-[ 2048] Writing, duration: 863 ms, Length: 125,07 MB, avg bytes/value: 7,11
-[ 2048] Reading, random period: 63 days, 2020-05-24 03:25:00Z - 2020-07-26 03:25:00Z, duration: 409 ms, 90720 item(s)
-[ 4096] Writing, duration: 967 ms, Length: 125,44 MB, avg bytes/value: 7,13
-[ 4096] Reading, random period: 63 days, 2020-04-30 10:44:00Z - 2020-07-02 10:44:00Z, duration: 371 ms, 90720 item(s)
-[ 8192] Writing, duration: 1013 ms, Length: 126,43 MB, avg bytes/value: 7,19
-[ 8192] Reading, random period: 63 days, 2020-05-21 05:12:00Z - 2020-07-23 05:12:00Z, duration: 346 ms, 90720 item(s)
-[16384] Writing, duration: 1019 ms, Length: 127,62 MB, avg bytes/value: 7,25
-[16384] Reading, random period: 63 days, 2020-06-17 02:23:00Z - 2020-08-19 02:23:00Z, duration: 410 ms, 90720 item(s)
-
-     */
     class Program
     {
         static readonly Random   r         = new(Guid.NewGuid().GetHashCode());
@@ -52,9 +27,9 @@ Writing entities, compressed: NO, page size: 2048, 4096, 8192, 16384
             Console.WriteLine("Keys: {0} (each {1} minutes), {2:u} - {3:u}", entities.Count, every, sd, ed);
             
             testTyped(false);
-            //testTyped(true);
+            testTyped(true);
             testEntities(false);
-            //testEntities(true);
+            testEntities(true);
         }
 
         #region testTyped

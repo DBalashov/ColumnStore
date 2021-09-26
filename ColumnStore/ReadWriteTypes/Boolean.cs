@@ -3,7 +3,7 @@ using System.IO;
 
 namespace ColumnStore
 {
-    class ReadWriteHandlerBoolean : ReadWriteBase
+    sealed class ReadWriteHandlerBoolean : ReadWriteBase
     {
         static readonly byte[] byteMasks =
         {
@@ -21,17 +21,17 @@ namespace ColumnStore
         {
             var byteCount = range.Length() / 8 + (range.Length() % 8 > 0 ? 1 : 0);
             var buff      = poolBytes.Rent(byteCount);
-            var bools     = (bool[]) values;
+            var bools     = (bool[])values;
 
             for (int i = range.Start.Value, index = 0; i < range.End.Value; i++, index++)
             {
                 var byteIndex = index >> 3; // /8
                 var bitIndex  = index % 8;
 
-                var byteValue = (byte) (buff[byteIndex] & byteMasks[bitIndex]);
+                var byteValue = (byte)(buff[byteIndex] & byteMasks[bitIndex]);
 
                 if (bools[i])
-                    byteValue |= (byte) (1 << bitIndex);
+                    byteValue |= (byte)(1 << bitIndex);
 
                 buff[byteIndex] = byteValue;
             }
@@ -41,12 +41,12 @@ namespace ColumnStore
             poolBytes.Return(buff);
         }
 
-        public override Array Unpack(byte[] buff, int count, int offset)
+        public override Array Unpack(Span<byte> buff, int count)
         {
             var values = new bool[count];
 
             for (var i = 0; i < count; i++)
-                values[i] = (buff[offset + (i >> 3)] & (1 << (i % 8))) > 0;
+                values[i] = (buff[(i >> 3)] & (1 << (i % 8))) > 0;
 
             return values;
         }

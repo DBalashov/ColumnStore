@@ -20,13 +20,13 @@ namespace ColumnStore
                 // write dictionary values
                 Buffer.BlockCopy(BitConverter.GetBytes((ushort)r.Values.Length), 0, buff, offset, 2);
                 offset += 2;
-                
+
                 Buffer.BlockCopy(r.Values, 0, buff, offset, r.Values.Length * elementSize);
                 offset += r.Values.Length * elementSize;
 
                 // write value indexes
                 buff[offset++] = (byte)compactType;
-                r.Indexes.CompactValues(buff.AsSpan().Slice(offset), compactType);
+                r.Indexes.CompactValues(buff.AsSpan(offset, requireBytes - offset), compactType);
                 targetStream.Write(buff, 0, requireBytes);
                 poolBytes.Return(buff);
             }
@@ -45,13 +45,14 @@ namespace ColumnStore
             }
         }
 
-        protected Array unpackIntXX<T>(byte[] buff, int count, int offset, ArrayPool<T> pool, int elementSize)
+        protected Array unpackIntXX<T>(Span<byte> buff, int count, ArrayPool<T> pool, int elementSize)
         {
-            var dictionaryValuesCount = BitConverter.ToUInt16(buff, offset);
-            offset += 2;
+            var dictionaryValuesCount = BitConverter.ToUInt16(buff);
+            var offset                = 2;
 
             var dictionaryValues = pool.Rent(dictionaryValuesCount);
-            Buffer.BlockCopy(buff, offset, dictionaryValues, 0, dictionaryValuesCount * elementSize);
+            Buffer.BlockCopy(buff.Slice(offset, dictionaryValuesCount * elementSize).ToArray(), 0,
+                             dictionaryValues, 0, dictionaryValuesCount * elementSize);
             offset += dictionaryValuesCount * elementSize;
 
             var compactType = (CompactType)buff[offset++];
@@ -59,13 +60,14 @@ namespace ColumnStore
 
             if (compactType <= CompactType.Short)
             {
-                var indexes = buff.AsSpan(offset).UncompactValues(count, compactType);
+                var indexes = buff.Slice(offset).UncompactValues(count, compactType);
                 for (var i = 0; i < indexes.Length; i++)
                     values[i] = dictionaryValues[indexes[i]];
             }
             else
             {
-                Buffer.BlockCopy(buff, offset, values, 0, count * elementSize);
+                Buffer.BlockCopy(buff.Slice(offset, count * elementSize).ToArray(), 0,
+                                 values, 0, count * elementSize);
             }
 
             pool.Return(dictionaryValues);

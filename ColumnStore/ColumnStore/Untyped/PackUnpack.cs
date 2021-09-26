@@ -35,10 +35,11 @@ namespace ColumnStore
                 offset = 0;
             }
 
-            var keys = MemoryMarshal.Cast<byte, CDT>(buff.AsSpan().Slice(offset, count * 4)).ToArray();
+            var span = buff.AsSpan();
+            var keys = MemoryMarshal.Cast<byte, CDT>(span.Slice(offset, count * 4)).ToArray();
             offset += count * 4;
 
-            var values = buff.UnpackData(offset);
+            var values = span.Slice(offset).UnpackData();
             return new UntypedColumn(keys, values);
         }
 

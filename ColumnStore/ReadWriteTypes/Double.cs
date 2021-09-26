@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace ColumnStore
 {
-    class ReadWriteHandlerDouble : ReadWriteBase
+    sealed class ReadWriteHandlerDouble : ReadWriteBase
     {
         public override void Pack(Array values, Stream targetStream, Range range)
         {
@@ -24,9 +24,9 @@ namespace ColumnStore
             }
         }
 
-        public override Array Unpack(byte[] buff, int count, int offset)
+        public override Array Unpack(Span<byte> buff, int count)
         {
-            var span = MemoryMarshal.Cast<byte, float>(buff.AsSpan(offset, count * 4));
+            var span = MemoryMarshal.Cast<byte, float>(buff.Slice(0, count * 4));
             var r    = new double[count];
             for (var i = 0; i < count; i++)
                 r[i] = span[i];

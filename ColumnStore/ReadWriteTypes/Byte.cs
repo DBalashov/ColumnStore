@@ -3,14 +3,14 @@ using System.IO;
 
 namespace ColumnStore
 {
-    class ReadWriteHandlerByte : ReadWriteBase
+    sealed class ReadWriteHandlerByte : ReadWriteBase
     {
         public override void Pack(Array values, Stream targetStream, Range range) => targetStream.Write(((byte[])values).AsSpan(range));
 
-        public override Array Unpack(byte[] buff, int count, int offset)
+        public override Array Unpack(Span<byte> buff, int count)
         {
             var values = new byte[count];
-            Buffer.BlockCopy(buff, offset, values, 0, count);
+            buff.Slice(0, count).CopyTo(values.AsSpan());
             return values;
         }
     }

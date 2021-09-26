@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace ColumnStore
 {
-    class ReadWriteHandlerTimeSpan : ReadWriteBase
+    sealed class ReadWriteHandlerTimeSpan : ReadWriteBase
     {
         public override void Pack(Array values, Stream targetStream, Range range)
         {
@@ -17,9 +17,9 @@ namespace ColumnStore
             targetStream.Write(MemoryMarshal.Cast<int, byte>(v));
         }
 
-        public override Array Unpack(byte[] buff, int count, int offset)
+        public override Array Unpack(Span<byte> buff, int count)
         {
-            var span = MemoryMarshal.Cast<byte, int>(buff.AsSpan(offset, count * 4));
+            var span = MemoryMarshal.Cast<byte, int>(buff.Slice(0, count * 4));
             var r    = new TimeSpan[count];
             for (var i = 0; i < count; i++)
                 r[i] = TimeSpan.FromSeconds(span[i]);

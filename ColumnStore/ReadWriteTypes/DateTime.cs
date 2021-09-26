@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace ColumnStore
 {
-    class ReadWriteHandlerDateTime : ReadWriteBase
+    sealed class ReadWriteHandlerDateTime : ReadWriteBase
     {
         public override void Pack(Array values, Stream targetStream, Range range)
         {
@@ -16,10 +16,10 @@ namespace ColumnStore
             targetStream.Write(MemoryMarshal.Cast<CDT, byte>(v));
         }
 
-        public override Array Unpack(byte[] buff, int count, int offset)
+        public override Array Unpack(Span<byte> buff, int count)
         {
             var r    = new DateTime[count];
-            var span = MemoryMarshal.Cast<byte, CDT>(buff.AsSpan(offset, count * 4));
+            var span = MemoryMarshal.Cast<byte, CDT>(buff.Slice(0, count * 4));
             for (var i = 0; i < r.Length; i++)
                 r[i] = span[i];
             return r;
