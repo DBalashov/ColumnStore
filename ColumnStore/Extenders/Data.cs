@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
 
 namespace ColumnStore
 {
@@ -36,7 +35,7 @@ namespace ColumnStore
 
     public static class Extenders
     {
-        public static StoredDataType DetectDataType([NotNull] this Array a)
+        public static StoredDataType DetectDataType(this Array a)
         {
             var v    = a.GetValue(0);
             var type = v.GetType();
@@ -75,35 +74,34 @@ namespace ColumnStore
                 _ => CompactType.Int
             };
 
-        [NotNull]
-        internal static string BuildSectionName([NotNull] this string commonPath, [NotNull] string columnName, int rangeIndex) =>
+
+        internal static string BuildSectionName(this string commonPath, string columnName, int rangeIndex) =>
             string.Join("/", commonPath, columnName, rangeIndex);
 
-        [NotNull]
-        internal static Array UnpackData([NotNull] this byte[] data, int offset = 0)
+
+        internal static Array UnpackData(this byte[] data, int offset = 0)
         {
             var count = BitConverter.ToInt32(data, offset);
             offset += 4;
 
-            var dataType = (StoredDataType) BitConverter.ToUInt16(data, offset);
+            var dataType = (StoredDataType)BitConverter.ToUInt16(data, offset);
             offset += 2;
 
             return readWriteHandlers[dataType].Unpack(data, count, offset);
         }
 
-        internal static void PackData([NotNull] this Array values, [NotNull] Stream targetStream, Range range)
+        internal static void PackData(this Array values, Stream targetStream, Range range)
         {
             var dataType = values.DetectDataType();
 
             targetStream.Write(BitConverter.GetBytes(range.Length), 0, 4);
-            targetStream.Write(BitConverter.GetBytes((ushort) dataType), 0, 2);
-            
+            targetStream.Write(BitConverter.GetBytes((ushort)dataType), 0, 2);
+
             readWriteHandlers[dataType].Pack(values, targetStream, range);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [NotNull]
-        internal static Array CreateSameType([NotNull] this Array arr, int length) =>
+        internal static Array CreateSameType(this Array arr, int length) =>
             arr.Length == 0 ? throw new InvalidDataException("Array is empty") : Array.CreateInstance(arr.GetValue(0).GetType(), length);
     }
 }

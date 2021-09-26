@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace ColumnStore
 {
@@ -22,12 +21,12 @@ namespace ColumnStore
             To     = to;
             Length = to - from;
         }
-        
+
 #if DEBUG
         public override string ToString() => $"{From} - {To}: {Length}";
 #endif
     }
-    
+
     sealed class RangeWithKey : Range
     {
         public readonly CDT Key;
@@ -44,8 +43,7 @@ namespace ColumnStore
 
     static class CDTRangeIndexExtenders
     {
-        [NotNull]
-        internal static IEnumerable<RangeWithKey> GetRange([NotNull] this CDT[] values, CDTUnit unit)
+        internal static IEnumerable<RangeWithKey> GetRange(this CDT[] values, CDTUnit unit)
         {
             if (!values.Any())
                 yield break;

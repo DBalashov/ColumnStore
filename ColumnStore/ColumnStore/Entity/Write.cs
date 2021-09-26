@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
 
 namespace ColumnStore
 {
     partial class ColumnStoreEntity
     {
-        public void Write<E>([NotNull] Dictionary<CDT, E> entities) where E : class
+        public void Write<E>(Dictionary<CDT, E> entities) where E : class
         {
             if (entities == null)
                 throw new ArgumentException("Can't be null", nameof(entities));
@@ -47,8 +46,7 @@ namespace ColumnStore
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [NotNull]
-        byte[] pack<E, V>([CanBeNull] byte[] data, [NotNull] KeyValue<E>[] newData, [NotNull] PropertyInfo prop) =>
+        byte[] pack<E, V>(byte[]? data, KeyValue<E>[] newData, PropertyInfo prop) =>
             data != null
                 ? data.Unpack<V>(ps.Compressed).MergeWithReplace(newData, prop).Pack(ps.Compressed)
                 : newData.Pack<E, V>(prop, ps.Compressed);

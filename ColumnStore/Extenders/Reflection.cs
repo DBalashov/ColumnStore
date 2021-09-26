@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using JetBrains.Annotations;
 
 // ReSharper disable AssignNullToNotNullAttribute
 
@@ -25,8 +24,8 @@ namespace ColumnStore
             typeof(string),
         };
 
-        [NotNull]
-        internal static Dictionary<string, PropertyInfo> GetProps([NotNull] this Type type) =>
+
+        internal static Dictionary<string, PropertyInfo> GetProps(this Type type) =>
             type.GetProperties()
                 .Where(p => p.CanRead && p.CanWrite && supportedTypes.Contains(p.PropertyType))
                 .ToDictionary(p => p.Name, StringComparer.InvariantCulture);
@@ -34,14 +33,13 @@ namespace ColumnStore
         #region getActionSet
 
         internal static Dictionary<PropertyInfo, object> actionSet = new();
-
-        [NotNull]
-        internal static Action<T, V> getActionSet<T, V>([NotNull] this PropertyInfo property)
+        
+        internal static Action<T, V> getActionSet<T, V>(this PropertyInfo property)
         {
             lock (actionSet)
             {
                 if (actionSet.TryGetValue(property, out var o))
-                    return (Action<T, V>) o;
+                    return (Action<T, V>)o;
 
                 var parmInstance = Expression.Parameter(typeof(T));
                 var parmValue    = Expression.Parameter(typeof(V));
@@ -52,7 +50,7 @@ namespace ColumnStore
 
                 o = Expression.Lambda<Action<T, V>>(bodyCall, parmInstance, parmValue).Compile();
                 actionSet.Add(property, o);
-                return (Action<T, V>) o;
+                return (Action<T, V>)o;
             }
         }
 
@@ -61,14 +59,13 @@ namespace ColumnStore
         #region getActionGet
 
         internal static Dictionary<PropertyInfo, object> actionGet = new();
-
-        [NotNull]
-        internal static Func<T, V> getActionGet<T, V>([NotNull] this PropertyInfo property)
+        
+        internal static Func<T, V> getActionGet<T, V>(this PropertyInfo property)
         {
             lock (actionGet)
             {
                 if (actionGet.TryGetValue(property, out var o))
-                    return (Func<T, V>) o;
+                    return (Func<T, V>)o;
 
                 var parmInstance     = Expression.Parameter(typeof(T));
                 var bodyToObjectType = Expression.Convert(parmInstance, property.DeclaringType);
@@ -78,7 +75,7 @@ namespace ColumnStore
                 o = Expression.Lambda<Func<T, V>>(bodyCall, parmInstance).Compile();
 
                 actionGet.Add(property, o);
-                return (Func<T, V>) o;
+                return (Func<T, V>)o;
             }
         }
 

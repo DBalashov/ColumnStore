@@ -1,16 +1,14 @@
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace ColumnStore
 {
     static class DictionarizeExtenders
     {
-        internal static DictionarizeResult<T> Dictionarize<T>([NotNull] this Array values, [NotNull] Range range, [NotNull] T nullReplaceTo = default(T))
+        internal static DictionarizeResult<T> Dictionarize<T>(this Array values, Range range, T nullReplaceTo = default(T))
         {
-            var v       = (T[]) values;
+            var v       = (T[])values;
             var r       = new Dictionary<T, int>(); // value : index
             var indexes = new int[range.Length];
             for (var i = range.From; i < range.To; i++)
@@ -31,10 +29,10 @@ namespace ColumnStore
 
     readonly struct DictionarizeResult<T>
     {
-        [NotNull] internal readonly T[]   Values;
-        [NotNull] internal readonly int[] Indexes;
+        internal readonly T[]   Values;
+        internal readonly int[] Indexes;
 
-        internal DictionarizeResult([NotNull] int[] indexes, [NotNull] T[] values)
+        internal DictionarizeResult(int[] indexes, T[] values)
         {
             Indexes = indexes;
             Values  = values;

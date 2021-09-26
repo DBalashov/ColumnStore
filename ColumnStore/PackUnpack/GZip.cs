@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
-using JetBrains.Annotations;
 
 namespace ColumnStore
 {
@@ -13,8 +12,7 @@ namespace ColumnStore
         static readonly ArrayPool<byte> pool = ArrayPool<byte>.Shared;
 
         [DebuggerStepThrough]
-        [NotNull]
-        public static byte[] GZipUnpack([NotNull] this byte[] data, int offset = 0)
+        public static byte[] GZipUnpack(this byte[] data, int offset = 0)
         {
             var buff = pool.Rent(8192);
 

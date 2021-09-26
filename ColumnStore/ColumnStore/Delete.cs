@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace ColumnStore
 {
@@ -12,7 +11,7 @@ namespace ColumnStore
         /// <param name="columnName">case insensitive column name</param>
         /// <typeparam name="T"></typeparam>
         /// <exception cref="ArgumentException"></exception>
-        public void Delete<T>([NotNull] string columnName, params CDTRange[] ranges)
+        public void Delete<T>(string columnName, params CDTRange[] ranges)
         {
             if (string.IsNullOrEmpty(columnName))
                 throw new ArgumentException("Can't be null", nameof(columnName));

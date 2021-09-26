@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace ColumnStore
 {
     partial class ColumnStoreTyped
     {
-        public void Write<V>(string columnName, [NotNull] Dictionary<CDT, V> values)
+        public void Write<V>(string columnName, Dictionary<CDT, V> values)
         {
             if (values == null)
                 throw new ArgumentException("Can't be null", nameof(values));

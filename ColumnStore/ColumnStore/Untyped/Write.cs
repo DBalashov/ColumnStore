@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace ColumnStore
 {
     partial class ColumnStoreUntyped
     {
-        public void Write([NotNull] string columnName, [NotNull] UntypedColumn newData)
+        public void Write(string columnName, UntypedColumn newData)
         {
             if (newData == null)
                 throw new ArgumentException("Can't be null", nameof(newData));
@@ -26,8 +25,8 @@ namespace ColumnStore
 
             ps.Container.Put(entries);
         }
-        
-        public void Write([NotNull] Dictionary<string, UntypedColumn> newData)
+
+        public void Write(Dictionary<string, UntypedColumn> newData)
         {
             if (newData == null)
                 throw new ArgumentException("Can't be null", nameof(newData));

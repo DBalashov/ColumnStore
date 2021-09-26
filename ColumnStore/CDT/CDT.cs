@@ -158,13 +158,13 @@ namespace ColumnStore
         #endregion
 
         [ExcludeFromCodeCoverage]
-        public override bool Equals(object obj) => obj is CDT cdt && cdt.Value == Value;
+        public override bool Equals(object? obj) => obj is CDT cdt && cdt.Value == Value;
 
         [ExcludeFromCodeCoverage]
         public override int GetHashCode() => Value;
 
-        public int CompareTo(object obj)   => obj is CDT cdt ? Value.CompareTo(cdt.Value) : -1;
-        public int CompareTo(CDT    other) => Value.CompareTo(other.Value);
+        public int CompareTo(object? obj)   => obj is CDT cdt ? Value.CompareTo(cdt.Value) : -1;
+        public int CompareTo(CDT     other) => Value.CompareTo(other.Value);
 
 #if DEBUG
         public override string ToString() => ((DateTime) this).ToString("yyyy-MM-dd HH:mm:ss");

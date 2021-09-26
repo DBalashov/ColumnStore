@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using FileContainer;
-using JetBrains.Annotations;
 
 namespace ColumnStore
 {
     public partial class PersistentColumnStore
     {
-        [NotNull]
         public ColumnStoreEntry[] Find(params string[] keys)
         {
             var items = Container.Find(keys);
@@ -23,7 +21,7 @@ namespace ColumnStore
 
                 r.Add(new ColumnStoreEntry(item,
                                            BitConverter.ToInt32(buff, 0),
-                                           (StoredDataType) BitConverter.ToInt32(buff, 4)));
+                                           (StoredDataType)BitConverter.ToInt32(buff, 4)));
             }
 
             return r.ToArray();
@@ -32,7 +30,7 @@ namespace ColumnStore
 
     public class ColumnStoreEntry
     {
-        [NotNull] public string Name { get; }
+        public string Name { get; }
 
         /// <summary> UTC </summary>
         public DateTime Modified { get; }
@@ -41,11 +39,11 @@ namespace ColumnStore
         public int            Count    { get; }
         public StoredDataType DataType { get; }
 
-        [NotNull] public string CommonPath   { get; }
-        [NotNull] public string ColumnName   { get; }
-        public           CDT    PartitionKey { get; }
+        public string CommonPath   { get; }
+        public string ColumnName   { get; }
+        public CDT    PartitionKey { get; }
 
-        internal ColumnStoreEntry([NotNull] PagedContainerEntry entry, int count, StoredDataType dataType)
+        internal ColumnStoreEntry(PagedContainerEntry entry, int count, StoredDataType dataType)
         {
             Name     = entry.Name;
             Modified = entry.Modified;

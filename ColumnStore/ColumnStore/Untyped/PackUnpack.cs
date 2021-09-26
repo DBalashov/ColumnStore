@@ -1,16 +1,14 @@
 using System;
 using System.Buffers;
 using System.IO;
-using JetBrains.Annotations;
 
 namespace ColumnStore
 {
     static class ColumnUntypedExtenders
     {
         static readonly ArrayPool<byte> poolBytes = ArrayPool<byte>.Shared;
-        
-        [NotNull]
-        internal static byte[] Pack([NotNull] this UntypedColumn data, Range range = null, bool withCompression = false)
+
+        internal static byte[] Pack( this UntypedColumn data, Range range = null, bool withCompression = false)
         {
             var stmTarget = new MemoryStream();
             range ??= new Range(0, data.Keys.Length);
@@ -30,8 +28,7 @@ namespace ColumnStore
             return stm.ToArray();
         }
 
-        [NotNull]
-        internal static UntypedColumn Unpack([NotNull] this byte[] buff, bool withDecompression)
+        internal static UntypedColumn Unpack( this byte[] buff, bool withDecompression)
         {
             var count  = BitConverter.ToInt32(buff, 0);
             var offset = 4;
@@ -52,8 +49,7 @@ namespace ColumnStore
             return new UntypedColumn(keys, values);
         }
 
-        [NotNull]
-        internal static UntypedColumn MergeWithReplace([NotNull] this UntypedColumn existing, [NotNull] Range range, [NotNull] UntypedColumn newData)
+        internal static UntypedColumn MergeWithReplace( this UntypedColumn existing,  Range range,  UntypedColumn newData)
         {
             var sd = newData.Keys[range.From];
             var ed = newData.Keys[range.To - 1];

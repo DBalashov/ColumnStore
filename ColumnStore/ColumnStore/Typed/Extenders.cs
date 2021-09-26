@@ -3,7 +3,6 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace ColumnStore
 {
@@ -12,8 +11,7 @@ namespace ColumnStore
         static readonly ArrayPool<byte> poolBytes = ArrayPool<byte>.Shared;
         static readonly ArrayPool<int>  poolInts  = ArrayPool<int>.Shared;
 
-        [NotNull]
-        internal static byte[] Pack<V>([NotNull] this Dictionary<int, V> values, bool withCompression)
+        internal static byte[] Pack<V>( this Dictionary<int, V> values, bool withCompression)
         {
             using var stm = new WriteStreamWrapper(new MemoryStream(), withCompression);
 
@@ -40,9 +38,8 @@ namespace ColumnStore
 
             return stm.ToArray();
         }
-
-        [NotNull]
-        internal static Dictionary<int, V> Unpack<V>([NotNull] this byte[] buff, bool withDecompression)
+        
+        internal static Dictionary<int, V> Unpack<V>( this byte[] buff, bool withDecompression)
         {
             if (withDecompression)
                 buff = buff.GZipUnpack();
@@ -67,9 +64,8 @@ namespace ColumnStore
 
             return r;
         }
-
-        [NotNull]
-        internal static Dictionary<int, V> MergeWithReplace<V>([NotNull] this Dictionary<int, V> existing, [NotNull] KeyValue<V>[] newData)
+        
+        internal static Dictionary<int, V> MergeWithReplace<V>( this Dictionary<int, V> existing,  KeyValue<V>[] newData)
         {
             var range = new CDTRange(new CDT(newData.First().Key), new CDT(newData.Last().Key));
             var r     = new Dictionary<int, V>();

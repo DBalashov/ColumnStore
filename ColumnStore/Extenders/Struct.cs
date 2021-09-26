@@ -1,16 +1,15 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using JetBrains.Annotations;
 
 namespace ColumnStore
 {
     static class StructExtenders
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void PackStructs<T>([NotNull] this T[]    source, int sourceOffsetInBytes,
-                                            [NotNull]      byte[] dest,   int destOffsetInBytes = 0,
-                                            int?                  countItems = null) where T : struct
+        internal static void PackStructs<T>(this T[] source, int sourceOffsetInBytes,
+                                            byte[]   dest,   int destOffsetInBytes = 0,
+                                            int?     countItems = null) where T : struct
         {
             using var p = new PinnedHandle(source);
             Marshal.Copy(IntPtr.Add(p.Address, sourceOffsetInBytes),
@@ -19,8 +18,7 @@ namespace ColumnStore
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [NotNull]
-        internal static T[] UnpackStructs<T>([NotNull] this byte[] source, int sourceOffsetInBytes, int count) where T : struct
+        internal static T[] UnpackStructs<T>(this byte[] source, int sourceOffsetInBytes, int count) where T : struct
         {
             var       dest = new T[count];
             using var p    = new PinnedHandle(dest);

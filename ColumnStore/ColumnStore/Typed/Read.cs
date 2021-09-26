@@ -1,18 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace ColumnStore
 {
     partial class ColumnStoreTyped : IColumnStoreTyped
     {
         readonly PersistentColumnStore ps;
-        
-        internal ColumnStoreTyped([NotNull] PersistentColumnStore ps) => this.ps = ps;
 
-        [NotNull]
+        internal ColumnStoreTyped(PersistentColumnStore ps) => this.ps = ps;
+
         public Dictionary<CDT, V> Read<V>(CDT from, CDT to, string columnName)
         {
             if (from >= to)

@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace ColumnStore
 {
     static class GroupToDictionaryExtenders
     {
-        [NotNull]
-        internal static Dictionary<int, KeyValue<V>[]> GroupToDictionary<V>([NotNull] this Dictionary<CDT, V> values, [NotNull] Func<CDT, int> truncator)
+        internal static Dictionary<int, KeyValue<V>[]> GroupToDictionary<V>(this Dictionary<CDT, V> values, Func<CDT, int> truncator)
         {
             var r    = new Dictionary<int, KeyValue<V>[]>();
             var vals = new List<KeyValue<V>>();

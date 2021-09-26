@@ -1,14 +1,13 @@
 using System;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace ColumnStore
 {
     public sealed class UntypedColumn
     {
-        [NotNull] public readonly CDT[] Keys;
-        [NotNull] public readonly Array Values;
-        
+        public readonly CDT[] Keys;
+        public readonly Array Values;
+
         /// <summary>
         /// Keys and Values for column
         /// <code>
@@ -18,7 +17,7 @@ namespace ColumnStore
         /// </code>
         /// </summary>
         /// <exception cref="ArgumentException"></exception>
-        public UntypedColumn([NotNull] CDT[] keys, [NotNull] Array values)
+        public UntypedColumn(CDT[] keys, Array values)
         {
             Keys   = keys ?? throw new ArgumentException("Can't be null", nameof(keys));
             Values = values ?? throw new ArgumentException("Can't be null", nameof(values));

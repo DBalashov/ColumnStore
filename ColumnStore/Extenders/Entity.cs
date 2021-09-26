@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using JetBrains.Annotations;
 
 namespace ColumnStore
 {
@@ -13,8 +12,7 @@ namespace ColumnStore
         static readonly ArrayPool<byte> poolBytes = ArrayPool<byte>.Shared;
         static readonly ArrayPool<int>  poolInts  = ArrayPool<int>.Shared;
 
-        [NotNull]
-        internal static byte[] Pack<E, V>([NotNull] this KeyValue<E>[] newData, [NotNull] PropertyInfo prop, bool withCompression)
+        internal static byte[] Pack<E, V>(this KeyValue<E>[] newData, PropertyInfo prop, bool withCompression)
         {
             using var stm = new WriteStreamWrapper(new MemoryStream(), withCompression);
 
@@ -41,10 +39,9 @@ namespace ColumnStore
             return stm.ToArray();
         }
 
-        [NotNull]
-        internal static Dictionary<int, V> MergeWithReplace<E, V>([NotNull] this Dictionary<int, V> existing,
-                                                                  [NotNull]      KeyValue<E>[]      newData,
-                                                                  [NotNull]      PropertyInfo       prop)
+        internal static Dictionary<int, V> MergeWithReplace<E, V>(this Dictionary<int, V> existing,
+                                                                  KeyValue<E>[]           newData,
+                                                                  PropertyInfo            prop)
         {
             var range = new CDTRange(new CDT(newData.First().Key), new CDT(newData.Last().Key));
 

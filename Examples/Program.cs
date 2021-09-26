@@ -51,7 +51,7 @@ namespace Examples
             // write & read
             foreach (var pageSize in pageSizes)
             {
-                using (var pc = new InMemoryContainer(pageSize))
+                using (var pc = new InMemoryContainer(new PersistentContainerSettings(pageSize)))
                 using (var ps = new PersistentColumnStore(pc, CDTUnit.Month, compressedContainer))
                 {
                     var sw = Stopwatch.StartNew();
@@ -101,7 +101,7 @@ namespace Examples
             Console.WriteLine("\nWriting entities, compressed: {0}, page size: {1}", compressedContainer ? "YES" : "NO", string.Join(", ", pageSizes));
             foreach (var pageSize in pageSizes)
             {
-                using (var pc = new InMemoryContainer(pageSize))
+                using (var pc = new InMemoryContainer(new PersistentContainerSettings(pageSize)))
                 using (var ps = new PersistentColumnStore(pc, CDTUnit.Month, compressedContainer))
                 {
                     var sw = Stopwatch.StartNew();

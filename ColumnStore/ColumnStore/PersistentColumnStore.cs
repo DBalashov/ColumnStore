@@ -1,6 +1,5 @@
 using System;
 using FileContainer;
-using JetBrains.Annotations;
 
 namespace ColumnStore
 {
@@ -11,8 +10,8 @@ namespace ColumnStore
         const string SECTION_SETTINGS        = "___settings___";
         const int    SECTION_SETTINGS_LENGTH = 128;
 
-        [NotNull] public string                 Path      { get; }
-        [NotNull] public PagedContainerAbstract Container { get; }
+        public string                 Path      { get; }
+        public PagedContainerAbstract Container { get; }
 
         /// <summary> partition size </summary>
         public CDTUnit Unit { get; private set; }
@@ -21,13 +20,13 @@ namespace ColumnStore
         public bool Compressed { get; private set; }
 
         /// <summary> Access to Typed columns </summary>
-        [NotNull] public IColumnStoreTyped   Typed   { get; }
-        
+        public IColumnStoreTyped Typed { get; }
+
         /// <summary> Access to columns with map to entity </summary>
-        [NotNull] public IColumnStoreEntity  Entity  { get; }
-        
+        public IColumnStoreEntity Entity { get; }
+
         /// <summary> Access to Untyped columns </summary>
-        [NotNull] public IColumnStoreUntyped Untyped { get; }
+        public IColumnStoreUntyped Untyped { get; }
 
         /// <summary> ColumnStore container </summary>
         /// <param name="unit">
@@ -40,7 +39,7 @@ namespace ColumnStore
         /// Can be set ONLY for new commonPath data. Will read from container for existing data.
         /// </param>
         /// <param name="commonPath">prefix for ALL columns (writing/reading) in PersistentColumnStore instance. For example "/Cars/12312" </param>
-        public PersistentColumnStore([NotNull] PagedContainerAbstract container, CDTUnit unit = CDTUnit.Month, bool compressed = false, string commonPath = null)
+        public PersistentColumnStore(PagedContainerAbstract container, CDTUnit unit = CDTUnit.Month, bool compressed = false, string commonPath = null)
         {
             Container  = container ?? throw new ArgumentException("Can't be null", nameof(container));
             Unit       = unit;
@@ -61,12 +60,12 @@ namespace ColumnStore
             if (configData == null)
             {
                 configData                     = new byte[SECTION_SETTINGS_LENGTH];
-                configData[0]                  = (byte) unit;
-                configData[1]                  = (byte) (compressed ? 1 : 0);
+                configData[0]                  = (byte)unit;
+                configData[1]                  = (byte)(compressed ? 1 : 0);
                 Container[settingsSectionName] = configData;
             }
 
-            Unit       = (CDTUnit) configData[0];
+            Unit       = (CDTUnit)configData[0];
             Compressed = configData[1] > 0;
         }
 

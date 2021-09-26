@@ -1,16 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace ColumnStore
 {
     partial class ColumnStoreUntyped : IColumnStoreUntyped
     {
-        [NotNull] readonly PersistentColumnStore ps;
-        internal ColumnStoreUntyped([NotNull] PersistentColumnStore ps) => this.ps = ps;
+        readonly PersistentColumnStore ps;
+        internal ColumnStoreUntyped(PersistentColumnStore ps) => this.ps = ps;
         
-        [NotNull]
         public Dictionary<string, UntypedColumn> Read(CDT from, CDT to, params string[] columnNames)
         {
             if (from >= to)
@@ -43,12 +41,11 @@ namespace ColumnStore
             return r;
         }
 
-        [CanBeNull]
-        UntypedColumn filterByRange([NotNull] UntypedColumn unpacked, [NotNull] CDTRange range)
+        UntypedColumn? filterByRange(UntypedColumn unpacked, CDTRange range)
         {
             if (range.To < unpacked.Keys.First() ||
                 range.From > unpacked.Keys.Last()) return null;
-            
+
             var indexFrom = Array.BinarySearch(unpacked.Keys, range.From);
             if (indexFrom < 0)
                 indexFrom = ~indexFrom;
@@ -70,8 +67,7 @@ namespace ColumnStore
             return null;
         }
 
-        [CanBeNull]
-        UntypedColumn combine([NotNull] List<UntypedColumn> items)
+        UntypedColumn? combine(List<UntypedColumn> items)
         {
             if (!items.Any())
                 return null;

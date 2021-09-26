@@ -1,12 +1,11 @@
 using System.IO;
 using System.IO.Compression;
-using JetBrains.Annotations;
 
 namespace ColumnStore
 {
     class WriteStreamWrapper : Stream
     {
-        public override void Flush() => ((Stream) zstm ?? stm).Flush();
+        public override void Flush() => ((Stream)zstm ?? stm).Flush();
 
         public override int Read(byte[] buffer, int offset, int count) => throw new System.NotImplementedException();
 
@@ -14,12 +13,12 @@ namespace ColumnStore
 
         public override void SetLength(long value) => throw new System.NotImplementedException();
 
-        public override void Write(byte[] buffer, int offset, int count) => ((Stream) zstm ?? stm).Write(buffer, offset, count);
+        public override void Write(byte[] buffer, int offset, int count) => ((Stream)zstm ?? stm).Write(buffer, offset, count);
 
         public override bool CanRead  => false;
         public override bool CanSeek  => false;
         public override bool CanWrite => true;
-        public override long Length   => ((Stream) zstm ?? stm).Length;
+        public override long Length   => ((Stream)zstm ?? stm).Length;
 
         public override long Position
         {
@@ -30,7 +29,7 @@ namespace ColumnStore
         readonly MemoryStream stm;
         readonly GZipStream   zstm;
 
-        public WriteStreamWrapper([NotNull] MemoryStream stm, bool withCompression)
+        public WriteStreamWrapper(MemoryStream stm, bool withCompression)
         {
             this.stm = stm;
             if (withCompression)
@@ -44,7 +43,6 @@ namespace ColumnStore
             base.Dispose(disposing);
         }
 
-        [NotNull]
         internal byte[] ToArray()
         {
             zstm?.Flush();

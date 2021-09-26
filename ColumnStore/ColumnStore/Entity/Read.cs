@@ -3,17 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using JetBrains.Annotations;
 
 namespace ColumnStore
 {
     partial class ColumnStoreEntity : IColumnStoreEntity
     {
         readonly PersistentColumnStore ps;
-        
-        internal ColumnStoreEntity([NotNull] PersistentColumnStore ps) => this.ps = ps;
-        
-        [NotNull]
+
+        internal ColumnStoreEntity(PersistentColumnStore ps) => this.ps = ps;
+
         public Dictionary<CDT, E> Read<E>(CDT from, CDT to) where E : class, new()
         {
             if (from >= to)
@@ -47,8 +45,8 @@ namespace ColumnStore
             return r;
         }
 
-        void unpack<T, V>([NotNull] byte[]       data, [NotNull] CDTRangeWithKey range, [NotNull] Dictionary<CDT, T> target,
-                          [NotNull] PropertyInfo prop) where T : class, new()
+        void unpack<T, V>(byte[]       data, CDTRangeWithKey range, Dictionary<CDT, T> target,
+                          PropertyInfo prop) where T : class, new()
         {
             var setValue = prop.getActionSet<T, V>();
 
