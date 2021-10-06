@@ -6,27 +6,32 @@ namespace ColumnStore
     {
         internal static void CompactValues(this int[] values, Span<byte> targetBuff, CompactType type)
         {
-            var fromOffset = 0;
             switch (type)
             {
                 case CompactType.Byte:
+                {
+                    var idx = 0;
                     foreach (var value in values)
                     {
-                        targetBuff[fromOffset] = (byte)value;
-                        fromOffset++;
+                        targetBuff[idx] = (byte)value;
+                        idx++;
                     }
 
                     break;
-
+                }
+                
                 case CompactType.Short:
+                {
+                    var idx = 0;
                     foreach (var value in values)
                     {
-                        targetBuff[fromOffset]     =  (byte)(value & 0xFF);
-                        targetBuff[fromOffset + 1] =  (byte)((value >> 8) & 0xFF);
-                        fromOffset                 += 2;
+                        targetBuff[idx]     =  (byte)(value & 0xFF);
+                        targetBuff[idx + 1] =  (byte)((value >> 8) & 0xFF);
+                        idx                 += 2;
                     }
 
                     break;
+                }
 
                 // case CompactType.Int:
                 //     foreach (var value in values)
@@ -67,7 +72,7 @@ namespace ColumnStore
                                (((int)buff[offset + 1]) << 8);
                     return r;
                 }
-                
+
                 // case CompactType.Int:
                 //     for (var i = 0; i < count; i++, offset += 4)
                 //         r[i] = ((int) buff[offset]) |

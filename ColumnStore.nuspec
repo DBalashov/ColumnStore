@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
     <id>ColumnStore</id>
-    <version>2021.4.24</version>
+    <version>2021.10.6</version>
     <title>FileContainer</title>
     <authors>Denis Balashov and contributors</authors>
     <owners>Denis Balashov</owners>
@@ -15,12 +15,12 @@
     <language>en-US</language>
     <tags>column store,storage</tags>
     <dependencies>
-      <group targetFramework=".NETStandard2.0">
-        <dependency id="FileContainer" version="(2021.4.20,)" />
+      <group targetFramework="net5.0">
+        <dependency id="FileContainer" version="(2021.9.25,)" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="ColumnStore\bin\Release\netstandard2.0\ColumnStore.dll" target="lib\netstandard2.0" />
+    <file src="ColumnStore\bin\Release\net5.0\ColumnStore.dll" target="lib\net5.0" />
   </files>
 </package>
