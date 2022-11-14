@@ -27,7 +27,7 @@ namespace ColumnStore
                     count++;
                 }
 
-                if (outIndex + 2 >= outBuff.Length) return null; // результат упаковки по размеру получается больше оригинальных данных 
+                if (outIndex + 2 >= outBuff.Length) return null; // result size > original size -> break & return null (uncompressable) 
 
                 outBuff[outIndex]     =  (byte) count;
                 outBuff[outIndex + 1] =  (byte) value;
