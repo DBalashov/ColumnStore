@@ -37,82 +37,119 @@ namespace ColumnStore.Tests
 
         protected Dictionary<CDT, byte> GetBytes(CDT[] keys, CDT? from = null, CDT? to = null) =>
             filter(keys, from, to)
-                .ToDictionary(p => p,
-                              p =>
-                              {
-                                  var d = (DateTime) p;
-                                  return (byte) (d.Minute + d.Second + d.Day);
-                              });
+               .ToDictionary(p => p,
+                             p =>
+                             {
+                                 var d = (DateTime) p;
+                                 return (byte) (d.Minute + d.Second + d.Day);
+                             });
+
+        protected Dictionary<CDT, sbyte> GetSBytes(CDT[] keys, CDT? from = null, CDT? to = null) =>
+            filter(keys, from, to)
+               .ToDictionary(p => p,
+                             p =>
+                             {
+                                 var d = (DateTime) p;
+                                 return (sbyte) (d.Second + d.Day);
+                             });
 
         protected Dictionary<CDT, bool> GetBoolean(CDT[] keys, CDT? from = null, CDT? to = null) =>
             filter(keys, from, to)
-                .ToDictionary(p => p,
-                              p =>
-                              {
-                                  var d = (DateTime) p;
-                                  return (d.Minute + d.Second + d.Day) % d.Day > 0;
-                              });
+               .ToDictionary(p => p,
+                             p =>
+                             {
+                                 var d = (DateTime) p;
+                                 return (d.Minute + d.Second + d.Day) % d.Day > 0;
+                             });
 
         protected Dictionary<CDT, int> GetInts(CDT[] keys, CDT? from = null, CDT? to = null) =>
             filter(keys, from, to)
-                .ToDictionary(p => p,
-                              p =>
-                              {
-                                  var d = (DateTime) p;
-                                  return d.Minute + d.Second + d.Day;
-                              });
+               .ToDictionary(p => p,
+                             p =>
+                             {
+                                 var d = (DateTime) p;
+                                 return d.Minute + d.Second + d.Day;
+                             });
+
+        protected Dictionary<CDT, uint> GetUInts(CDT[] keys, CDT? from = null, CDT? to = null) =>
+            filter(keys, from, to)
+               .ToDictionary(p => p,
+                             p =>
+                             {
+                                 var d = (DateTime) p;
+                                 return (uint) (d.Minute + d.Second + d.Day);
+                             });
 
         protected Dictionary<CDT, short> GetInt16s(CDT[] keys, CDT? from = null, CDT? to = null) =>
             filter(keys, from, to)
-                .ToDictionary(p => p,
-                              p =>
-                              {
-                                  var d = (DateTime) p;
-                                  return (short) (d.Minute + d.Second + d.Day + 1);
-                              });
+               .ToDictionary(p => p,
+                             p =>
+                             {
+                                 var d = (DateTime) p;
+                                 return (short) (d.Minute + d.Second + d.Day + 1);
+                             });
+
+        protected Dictionary<CDT, ushort> GetUInt16s(CDT[] keys, CDT? from = null, CDT? to = null) =>
+            filter(keys, from, to)
+               .ToDictionary(p => p,
+                             p =>
+                             {
+                                 var d = (DateTime) p;
+                                 return (ushort) (d.Minute + d.Second + d.Day + 1);
+                             });
 
         protected Dictionary<CDT, Int64> GetInt64s(CDT[] keys, CDT? from = null, CDT? to = null) =>
             filter(keys, from, to)
-                .ToDictionary(p => p,
-                              p =>
-                              {
-                                  var   d = (DateTime) p;
-                                  Int64 x = d.Minute + d.Second + d.Day + 2;
-                                  return x | ((x + 3) << 32);
-                              });
+               .ToDictionary(p => p,
+                             p =>
+                             {
+                                 var   d = (DateTime) p;
+                                 Int64 x = d.Minute + d.Second + d.Day + 2;
+                                 return x | ((x + 3) << 32);
+                             });
+
+        protected Dictionary<CDT, UInt64> GetUInt64s(CDT[] keys, CDT? from = null, CDT? to = null) =>
+            filter(keys, from, to)
+               .ToDictionary(p => p,
+                             p =>
+                             {
+                                 var   d = (DateTime) p;
+                                 Int64 x = d.Minute + d.Second + d.Day + 2;
+                                 return (UInt64) (x | ((x + 3) << 32));
+                             });
 
         protected Dictionary<CDT, Guid> GetGuids(CDT[] keys, CDT? from = null, CDT? to = null) =>
             filter(keys, from, to)
-                .ToDictionary(p => p,
-                              p =>
-                              {
-                                  var d = (DateTime) p;
-                                  return new Guid((uint) d.Year, 0, 0, (byte) d.Year, (byte) d.Month, (byte) d.Day, (byte) d.Hour, 0, 0, 0, 0);
-                              });
+               .ToDictionary(p => p,
+                             p =>
+                             {
+                                 var d = (DateTime) p;
+                                 return new Guid((uint) d.Year, 0, 0, (byte) d.Year, (byte) d.Month, (byte) d.Day, (byte) d.Hour, 0, 0, 0, 0);
+                             });
 
         protected Dictionary<CDT, string> GetStrings(CDT[] keys, CDT? from = null, CDT? to = null) =>
             filter(keys, from, to)
-                .ToDictionary(p => p,
-                              p =>
-                              {
-                                  var d = (DateTime) p;
-                                  return "Item Address " + d.ToString("yyyyMMdd") + "/" + d.Month + "/" + d.Minute + "/" + d.Day;
-                              });
+               .ToDictionary(p => p,
+                             p =>
+                             {
+                                 var d = (DateTime) p;
+                                 return "Item Address " + d.ToString("yyyyMMdd") + "/" + d.Month + "/" + d.Minute + "/" + d.Day;
+                             });
 
         protected Dictionary<CDT, double> GetDoubles(CDT[] keys, CDT? from = null, CDT? to = null) =>
             filter(keys, from, to)
-                .ToDictionary(p => p,
-                              p => ((DateTime) p).TimeOfDay.TotalMilliseconds);
+               .ToDictionary(p => p,
+                             p => ((DateTime) p).TimeOfDay.TotalMilliseconds);
 
         protected Dictionary<CDT, TimeSpan> GetTimeSpans(CDT[] keys, CDT? from = null, CDT? to = null) =>
             filter(keys, from, to)
-                .ToDictionary(p => p,
-                              p => ((DateTime) p).TimeOfDay);
+               .ToDictionary(p => p,
+                             p => ((DateTime) p).TimeOfDay);
 
         protected Dictionary<CDT, DateTime> GetDateTimes(CDT[] keys, CDT? from = null, CDT? to = null) =>
             filter(keys, from, to)
-                .ToDictionary(p => p,
-                              p => (DateTime) p);
+               .ToDictionary(p => p,
+                             p => (DateTime) p);
 
 
         protected void AssertIsEqual<T>(Dictionary<CDT, T> a1, Dictionary<CDT, T> a2)

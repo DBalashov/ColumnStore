@@ -48,7 +48,7 @@ namespace ColumnStore.Tests.Typed
         {
             var part = getDataPart(keys.Skip(keys.Length / 2).First(),
                                    keys.Skip(keys.Length / 2 + keys.Length / 3).First());
-            
+
             var result = store.Typed.Read<T>(part.First().Key, part.Last().Key.Add(TimeSpan.FromSeconds(1)), columnName);
             Assert.IsNotNull(result);
             Assert.IsNotEmpty(result.Keys);
@@ -64,6 +64,11 @@ namespace ColumnStore.Tests.Typed
         public void WriteByte() =>
             writeRead(() => GetBytes(keys),
                       (sd, ed) => GetBytes(keys, sd, ed));
+
+        [Test]
+        public void WriteSByte() =>
+            writeRead(() => GetSBytes(keys),
+                      (sd, ed) => GetSBytes(keys, sd, ed));
 
         [Test]
         public void WriteBoolean() =>
@@ -84,16 +89,31 @@ namespace ColumnStore.Tests.Typed
         public void WriteInt() =>
             writeRead(() => GetInts(keys),
                       (sd, ed) => GetInts(keys, sd, ed));
-        
+
+        [Test]
+        public void WriteUInt() =>
+            writeRead(() => GetUInts(keys),
+                      (sd, ed) => GetUInts(keys, sd, ed));
+
         [Test]
         public void WriteInt16() =>
             writeRead(() => GetInt16s(keys),
                       (sd, ed) => GetInt16s(keys, sd, ed));
-        
+
+        [Test]
+        public void WriteUInt16() =>
+            writeRead(() => GetUInt16s(keys),
+                      (sd, ed) => GetUInt16s(keys, sd, ed));
+
         [Test]
         public void WriteInt64() =>
             writeRead(() => GetInt64s(keys),
                       (sd, ed) => GetInt64s(keys, sd, ed));
+
+        [Test]
+        public void WriteUInt64() =>
+            writeRead(() => GetUInt64s(keys),
+                      (sd, ed) => GetUInt64s(keys, sd, ed));
 
         [Test]
         public void WriteString() =>

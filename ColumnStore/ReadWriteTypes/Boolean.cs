@@ -1,54 +1,53 @@
 using System;
 using System.IO;
 
-namespace ColumnStore
+namespace ColumnStore;
+
+sealed class ReadWriteHandlerBoolean : ReadWriteBase
 {
-    sealed class ReadWriteHandlerBoolean : ReadWriteBase
+    static readonly byte[] byteMasks =
     {
-        static readonly byte[] byteMasks =
+        0b1111_1110,
+        0b1111_1101,
+        0b1111_1011,
+        0b1111_0111,
+        0b1110_1111,
+        0b1101_1111,
+        0b1011_1111,
+        0b0111_1111,
+    };
+
+    public override void Pack(Array values, Stream targetStream, Range range)
+    {
+        var byteCount = range.Length() / 8 + (range.Length() % 8 > 0 ? 1 : 0);
+        var buff      = poolBytes.Rent(byteCount);
+        var bools     = (bool[]) values;
+
+        for (int i = range.Start.Value, index = 0; i < range.End.Value; i++, index++)
         {
-            0b1111_1110,
-            0b1111_1101,
-            0b1111_1011,
-            0b1111_0111,
-            0b1110_1111,
-            0b1101_1111,
-            0b1011_1111,
-            0b0111_1111,
-        };
+            var byteIndex = index >> 3; // /8
+            var bitIndex  = index % 8;
 
-        public override void Pack(Array values, Stream targetStream, Range range)
-        {
-            var byteCount = range.Length() / 8 + (range.Length() % 8 > 0 ? 1 : 0);
-            var buff      = poolBytes.Rent(byteCount);
-            var bools     = (bool[])values;
+            var byteValue = (byte) (buff[byteIndex] & byteMasks[bitIndex]);
 
-            for (int i = range.Start.Value, index = 0; i < range.End.Value; i++, index++)
-            {
-                var byteIndex = index >> 3; // /8
-                var bitIndex  = index % 8;
+            if (bools[i])
+                byteValue |= (byte) (1 << bitIndex);
 
-                var byteValue = (byte)(buff[byteIndex] & byteMasks[bitIndex]);
-
-                if (bools[i])
-                    byteValue |= (byte)(1 << bitIndex);
-
-                buff[byteIndex] = byteValue;
-            }
-
-            targetStream.Write(buff, 0, byteCount);
-
-            poolBytes.Return(buff);
+            buff[byteIndex] = byteValue;
         }
 
-        public override Array Unpack(Span<byte> buff, int count)
-        {
-            var values = new bool[count];
+        targetStream.Write(buff, 0, byteCount);
 
-            for (var i = 0; i < count; i++)
-                values[i] = (buff[(i >> 3)] & (1 << (i % 8))) > 0;
+        poolBytes.Return(buff);
+    }
 
-            return values;
-        }
+    public override Array Unpack(Span<byte> buff, int count)
+    {
+        var values = new bool[count];
+
+        for (var i = 0; i < count; i++)
+            values[i] = (buff[(i >> 3)] & (1 << (i % 8))) > 0;
+
+        return values;
     }
 }

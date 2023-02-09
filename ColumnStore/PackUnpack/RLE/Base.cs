@@ -1,11 +1,10 @@
 using System;
 
-namespace ColumnStore
-{
-    abstract class RLEPackUnpackHandler
-    {
-        internal abstract byte[]? Pack( Array source);
+namespace ColumnStore;
 
-        internal abstract Array Unpack( byte[] buff);
-    }
+abstract class RLEPackUnpackHandler
+{
+    internal abstract byte[]? Pack(Array source);
+
+    internal abstract Array Unpack(byte[] buff);
 }

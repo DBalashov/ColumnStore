@@ -2,9 +2,6 @@
 **/Debug/**
 **/bin/**
 **/obj/**
-/.run/Examples.run.xml
-/.idea/.idea.ColumnStore/.idea/indexLayout.xml
-/.idea/.idea.ColumnStore/.idea/misc.xml
-/.idea/.idea.ColumnStore/.idea/riderModule.iml
-/.idea/.idea.ColumnStore/.idea/vcs.xml
+.run
+.idea
 /ColumnStore.sln.DotSettings.user

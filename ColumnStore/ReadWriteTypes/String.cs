@@ -2,72 +2,71 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace ColumnStore
+namespace ColumnStore;
+
+// todo nullable bitmap
+sealed class ReadWriteHandlerString : ReadWriteBase
 {
-    // todo nullable bitmap
-    sealed class ReadWriteHandlerString : ReadWriteBase
+    public override void Pack(Array values, Stream targetStream, Range range)
     {
-        public override void Pack(Array values, Stream targetStream, Range range)
-        {
-            using var bw = new BinaryWriter(targetStream, Encoding.UTF8, true);
+        using var bw = new BinaryWriter(targetStream, Encoding.UTF8, true);
 
-            var r = values.Dictionarize(range, "");
+        var r = values.Dictionarize(range, "");
 
-            // write dictionary values
-            bw.Write((ushort)r.Values.Length);
-            foreach (var item in r.Values)
-                if (item == null)
-                {
-                    bw.Write((short)-1);
-                }
-                else
-                {
-                    var buff = Encoding.UTF8.GetBytes(item);
-                    bw.Write((ushort)buff.Length);
-                    bw.Write(buff, 0, buff.Length);
-                }
-
-            // write value indexes
-            var compactType = r.Values.Length.GetCompactType();
-            bw.Write((byte)compactType);
-
-            var requireBytes = range.Length() * (1 << (int)compactType);
-            var buffIndexes  = poolBytes.Rent(requireBytes);
-            var span         = buffIndexes.AsSpan(0, requireBytes);
-            r.Indexes.CompactValues(span, compactType);
-            bw.Write(span);
-            poolBytes.Return(buffIndexes);
-        }
-
-        public override Array Unpack(Span<byte> buff, int count)
-        {
-            // read dictionary values
-            var dictionaryValuesCount = BitConverter.ToUInt16(buff);
-            var offset                = 2;
-
-            var dictionaryValues = new string?[dictionaryValuesCount];
-            for (var i = 0; i < dictionaryValuesCount; i++)
+        // write dictionary values
+        bw.Write((ushort) r.Values.Length);
+        foreach (var item in r.Values)
+            if (item == null)
             {
-                var length = BitConverter.ToInt16(buff.Slice(offset));
-                offset += 2;
-
-                if (length >= 0)
-                {
-                    dictionaryValues[i] =  Encoding.UTF8.GetString(buff.Slice(offset, length));
-                    offset              += length;
-                }
-                else dictionaryValues[i] = null;
+                bw.Write((short) -1);
+            }
+            else
+            {
+                var buff = Encoding.UTF8.GetBytes(item);
+                bw.Write((ushort) buff.Length);
+                bw.Write(buff, 0, buff.Length);
             }
 
-            // read value indexes
-            var compactType = (CompactType)buff[offset++];
-            var indexes     = buff.Slice(offset).UncompactValues(count, compactType);
+        // write value indexes
+        var compactType = r.Values.Length.GetCompactType();
+        bw.Write((byte) compactType);
 
-            var values = new string?[count];
-            for (var i = 0; i < count; i++)
-                values[i] = dictionaryValues[indexes[i]];
+        var requireBytes = range.Length() * (1 << (int) compactType);
+        var buffIndexes  = poolBytes.Rent(requireBytes);
+        var span         = buffIndexes.AsSpan(0, requireBytes);
+        r.Indexes.CompactValues(span, compactType);
+        bw.Write(span);
+        poolBytes.Return(buffIndexes);
+    }
 
-            return values;
+    public override Array Unpack(Span<byte> buff, int count)
+    {
+        // read dictionary values
+        var dictionaryValuesCount = BitConverter.ToUInt16(buff);
+        var offset                = 2;
+
+        var dictionaryValues = new string?[dictionaryValuesCount];
+        for (var i = 0; i < dictionaryValuesCount; i++)
+        {
+            var length = BitConverter.ToInt16(buff.Slice(offset));
+            offset += 2;
+
+            if (length >= 0)
+            {
+                dictionaryValues[i] =  Encoding.UTF8.GetString(buff.Slice(offset, length));
+                offset              += length;
+            }
+            else dictionaryValues[i] = null;
         }
+
+        // read value indexes
+        var compactType = (CompactType) buff[offset++];
+        var indexes     = buff.Slice(offset).UncompactValues(count, compactType);
+
+        var values = new string?[count];
+        for (var i = 0; i < count; i++)
+            values[i] = dictionaryValues[indexes[i]];
+
+        return values;
     }
 }

@@ -4,16 +4,16 @@ using System.Diagnostics.CodeAnalysis;
 namespace ColumnStore;
 
 [ExcludeFromCodeCoverage]
-class RLEPackUnpackHandlerBytes : RLEPackUnpackHandler
+class RLEPackUnpackHandlerInt32s : RLEPackUnpackHandler
 {
     internal override byte[]? Pack(Array source)
     {
         if (source.Length == 0)
             return null;
 
-        var values = (byte[]) source;
+        var values = (int[]) source;
 
-        var outBuff  = new byte[4 + values.Length * 2];
+        var outBuff  = new byte[4 + (values.Length * 4) * 2];
         var outIndex = 4;
 
         var inIndex = 0;
@@ -27,11 +27,12 @@ class RLEPackUnpackHandlerBytes : RLEPackUnpackHandler
                 count++;
             }
 
-            if (outIndex + 2 >= outBuff.Length) return null; // result size > original size -> break & return null (uncompressable) 
+            if (outIndex * 4 + 2 >= outBuff.Length) return null; // result size > original size -> break & return null (uncompressable) 
 
-            outBuff[outIndex]     =  (byte) count;
-            outBuff[outIndex + 1] =  (byte) value;
-            outIndex              += 2;
+            outBuff[outIndex] = (byte) count;
+            Buffer.BlockCopy(BitConverter.GetBytes(value), 0, outBuff, outIndex + 1, 4);
+
+            outIndex += 1 + 4;
         }
 
         Buffer.BlockCopy(BitConverter.GetBytes(values.Length), 0, outBuff, 0, 4);
@@ -47,11 +48,12 @@ class RLEPackUnpackHandlerBytes : RLEPackUnpackHandler
         offset += 4;
 
         var outIndex = 0;
-        var r        = new byte[outElementsCount];
+        var r        = new int[outElementsCount];
         while (offset < buff.Length)
         {
             var cnt   = buff[offset++];
-            var value = buff[offset++];
+            var value = BitConverter.ToInt32(buff, offset);
+            offset += 4;
             for (var k = 0; k < cnt; k++, outIndex++)
                 r[outIndex] = value;
         }

@@ -16,15 +16,24 @@ namespace ColumnStore.Tests.Untyped
             keys   = GetKeys();
             values = new Dictionary<string, Array>();
 
-            var vInts   = keys.Convert().ToDictionary(p => (CDT) p, p => p.Minute + p.Second + p.Day);
-            var vInt16s = keys.Convert().ToDictionary(p => (CDT) p, p => (short) (p.Minute + p.Second + p.Day));
+            var vInts    = keys.Convert().ToDictionary(p => (CDT) p, p => p.Minute + p.Second + p.Day);
+            var vUInts   = keys.Convert().ToDictionary(p => (CDT) p, p => (uint) (p.Minute   + p.Second + p.Day));
+            var vInt16s  = keys.Convert().ToDictionary(p => (CDT) p, p => (short) (p.Minute  + p.Second + p.Day));
+            var vUInt16s = keys.Convert().ToDictionary(p => (CDT) p, p => (ushort) (p.Minute + p.Second + p.Day));
             var vInt64s = keys.Convert().ToDictionary(p => (CDT) p, p =>
-            {
-                Int64 x = p.Minute + p.Second + p.Day + 1;
-                return x | ((x + 2) << 32);
-            });
+                                                                    {
+                                                                        Int64 x = p.Minute + p.Second + p.Day + 1;
+                                                                        return x | ((x + 2) << 32);
+                                                                    });
 
-            var vBytes     = keys.Convert().ToDictionary(p => (CDT) p, p => (byte) (p.Minute + p.Second + p.Day));
+            var vUInt64s = keys.Convert().ToDictionary(p => (CDT) p, p =>
+                                                                     {
+                                                                         Int64 x = p.Minute + p.Second + p.Day + 1;
+                                                                         return (UInt64) (x | ((x + 2) << 32));
+                                                                     });
+
+            var vBytes     = keys.Convert().ToDictionary(p => (CDT) p, p => (byte) (p.Minute  + p.Second + p.Day));
+            var vSBytes    = keys.Convert().ToDictionary(p => (CDT) p, p => (sbyte) (p.Second + p.Day));
             var vBooleans  = keys.Convert().ToDictionary(p => (CDT) p, p => (p.Minute + p.Second + p.Day) % p.Day > 0);
             var vDoubles   = keys.Convert().ToDictionary(p => (CDT) p, p => p.TimeOfDay.TotalMilliseconds);
             var vTimeSpans = keys.Convert().ToDictionary(p => (CDT) p, p => p.TimeOfDay);
@@ -33,16 +42,20 @@ namespace ColumnStore.Tests.Untyped
             var vDateTimes = keys.Convert().ToDictionary(p => (CDT) p, p => p);
             for (var i = 0; i < 2; i++)
             {
-                values.Add("Ints_" + i, vInts.Values.ToArray());
-                values.Add("Int16s_" + i, vInt16s.Values.ToArray());
-                values.Add("Int64s_" + i, vInt64s.Values.ToArray());
-                values.Add("Bytes_" + i, vBytes.Values.ToArray());
-                values.Add("Doubles_" + i, vDoubles.Values.ToArray());
-                values.Add("Guids_" + i, vGuids.Values.ToArray());
-                values.Add("Strings_" + i, vStrings.Values.ToArray());
+                values.Add("Ints_"      + i, vInts.Values.ToArray());
+                values.Add("UInts_"     + i, vUInts.Values.ToArray());
+                values.Add("Int16s_"    + i, vInt16s.Values.ToArray());
+                values.Add("UInt16s_"   + i, vUInt16s.Values.ToArray());
+                values.Add("Int64s_"    + i, vInt64s.Values.ToArray());
+                values.Add("UInt64s_"   + i, vUInt64s.Values.ToArray());
+                values.Add("Bytes_"     + i, vBytes.Values.ToArray());
+                values.Add("SBytes_"    + i, vSBytes.Values.ToArray());
+                values.Add("Doubles_"   + i, vDoubles.Values.ToArray());
+                values.Add("Guids_"     + i, vGuids.Values.ToArray());
+                values.Add("Strings_"   + i, vStrings.Values.ToArray());
                 values.Add("DateTimes_" + i, vDateTimes.Values.ToArray());
                 values.Add("TimeSpans_" + i, vTimeSpans.Values.ToArray());
-                values.Add("Boolean_" + i, vBooleans.Values.ToArray());
+                values.Add("Boolean_"   + i, vBooleans.Values.ToArray());
             }
 
             TestContext.WriteLine($"Keys: {keys.Length}");
