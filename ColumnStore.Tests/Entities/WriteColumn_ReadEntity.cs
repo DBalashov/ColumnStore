@@ -42,6 +42,9 @@ namespace ColumnStore.Tests.Entity
 
         [Test]
         public void WriteByteReadEntity() => checkRead(GetStore(), "ColumnByte", entity => entity.ColumnByte);
+        
+        [Test]
+        public void WriteSByteReadEntity() => checkRead(GetStore(), "ColumnSByte", entity => entity.ColumnSByte);
 
         [Test]
         public void WriteBooleanReadEntity() => checkRead(GetStore(), "ColumnBool", entity => entity.ColumnBool);
@@ -60,13 +63,22 @@ namespace ColumnStore.Tests.Entity
 
         [Test]
         public void WriteInt64ReadEntity() => checkRead(GetStore(), "ColumnInt64", entity => entity.ColumnInt64);
+        
+        [Test]
+        public void WriteUIntReadEntity() => checkRead(GetStore(), "ColumnUInt", entity => entity.ColumnUInt);
+
+        [Test]
+        public void WriteUInt16ReadEntity() => checkRead(GetStore(), "ColumnUInt16", entity => entity.ColumnUInt16);
+
+        [Test]
+        public void WriteUInt64ReadEntity() => checkRead(GetStore(), "ColumnUInt64", entity => entity.ColumnUInt64);
 
         [Test]
         public void WriteStringReadEntity() => checkRead(GetStore(), "ColumnString", entity => entity.ColumnString);
 
         [Test]
         public void WriteDateTimeReadEntity() => checkRead(GetStore(), "ColumnDateTime", entity => entity.ColumnDateTime);
-
+        
         [Test]
         public void WriteTimeSpanReadEntity() => checkRead(GetStore(), "ColumnTimeSpan", entity => entity.ColumnTimeSpan);
     }

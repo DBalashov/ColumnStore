@@ -84,11 +84,11 @@ public static class Extenders
                                                                                       [StoredDataType.Int64]  = new ReadWriteHandlerInt64(),
                                                                                       [StoredDataType.UInt64] = new ReadWriteHandlerUInt64(),
 
-                                                                                      [StoredDataType.Double]   = new ReadWriteHandlerDouble(),
-                                                                                      [StoredDataType.DateTime] = new ReadWriteHandlerDateTime(),
-                                                                                      [StoredDataType.Guid]     = new ReadWriteHandlerGuid(),
-                                                                                      [StoredDataType.String]   = new ReadWriteHandlerString(),
-                                                                                      [StoredDataType.TimeSpan] = new ReadWriteHandlerTimeSpan(),
+                                                                                      [StoredDataType.Double]         = new ReadWriteHandlerDouble(),
+                                                                                      [StoredDataType.DateTime]       = new ReadWriteHandlerDateTime(),
+                                                                                      [StoredDataType.Guid]           = new ReadWriteHandlerGuid(),
+                                                                                      [StoredDataType.String]         = new ReadWriteHandlerString(),
+                                                                                      [StoredDataType.TimeSpan]       = new ReadWriteHandlerTimeSpan(),
                                                                                   };
 
     internal static CompactType GetCompactType(this int count) =>

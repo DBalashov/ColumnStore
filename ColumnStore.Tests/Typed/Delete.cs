@@ -49,7 +49,22 @@ namespace ColumnStore.Tests.Typed
         public void DeleteByte() =>
             delete(() => GetBytes(keys),
                    (sd, ed) => GetBytes(keys, sd, ed));
+        
+        [Test]
+        public void DeleteSByte() =>
+            delete(() => GetSBytes(keys),
+                   (sd, ed) => GetSBytes(keys, sd, ed));
 
+        [Test]
+        public void DeleteInt16s() =>
+            delete(() => GetInt16s(keys),
+                   (sd, ed) => GetInt16s(keys, sd, ed));
+        
+        [Test]
+        public void DeleteUInt16s() =>
+            delete(() => GetUInt16s(keys),
+                   (sd, ed) => GetUInt16s(keys, sd, ed));
+        
         [Test]
         public void DeleteBoolean() =>
             delete(() => GetBytes(keys),
@@ -69,7 +84,22 @@ namespace ColumnStore.Tests.Typed
         public void DeleteInt() =>
             delete(() => GetInts(keys),
                    (sd, ed) => GetInts(keys, sd, ed));
+        
+        [Test]
+        public void DeleteUInt() =>
+            delete(() => GetUInts(keys),
+                   (sd, ed) => GetUInts(keys, sd, ed));
 
+        [Test]
+        public void DeleteInt64() =>
+            delete(() => GetInt64s(keys),
+                   (sd, ed) => GetInt64s(keys, sd, ed));
+        
+        [Test]
+        public void DeleteUInt64() =>
+            delete(() => GetUInt64s(keys),
+                   (sd, ed) => GetUInt64s(keys, sd, ed));
+        
         [Test]
         public void DeleteString() =>
             delete(() => GetStrings(keys),
@@ -79,7 +109,7 @@ namespace ColumnStore.Tests.Typed
         public void DeleteDateTime() =>
             delete(() => GetDateTimes(keys),
                    (sd, ed) => GetDateTimes(keys, sd, ed));
-
+        
         [Test]
         public void DeleteTimeSpan() =>
             delete(() => GetTimeSpans(keys),

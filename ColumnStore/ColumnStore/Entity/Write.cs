@@ -26,25 +26,25 @@ partial class ColumnStoreEntity
                 var data        = ps.Container[sectionName];
 
                 byte[] buff;
-                if (prop.Value.PropertyType      == typeof(int)) buff      = pack<E, int>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(uint)) buff     = pack<E, uint>(data, range.Value, prop.Value);
-                
-                else if (prop.Value.PropertyType == typeof(short)) buff    = pack<E, short>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(ushort)) buff   = pack<E, ushort>(data, range.Value, prop.Value);
-                
-                else if (prop.Value.PropertyType == typeof(Int64)) buff    = pack<E, Int64>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(UInt64)) buff   = pack<E, UInt64>(data, range.Value, prop.Value);
-                
-                else if (prop.Value.PropertyType == typeof(byte)) buff     = pack<E, byte>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(sbyte)) buff    = pack<E, sbyte>(data, range.Value, prop.Value);
-                
-                else if (prop.Value.PropertyType == typeof(bool)) buff     = pack<E, bool>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(double)) buff   = pack<E, double>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(string)) buff   = pack<E, string>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(Guid)) buff     = pack<E, Guid>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(TimeSpan)) buff = pack<E, TimeSpan>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(DateTime)) buff = pack<E, DateTime>(data, range.Value, prop.Value);
-                
+                if (prop.Value.PropertyType      == typeof(int)) buff  = pack<E, int>(data, range.Value, prop.Value);
+                else if (prop.Value.PropertyType == typeof(uint)) buff = pack<E, uint>(data, range.Value, prop.Value);
+
+                else if (prop.Value.PropertyType == typeof(short)) buff  = pack<E, short>(data, range.Value, prop.Value);
+                else if (prop.Value.PropertyType == typeof(ushort)) buff = pack<E, ushort>(data, range.Value, prop.Value);
+
+                else if (prop.Value.PropertyType == typeof(Int64)) buff  = pack<E, Int64>(data, range.Value, prop.Value);
+                else if (prop.Value.PropertyType == typeof(UInt64)) buff = pack<E, UInt64>(data, range.Value, prop.Value);
+
+                else if (prop.Value.PropertyType == typeof(byte)) buff  = pack<E, byte>(data, range.Value, prop.Value);
+                else if (prop.Value.PropertyType == typeof(sbyte)) buff = pack<E, sbyte>(data, range.Value, prop.Value);
+
+                else if (prop.Value.PropertyType == typeof(bool)) buff           = pack<E, bool>(data, range.Value, prop.Value);
+                else if (prop.Value.PropertyType == typeof(double)) buff         = pack<E, double>(data, range.Value, prop.Value);
+                else if (prop.Value.PropertyType == typeof(string)) buff         = pack<E, string>(data, range.Value, prop.Value);
+                else if (prop.Value.PropertyType == typeof(Guid)) buff           = pack<E, Guid>(data, range.Value, prop.Value);
+                else if (prop.Value.PropertyType == typeof(TimeSpan)) buff       = pack<E, TimeSpan>(data, range.Value, prop.Value);
+                else if (prop.Value.PropertyType == typeof(DateTime)) buff       = pack<E, DateTime>(data, range.Value, prop.Value);
+
                 else throw new NotSupportedException(prop.Value.PropertyType + " not supported");
 
                 writeEntries.Add(sectionName, buff);

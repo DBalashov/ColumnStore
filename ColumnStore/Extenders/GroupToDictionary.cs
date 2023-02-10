@@ -6,24 +6,24 @@ namespace ColumnStore;
 
 static class GroupToDictionaryExtenders
 {
-    internal static Dictionary<int, KeyValue<V>[]> GroupToDictionary<V>(this Dictionary<CDT, V> values, Func<CDT, int> truncator)
+    internal static Dictionary<int, KeyValue<V>[]> GroupToDictionary<V>(this Dictionary<CDT, V> values, Func<CDT, int> groupKey)
     {
         var r    = new Dictionary<int, KeyValue<V>[]>();
         var vals = new List<KeyValue<V>>();
 
-        int key = 0;
-        foreach (var kv in values.OrderBy(p => p.Key))
+        int key        = 0;
+        foreach (var (k, v) in values.OrderBy(p => p.Key))
         {
             if (key == 0)
-                key = truncator(kv.Key);
-            if (truncator(kv.Key) == key)
-                vals.Add(new KeyValue<V>(kv.Key.Value, kv.Value));
+                key = groupKey(k);
+            if (groupKey(k) == key)
+                vals.Add(new KeyValue<V>(k.Value, v));
             else
             {
                 r.Add(key, vals.ToArray());
-                key = kv.Key.Value;
+                key = k.Value;
                 vals.Clear();
-                vals.Add(new KeyValue<V>(kv.Key.Value, kv.Value));
+                vals.Add(new KeyValue<V>(k.Value, v));
             }
         }
 

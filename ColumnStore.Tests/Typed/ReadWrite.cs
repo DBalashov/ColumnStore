@@ -124,7 +124,7 @@ namespace ColumnStore.Tests.Typed
         public void WriteDateTime() =>
             writeRead(() => GetDateTimes(keys),
                       (sd, ed) => GetDateTimes(keys, sd, ed));
-
+        
         [Test]
         public void WriteTimeSpan() =>
             writeRead(() => GetTimeSpans(keys),

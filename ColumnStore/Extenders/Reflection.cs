@@ -23,7 +23,7 @@ static class ReflectionExtenders
         typeof(DateTime),
         typeof(TimeSpan),
         typeof(double),
-        typeof(string),
+        typeof(string)
     };
 
     internal static Dictionary<string, PropertyInfo> GetProps(this Type type) =>

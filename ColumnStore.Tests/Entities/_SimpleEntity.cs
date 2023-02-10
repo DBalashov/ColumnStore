@@ -84,7 +84,8 @@ namespace ColumnStore.Tests
             ColumnString = ColumnString2 = ColumnString3 = ColumnString4 = ColumnString5 = "Item Address " + d.ToString("yyyyMMdd") + "/" + d.Month + "/" + d.Minute + "/" + d.Day;
             ColumnTimeSpan = ColumnTimeSpan2 = ColumnTimeSpan3 = ColumnTimeSpan4 = ColumnTimeSpan5 = d.TimeOfDay;
             ColumnDateTime = ColumnDateTime2 = ColumnDateTime3 = ColumnDateTime4 = ColumnDateTime5 = d;
-            ColumnInt = ColumnInt2 = ColumnInt3 = ColumnInt4 = ColumnInt5 = d.Minute + d.Second + d.Day;
+
+            ColumnInt  = ColumnInt2  = ColumnInt3 = ColumnInt4 = ColumnInt5 = d.Minute + d.Second + d.Day;
             ColumnUInt = ColumnUInt2 = (uint) (d.Minute + d.Second + d.Day);
 
             ColumnInt16  = ColumnInt16_2  = ColumnInt16_3 = ColumnInt16_4 = ColumnInt16_5 = (short) (d.Minute + d.Second + d.Day + 1);

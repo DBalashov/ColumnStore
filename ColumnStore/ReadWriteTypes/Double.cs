@@ -8,7 +8,7 @@ sealed class ReadWriteHandlerDouble : ReadWriteBase
 {
     public override void Pack(Array values, Stream targetStream, Range range)
     {
-        if (values.GetValue(range.Start.Value) is not float)
+        if (values.GetValue(range.Start.Value) is double)
         {
             var doubles = (double[]) values;
             var v       = poolFloats.Rent(range.Length());
@@ -18,10 +18,12 @@ sealed class ReadWriteHandlerDouble : ReadWriteBase
             targetStream.Write(MemoryMarshal.Cast<float, byte>(v));
             poolFloats.Return(v);
         }
-        else
+        else if (values.GetValue(range.Start.Value) is float)
         {
-            targetStream.Write(MemoryMarshal.Cast<float, byte>(((float[]) values).AsSpan(new Range(range.Start.Value * 4, range.End))));
+            var span = ((float[]) values).AsSpan(new Range(range.Start.Value * 4, range.End));
+            targetStream.Write(MemoryMarshal.Cast<float, byte>(span));
         }
+        else throw new NotSupportedException($"Type {values.GetValue(range.Start.Value)?.GetType()} not supported");
     }
 
     public override Array Unpack(Span<byte> buff, int count)

@@ -18,7 +18,7 @@ static class ColumnTypedExtenders
         stm.Write(BitConverter.GetBytes(values.Count), 0, 4);
 
         var storedKeys   = poolInts.Rent(values.Count);
-        var storedValues = new V[values.Count];
+        var storedValues = ArrayPool<V>.Shared.Rent(values.Count);
 
         var offset = 0;
         foreach (var v in values)
@@ -33,6 +33,8 @@ static class ColumnTypedExtenders
 
         storedValues.PackData(stm, new Range(0, storedValues.Length));
 
+        ArrayPool<V>.Shared.Return(storedValues);
+        
         return stm.ToArray();
     }
 

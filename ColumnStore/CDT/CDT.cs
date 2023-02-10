@@ -37,7 +37,17 @@ public readonly struct CDT : IComparable<CDT>, IComparable
     public readonly int Value;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public CDT(DateTime dt) => Value = dt.Year is < MIN_YEAR or > MAX_YEAR ? 0 : (int) dt.Subtract(startDT).TotalSeconds;
+    public CDT(DateTime dt)
+    {
+        dt = dt.Kind switch
+             {
+                 DateTimeKind.Local       => dt.ToUniversalTime(),
+                 DateTimeKind.Unspecified => DateTime.SpecifyKind(dt, DateTimeKind.Utc),
+                 _                        => dt
+             };
+
+        Value = dt.Year is < MIN_YEAR or > MAX_YEAR ? 0 : (int) dt.Subtract(startDT).TotalSeconds;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal CDT(int value) => Value = value;
@@ -120,19 +130,9 @@ public readonly struct CDT : IComparable<CDT>, IComparable
                                                             ? DateTime.MinValue
                                                             : startDT.AddSeconds(dt.Value);
 
-    // [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    // public static explicit operator TimeSpan(CDT dt) => dt.Value == 0
-    //     ? TimeSpan.Zero
-    //     : ((DateTime) dt).TimeOfDay;
-
     #endregion
 
     #region +  -  ==  !=
-
-    //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-    // public static CDT operator +(CDT to, int seconds) => new CDT(to.Value + seconds);
-    //
-    // public static CDT operator -(CDT to, int seconds) => new CDT(to.Value - seconds);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator ==(CDT x, CDT y) => x.Value == y.Value;

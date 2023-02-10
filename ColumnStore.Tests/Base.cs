@@ -151,7 +151,6 @@ namespace ColumnStore.Tests
                .ToDictionary(p => p,
                              p => (DateTime) p);
 
-
         protected void AssertIsEqual<T>(Dictionary<CDT, T> a1, Dictionary<CDT, T> a2)
         {
             Assert.IsTrue(a1.Count == a2.Count, "Length mismatch: {0} vs {1}", a1.Count, a2.Count);

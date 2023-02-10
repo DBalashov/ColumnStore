@@ -47,6 +47,9 @@ namespace ColumnStore.Tests.Entity
         public void WriteEntityReadByte() => checkRead(GetStore(), "ColumnByte", entity => entity.ColumnByte);
         
         [Test]
+        public void WriteEntityReadSByte() => checkRead(GetStore(), "ColumnSByte", entity => entity.ColumnSByte);
+        
+        [Test]
         public void WriteEntityReadBoolean() => checkRead(GetStore(), "ColumnBool", entity => entity.ColumnBool);
 
         [Test]
@@ -63,6 +66,15 @@ namespace ColumnStore.Tests.Entity
         
         [Test]
         public void WriteEntityReadInt64() => checkRead(GetStore(), "ColumnInt64", entity => entity.ColumnInt64);
+        
+        [Test]
+        public void WriteEntityReadUInt() => checkRead(GetStore(), "ColumnUInt", entity => entity.ColumnUInt);
+        
+        [Test]
+        public void WriteEntityReadUInt16() => checkRead(GetStore(), "ColumnUInt16", entity => entity.ColumnUInt16);
+        
+        [Test]
+        public void WriteEntityReadUInt64() => checkRead(GetStore(), "ColumnUInt64", entity => entity.ColumnUInt64);
 
         [Test]
         public void WriteEntityReadString() => checkRead(GetStore(), "ColumnString", entity => entity.ColumnString);
