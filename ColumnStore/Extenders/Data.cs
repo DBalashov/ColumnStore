@@ -111,12 +111,12 @@ public static class Extenders
         return readWriteHandlers[dataType].Unpack(data.Slice(6), count);
     }
 
-    internal static void PackData(this Array values, Stream targetStream, Range range)
+    internal static void PackData(this Array values, IVirtualWriteStream targetStream, Range range)
     {
         var dataType = values.DetectDataType();
 
-        targetStream.Write(BitConverter.GetBytes(range.Length()),    0, 4);
-        targetStream.Write(BitConverter.GetBytes((ushort) dataType), 0, 2);
+        targetStream.Write(BitConverter.GetBytes(range.Length()).AsSpan());
+        targetStream.Write(BitConverter.GetBytes((ushort) dataType).AsSpan());
 
         readWriteHandlers[dataType].Pack(values, targetStream, range);
     }

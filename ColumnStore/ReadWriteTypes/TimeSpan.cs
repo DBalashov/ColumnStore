@@ -1,13 +1,11 @@
 using System;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace ColumnStore;
 
 sealed class ReadWriteHandlerTimeSpan : ReadWriteBase
 {
-    public override void Pack(Array values, Stream targetStream, Range range)
+    public override void Pack(Array values, IVirtualWriteStream targetStream, Range range)
     {
         var ts = (TimeSpan[]) values;
         var v  = new int[range.Length()];

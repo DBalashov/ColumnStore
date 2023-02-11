@@ -15,7 +15,7 @@ abstract class ReadWriteBase
     protected static readonly ArrayPool<Int64>  poolInt64s  = ArrayPool<Int64>.Shared;
     protected static readonly ArrayPool<UInt64> poolUInt64s = ArrayPool<UInt64>.Shared;
 
-    public abstract void Pack(Array values, Stream targetStream, Range range);
+    public abstract void Pack(Array values, IVirtualWriteStream targetStream, Range range);
 
     public abstract Array Unpack(Span<byte> buff, int count);
 }

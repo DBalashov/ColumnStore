@@ -18,9 +18,9 @@ namespace ColumnStore.Tests.Typed
 
         #region writeRead / readSimple / readRange
 
-        void writeRead<T>(Func<Dictionary<CDT, T>> getData, Func<CDT, CDT, Dictionary<CDT, T>> getDataPart)
+        void writeRead<T>(bool compressed, Func<Dictionary<CDT, T>> getData, Func<CDT, CDT, Dictionary<CDT, T>> getDataPart)
         {
-            var store      = GetStore();
+            var store      = GetStore(compressed);
             var data       = getData();
             var columnName = typeof(T).Name;
             store.Typed.Write(columnName, getData());
@@ -61,73 +61,73 @@ namespace ColumnStore.Tests.Typed
         #endregion
 
         [Test]
-        public void WriteByte() =>
-            writeRead(() => GetBytes(keys),
-                      (sd, ed) => GetBytes(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteByte(bool compressed) => writeRead(compressed, () => GetBytes(keys), (sd, ed) => GetBytes(keys, sd, ed));
 
         [Test]
-        public void WriteSByte() =>
-            writeRead(() => GetSBytes(keys),
-                      (sd, ed) => GetSBytes(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteSByte(bool compressed) => writeRead(compressed, () => GetSBytes(keys), (sd, ed) => GetSBytes(keys, sd, ed));
 
         [Test]
-        public void WriteBoolean() =>
-            writeRead(() => GetBoolean(keys),
-                      (sd, ed) => GetBoolean(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteBoolean(bool compressed) => writeRead(compressed, () => GetBoolean(keys), (sd, ed) => GetBoolean(keys, sd, ed));
 
         [Test]
-        public void WriteDouble() =>
-            writeRead(() => GetDoubles(keys),
-                      (sd, ed) => GetDoubles(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteDouble(bool compressed) => writeRead(compressed, () => GetDoubles(keys), (sd, ed) => GetDoubles(keys, sd, ed));
 
         [Test]
-        public void WriteGuid() =>
-            writeRead(() => GetGuids(keys),
-                      (sd, ed) => GetGuids(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteGuid(bool compressed) => writeRead(compressed, () => GetGuids(keys), (sd, ed) => GetGuids(keys, sd, ed));
 
         [Test]
-        public void WriteInt() =>
-            writeRead(() => GetInts(keys),
-                      (sd, ed) => GetInts(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteInt(bool compressed) => writeRead(compressed, () => GetInts(keys), (sd, ed) => GetInts(keys, sd, ed));
 
         [Test]
-        public void WriteUInt() =>
-            writeRead(() => GetUInts(keys),
-                      (sd, ed) => GetUInts(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteUInt(bool compressed) => writeRead(compressed, () => GetUInts(keys), (sd, ed) => GetUInts(keys, sd, ed));
 
         [Test]
-        public void WriteInt16() =>
-            writeRead(() => GetInt16s(keys),
-                      (sd, ed) => GetInt16s(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteInt16(bool compressed) => writeRead(compressed, () => GetInt16s(keys), (sd, ed) => GetInt16s(keys, sd, ed));
 
         [Test]
-        public void WriteUInt16() =>
-            writeRead(() => GetUInt16s(keys),
-                      (sd, ed) => GetUInt16s(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteUInt16(bool compressed) => writeRead(compressed, () => GetUInt16s(keys), (sd, ed) => GetUInt16s(keys, sd, ed));
 
         [Test]
-        public void WriteInt64() =>
-            writeRead(() => GetInt64s(keys),
-                      (sd, ed) => GetInt64s(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteInt64(bool compressed) => writeRead(compressed, () => GetInt64s(keys), (sd, ed) => GetInt64s(keys, sd, ed));
 
         [Test]
-        public void WriteUInt64() =>
-            writeRead(() => GetUInt64s(keys),
-                      (sd, ed) => GetUInt64s(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteUInt64(bool compressed) => writeRead(compressed, () => GetUInt64s(keys), (sd, ed) => GetUInt64s(keys, sd, ed));
 
         [Test]
-        public void WriteString() =>
-            writeRead(() => GetStrings(keys),
-                      (sd, ed) => GetStrings(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteString(bool compressed) => writeRead(compressed, () => GetStrings(keys), (sd, ed) => GetStrings(keys, sd, ed));
 
         [Test]
-        public void WriteDateTime() =>
-            writeRead(() => GetDateTimes(keys),
-                      (sd, ed) => GetDateTimes(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteDateTime(bool compressed) => writeRead(compressed, () => GetDateTimes(keys), (sd, ed) => GetDateTimes(keys, sd, ed));
         
         [Test]
-        public void WriteTimeSpan() =>
-            writeRead(() => GetTimeSpans(keys),
-                      (sd, ed) => GetTimeSpans(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteTimeSpan(bool compressed) => writeRead(compressed, () => GetTimeSpans(keys), (sd, ed) => GetTimeSpans(keys, sd, ed));
     }
 }

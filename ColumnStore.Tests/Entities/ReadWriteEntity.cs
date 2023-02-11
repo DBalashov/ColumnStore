@@ -37,17 +37,21 @@ namespace ColumnStore.Tests.Entity
         }
 
         [Test]
-        public void WriteSingle()
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteSingle(bool compressed)
         {
-            var store = GetStore();
+            var store = GetStore(compressed);
             store.Entity.Write(entities);
             TestContext.WriteLine($"Pages: {store.Container.TotalPages}, Length={store.Container.Length / 1024} KB");
         }
 
         [Test]
-        public void WriteMulti()
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteMulti(bool compressed)
         {
-            var store = GetStore();
+            var store = GetStore(compressed);
             store.Entity.Write(entities);
             store.Entity.Write(entities);
             checkRead(store);
@@ -55,9 +59,11 @@ namespace ColumnStore.Tests.Entity
         }
 
         [Test]
-        public void WriteRead()
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteRead(bool compressed)
         {
-            var store = GetStore();
+            var store = GetStore(compressed);
             store.Entity.Write(entities);
             checkRead(store);
             TestContext.WriteLine($"Pages: {store.Container.TotalPages}, Length={store.Container.Length / 1024} KB");

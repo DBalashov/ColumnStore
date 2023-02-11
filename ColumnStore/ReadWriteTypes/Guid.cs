@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Runtime.InteropServices;
 
 namespace ColumnStore;
@@ -7,7 +6,7 @@ namespace ColumnStore;
 // todo nullable bitmap
 sealed class ReadWriteHandlerGuid : ReadWriteBase
 {
-    public override void Pack(Array values, Stream targetStream, Range range)
+    public override void Pack(Array values, IVirtualWriteStream targetStream, Range range)
     {
         var r = values.Dictionarize<Guid>(range);
 
@@ -27,7 +26,7 @@ sealed class ReadWriteHandlerGuid : ReadWriteBase
 
         r.Indexes.CompactValues(span.Slice(1), type);
 
-        targetStream.Write(buff, 0, requireBytes);
+        targetStream.Write(buff.AsSpan(0, requireBytes));
         poolBytes.Return(buff);
     }
 

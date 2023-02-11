@@ -17,7 +17,7 @@ sealed class ReadWriteHandlerBoolean : ReadWriteBase
         0b0111_1111,
     };
 
-    public override void Pack(Array values, Stream targetStream, Range range)
+    public override void Pack(Array values, IVirtualWriteStream targetStream, Range range)
     {
         var byteCount = range.Length() / 8 + (range.Length() % 8 > 0 ? 1 : 0);
         var buff      = poolBytes.Rent(byteCount);
@@ -36,7 +36,7 @@ sealed class ReadWriteHandlerBoolean : ReadWriteBase
             buff[byteIndex] = byteValue;
         }
 
-        targetStream.Write(buff, 0, byteCount);
+        targetStream.Write(buff.AsSpan(0, byteCount));
 
         poolBytes.Return(buff);
     }

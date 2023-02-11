@@ -20,11 +20,11 @@ namespace Examples
 
             var typedRunner = new TestTypedRunner();
             typedRunner.Run(false);
-            //typedRunner.Run(true);
+            typedRunner.Run(true);
 
             var entitesRunner = new TestEntitiesRunner();
             entitesRunner.Run(false);
-            // entitesRunner.Run(true);
+            entitesRunner.Run(true);
 
             Console.WriteLine((int) sw.ElapsedMilliseconds);
         }

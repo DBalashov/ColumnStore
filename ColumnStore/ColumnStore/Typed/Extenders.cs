@@ -9,15 +9,13 @@ namespace ColumnStore;
 
 static class ColumnTypedExtenders
 {
-    static readonly ArrayPool<int> poolInts = ArrayPool<int>.Shared;
-
     internal static byte[] Pack<V>(this Dictionary<int, V> values, bool withCompression)
     {
-        using var stm = new WriteStreamWrapper(new MemoryStream(), withCompression);
+        using var stm = withCompression ? (IVirtualWriteStream) new StreamCompress(new MemoryStream()) : new StreamRaw(new MemoryStream());
 
-        stm.Write(BitConverter.GetBytes(values.Count), 0, 4);
+        stm.Write(BitConverter.GetBytes(values.Count).AsSpan());
 
-        var storedKeys   = poolInts.Rent(values.Count);
+        var storedKeys   = ArrayPool<int>.Shared.Rent(values.Count);
         var storedValues = ArrayPool<V>.Shared.Rent(values.Count);
 
         var offset = 0;
@@ -29,19 +27,19 @@ static class ColumnTypedExtenders
         }
 
         stm.Write(MemoryMarshal.Cast<int, byte>(storedKeys.AsSpan(0, values.Count)));
-        poolInts.Return(storedKeys);
+        ArrayPool<int>.Shared.Return(storedKeys);
 
         storedValues.PackData(stm, new Range(0, storedValues.Length));
 
         ArrayPool<V>.Shared.Return(storedValues);
-        
-        return stm.ToArray();
+
+        return stm.GetBytes();
     }
 
     internal static Dictionary<int, V> Unpack<V>(this byte[] buff, bool withDecompression)
     {
         if (withDecompression)
-            buff = buff.GZipUnpack();
+            buff = new StreamDecompress(buff).GetBytes();
 
         var count  = BitConverter.ToInt32(buff, 0);
         var offset = 4;

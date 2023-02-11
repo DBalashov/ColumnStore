@@ -14,11 +14,11 @@ static class ColumnUntypedExtenders
         stmTarget.Write(BitConverter.GetBytes(r.Length()),                         0, 4);
         stmTarget.Write(BitConverter.GetBytes((int) data.Values.DetectDataType()), 0, 4);
 
-        using var stm = new WriteStreamWrapper(stmTarget, withCompression);
+        using var stm = withCompression ? (IVirtualWriteStream)new StreamCompress(stmTarget) : new StreamRaw(stmTarget);
         stm.Write(MemoryMarshal.Cast<CDT, byte>(data.Keys.AsSpan(r)));
         data.Values.PackData(stm, r);
 
-        return stm.ToArray();
+        return stm.GetBytes();
     }
 
     internal static UntypedColumn Unpack(this byte[] buff, bool withDecompression)
@@ -31,7 +31,7 @@ static class ColumnUntypedExtenders
 
         if (withDecompression)
         {
-            buff   = buff.GZipUnpack(offset);
+            buff   = new StreamDecompress(buff, offset).GetBytes();
             offset = 0;
         }
 

@@ -1,12 +1,11 @@
 using System;
 using System.Buffers;
-using System.IO;
 
 namespace ColumnStore;
 
 abstract class IntBase : ReadWriteBase
 {
-    protected void packIntXX<T>(Array values, Stream targetStream, Range range, DictionarizeResult<T> r, int elementSize)
+    protected void packIntXX<T>(Array values, IVirtualWriteStream targetStream, Range range, DictionarizeResult<T> r, int elementSize)
     {
         var compactType = r.Values.Length.GetCompactType();
         if (compactType <= CompactType.Short)
@@ -27,7 +26,7 @@ abstract class IntBase : ReadWriteBase
             // write value indexes
             buff[offset++] = (byte) compactType;
             r.Indexes.CompactValues(buff.AsSpan(offset, requireBytes - offset), compactType);
-            targetStream.Write(buff, 0, requireBytes);
+            targetStream.Write(buff.AsSpan(0,           requireBytes));
             poolBytes.Return(buff);
         }
         else
@@ -40,7 +39,7 @@ abstract class IntBase : ReadWriteBase
 
             // write values
             Buffer.BlockCopy(values, range.Start.Value * elementSize, buff, offset, range.Length() * elementSize);
-            targetStream.Write(buff, 0, requireBytes);
+            targetStream.Write(buff.AsSpan(0, requireBytes));
             poolBytes.Return(buff);
         }
     }

@@ -16,10 +16,10 @@ namespace ColumnStore.Tests.Typed
             TestContext.WriteLine($"Keys: {keys.Length}");
         }
 
-        void delete<T>(Func<Dictionary<CDT, T>> getData, Func<CDT, CDT, Dictionary<CDT, T>> getDataPart)
+        void delete<T>(bool compressed, Func<Dictionary<CDT, T>> getData, Func<CDT, CDT, Dictionary<CDT, T>> getDataPart)
         {
             var columnName = typeof(T).Name;
-            var store      = GetStore();
+            var store      = GetStore(compressed);
             var data       = getData();
             store.Typed.Write(columnName, data);
             TestContext.WriteLine($"Pages: {store.Container.TotalPages}, Length={store.Container.Length / 1024} KB");
@@ -46,73 +46,73 @@ namespace ColumnStore.Tests.Typed
         }
 
         [Test]
-        public void DeleteByte() =>
-            delete(() => GetBytes(keys),
-                   (sd, ed) => GetBytes(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void DeleteByte(bool compressed) => delete(compressed, () => GetBytes(keys), (sd, ed) => GetBytes(keys, sd, ed));
         
         [Test]
-        public void DeleteSByte() =>
-            delete(() => GetSBytes(keys),
-                   (sd, ed) => GetSBytes(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void DeleteSByte(bool compressed) => delete(compressed, () => GetSBytes(keys), (sd, ed) => GetSBytes(keys, sd, ed));
 
         [Test]
-        public void DeleteInt16s() =>
-            delete(() => GetInt16s(keys),
-                   (sd, ed) => GetInt16s(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void DeleteInt16s(bool compressed) => delete(compressed, () => GetInt16s(keys), (sd, ed) => GetInt16s(keys, sd, ed));
         
         [Test]
-        public void DeleteUInt16s() =>
-            delete(() => GetUInt16s(keys),
-                   (sd, ed) => GetUInt16s(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void DeleteUInt16s(bool compressed) => delete(compressed, () => GetUInt16s(keys), (sd, ed) => GetUInt16s(keys, sd, ed));
         
         [Test]
-        public void DeleteBoolean() =>
-            delete(() => GetBytes(keys),
-                   (sd, ed) => GetBytes(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void DeleteBoolean(bool compressed) => delete(compressed, () => GetBytes(keys), (sd, ed) => GetBytes(keys, sd, ed));
 
         [Test]
-        public void DeleteDouble() =>
-            delete(() => GetDoubles(keys),
-                   (sd, ed) => GetDoubles(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void DeleteDouble(bool compressed) => delete(compressed, () => GetDoubles(keys), (sd, ed) => GetDoubles(keys, sd, ed));
 
         [Test]
-        public void DeleteGuid() =>
-            delete(() => GetGuids(keys),
-                   (sd, ed) => GetGuids(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void DeleteGuid(bool compressed) => delete(compressed, () => GetGuids(keys), (sd, ed) => GetGuids(keys, sd, ed));
 
         [Test]
-        public void DeleteInt() =>
-            delete(() => GetInts(keys),
-                   (sd, ed) => GetInts(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void DeleteInt(bool compressed) => delete(compressed, () => GetInts(keys), (sd, ed) => GetInts(keys, sd, ed));
         
         [Test]
-        public void DeleteUInt() =>
-            delete(() => GetUInts(keys),
-                   (sd, ed) => GetUInts(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void DeleteUInt(bool compressed) => delete(compressed, () => GetUInts(keys), (sd, ed) => GetUInts(keys, sd, ed));
 
         [Test]
-        public void DeleteInt64() =>
-            delete(() => GetInt64s(keys),
-                   (sd, ed) => GetInt64s(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void DeleteInt64(bool compressed) => delete(compressed, () => GetInt64s(keys), (sd, ed) => GetInt64s(keys, sd, ed));
         
         [Test]
-        public void DeleteUInt64() =>
-            delete(() => GetUInt64s(keys),
-                   (sd, ed) => GetUInt64s(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void DeleteUInt64(bool compressed) => delete(compressed, () => GetUInt64s(keys), (sd, ed) => GetUInt64s(keys, sd, ed));
         
         [Test]
-        public void DeleteString() =>
-            delete(() => GetStrings(keys),
-                   (sd, ed) => GetStrings(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void DeleteString(bool compressed) => delete(compressed, () => GetStrings(keys), (sd, ed) => GetStrings(keys, sd, ed));
 
         [Test]
-        public void DeleteDateTime() =>
-            delete(() => GetDateTimes(keys),
-                   (sd, ed) => GetDateTimes(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void DeleteDateTime(bool compressed) => delete(compressed, () => GetDateTimes(keys), (sd, ed) => GetDateTimes(keys, sd, ed));
         
         [Test]
-        public void DeleteTimeSpan() =>
-            delete(() => GetTimeSpans(keys),
-                   (sd, ed) => GetTimeSpans(keys, sd, ed));
+        [TestCase(false)]
+        [TestCase(true)]
+        public void DeleteTimeSpan(bool compressed) => delete(compressed, () => GetTimeSpans(keys), (sd, ed) => GetTimeSpans(keys, sd, ed));
     }
 }

@@ -7,13 +7,15 @@ namespace ColumnStore.Tests.Typed
     public class ReadWriteMerge : Base
     {
         CDT[]                 keys;
-        PersistentColumnStore store;
+        PersistentColumnStore storeUncompressed;
+        PersistentColumnStore storeCompressed;
 
         [SetUp]
         public void Setup()
         {
-            keys  = GetKeys();
-            store = GetStore();
+            keys              = GetKeys();
+            storeUncompressed = GetStore(false);
+            storeCompressed   = GetStore(true);
             TestContext.WriteLine($"Keys: {keys.Length}");
         }
 
@@ -21,9 +23,12 @@ namespace ColumnStore.Tests.Typed
         {
             var d          = getData();
             var columnName = typeof(T).Name;
-            store.Typed.Write(columnName, d);
-            store.Typed.Write(columnName, d);
-            TestContext.WriteLine($"Pages: {store.Container.TotalPages}, Length={store.Container.Length / 1024} KB");
+            storeCompressed.Typed.Write(columnName, d);
+            storeCompressed.Typed.Write(columnName, d);
+            storeUncompressed.Typed.Write(columnName, d);
+            storeUncompressed.Typed.Write(columnName, d);
+            TestContext.WriteLine($"Pages(U): {storeUncompressed.Container.TotalPages}, Length(U)={storeUncompressed.Container.Length / 1024} KB");
+            TestContext.WriteLine($"Pages(C): {storeCompressed.Container.TotalPages}, Length(C)={storeCompressed.Container.Length     / 1024} KB");
         }
 
         [Test]
@@ -31,7 +36,7 @@ namespace ColumnStore.Tests.Typed
 
         [Test]
         public void WriteSByte() => writeWithMerge(() => GetSBytes(keys));
-        
+
         [Test]
         public void WriteBoolean() => writeWithMerge(() => GetBoolean(keys));
 
@@ -43,22 +48,22 @@ namespace ColumnStore.Tests.Typed
 
         [Test]
         public void WriteInt() => writeWithMerge(() => GetInts(keys));
-        
+
         [Test]
         public void WriteUInt() => writeWithMerge(() => GetUInts(keys));
-        
+
         [Test]
         public void WriteInt16() => writeWithMerge(() => GetInt16s(keys));
-        
+
         [Test]
         public void WriteUInt16() => writeWithMerge(() => GetUInt16s(keys));
 
         [Test]
         public void WriteInt64() => writeWithMerge(() => GetInt64s(keys));
-        
+
         [Test]
         public void WriteUInt64() => writeWithMerge(() => GetUInt64s(keys));
-        
+
         [Test]
         public void WriteString() => writeWithMerge(() => GetStrings(keys));
 

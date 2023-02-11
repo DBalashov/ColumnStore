@@ -7,35 +7,35 @@ namespace ColumnStore;
 // todo nullable bitmap
 sealed class ReadWriteHandlerString : ReadWriteBase
 {
-    public override void Pack(Array values, Stream targetStream, Range range)
+    public override void Pack(Array values, IVirtualWriteStream targetStream, Range range)
     {
-        using var bw = new BinaryWriter(targetStream, Encoding.UTF8, true);
+        //using var bw = new BinaryWriter(targetStream.GetUnderlyingStreamn(), Encoding.UTF8, true);
 
         var r = values.Dictionarize(range, "");
 
         // write dictionary values
-        bw.Write((ushort) r.Values.Length);
+        targetStream.Write((ushort) r.Values.Length);
         foreach (var item in r.Values)
             if (item == null)
             {
-                bw.Write((short) -1);
+                targetStream.Write((short) -1);
             }
             else
             {
                 var buff = Encoding.UTF8.GetBytes(item);
-                bw.Write((ushort) buff.Length);
-                bw.Write(buff, 0, buff.Length);
+                targetStream.Write((ushort) buff.Length);
+                targetStream.Write(buff.AsSpan(0, buff.Length));
             }
 
         // write value indexes
         var compactType = r.Values.Length.GetCompactType();
-        bw.Write((byte) compactType);
+        targetStream.Write((byte) compactType);
 
         var requireBytes = range.Length() * (1 << (int) compactType);
         var buffIndexes  = poolBytes.Rent(requireBytes);
         var span         = buffIndexes.AsSpan(0, requireBytes);
         r.Indexes.CompactValues(span, compactType);
-        bw.Write(span);
+        targetStream.Write(span);
         poolBytes.Return(buffIndexes);
     }
 

@@ -8,12 +8,10 @@ namespace ColumnStore.Tests
 {
     public abstract class Base
     {
-        protected readonly Random r = new(Guid.Empty.GetHashCode());
-
         protected DateTime SD = new(2020, 1, 1);
         protected DateTime ED = new(2020, 12, 1);
 
-        protected PersistentColumnStore GetStore() => new(new InMemoryContainer(new PersistentContainerSettings(1024)), CDTUnit.Month);
+        protected PersistentColumnStore GetStore(bool compressed) => new(new InMemoryContainer(new PersistentContainerSettings(1024)), CDTUnit.Month, compressed);
 
         protected CDT[] GetKeys(int everyMinute = 10)
         {

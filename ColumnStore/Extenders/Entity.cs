@@ -14,9 +14,9 @@ static class EntityExtenders
 
     internal static byte[] Pack<K, V>(this KeyValue<K>[] newData, PropertyInfo prop, bool withCompression)
     {
-        using var stm = new WriteStreamWrapper(new MemoryStream(), withCompression);
+        using var stm = withCompression ? (IVirtualWriteStream) new StreamCompress(new MemoryStream()) : new StreamRaw(new MemoryStream());
 
-        stm.Write(BitConverter.GetBytes(newData.Length), 0, 4);
+        stm.Write(BitConverter.GetBytes(newData.Length).AsSpan());
 
         var getValue     = prop.getActionGet<K, V>();
         var storedKeys   = poolInts.Rent(newData.Length);
@@ -33,7 +33,7 @@ static class EntityExtenders
         poolInts.Return(storedKeys);
 
         storedValues.PackData(stm, new Range(0, newData.Length));
-        return stm.ToArray();
+        return stm.GetBytes();
     }
 
     internal static Dictionary<int, V> MergeWithReplace<K, V>(this Dictionary<int, V> existing,

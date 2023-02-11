@@ -44,45 +44,73 @@ namespace ColumnStore.Tests.Entity
         }
 
         [Test]
-        public void WriteEntityReadByte() => checkRead(GetStore(), "ColumnByte", entity => entity.ColumnByte);
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteEntityReadByte(bool compressed) => checkRead(GetStore(compressed), "ColumnByte", entity => entity.ColumnByte);
         
         [Test]
-        public void WriteEntityReadSByte() => checkRead(GetStore(), "ColumnSByte", entity => entity.ColumnSByte);
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteEntityReadSByte(bool compressed) => checkRead(GetStore(compressed), "ColumnSByte", entity => entity.ColumnSByte);
         
         [Test]
-        public void WriteEntityReadBoolean() => checkRead(GetStore(), "ColumnBool", entity => entity.ColumnBool);
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteEntityReadBoolean(bool compressed) => checkRead(GetStore(compressed), "ColumnBool", entity => entity.ColumnBool);
 
         [Test]
-        public void WriteEntityReadDouble() => checkRead(GetStore(), "ColumnDouble", entity => entity.ColumnDouble);
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteEntityReadDouble(bool compressed) => checkRead(GetStore(compressed), "ColumnDouble", entity => entity.ColumnDouble);
 
         [Test]
-        public void WriteEntityReadGuid() => checkRead(GetStore(), "ColumnGuid", entity => entity.ColumnGuid);
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteEntityReadGuid(bool compressed) => checkRead(GetStore(compressed), "ColumnGuid", entity => entity.ColumnGuid);
 
         [Test]
-        public void WriteEntityReadInt() => checkRead(GetStore(), "ColumnInt", entity => entity.ColumnInt);
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteEntityReadInt(bool compressed) => checkRead(GetStore(compressed), "ColumnInt", entity => entity.ColumnInt);
         
         [Test]
-        public void WriteEntityReadInt16() => checkRead(GetStore(), "ColumnInt16", entity => entity.ColumnInt16);
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteEntityReadInt16(bool compressed) => checkRead(GetStore(compressed), "ColumnInt16", entity => entity.ColumnInt16);
         
         [Test]
-        public void WriteEntityReadInt64() => checkRead(GetStore(), "ColumnInt64", entity => entity.ColumnInt64);
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteEntityReadInt64(bool compressed) => checkRead(GetStore(compressed), "ColumnInt64", entity => entity.ColumnInt64);
         
         [Test]
-        public void WriteEntityReadUInt() => checkRead(GetStore(), "ColumnUInt", entity => entity.ColumnUInt);
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteEntityReadUInt(bool compressed) => checkRead(GetStore(compressed), "ColumnUInt", entity => entity.ColumnUInt);
         
         [Test]
-        public void WriteEntityReadUInt16() => checkRead(GetStore(), "ColumnUInt16", entity => entity.ColumnUInt16);
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteEntityReadUInt16(bool compressed) => checkRead(GetStore(compressed), "ColumnUInt16", entity => entity.ColumnUInt16);
         
         [Test]
-        public void WriteEntityReadUInt64() => checkRead(GetStore(), "ColumnUInt64", entity => entity.ColumnUInt64);
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteEntityReadUInt64(bool compressed) => checkRead(GetStore(compressed), "ColumnUInt64", entity => entity.ColumnUInt64);
 
         [Test]
-        public void WriteEntityReadString() => checkRead(GetStore(), "ColumnString", entity => entity.ColumnString);
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteEntityReadString(bool compressed) => checkRead(GetStore(compressed), "ColumnString", entity => entity.ColumnString);
 
         [Test]
-        public void WriteEntityReadDateTime() => checkRead(GetStore(), "ColumnDateTime", entity => entity.ColumnDateTime);
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteEntityReadDateTime(bool compressed) => checkRead(GetStore(compressed), "ColumnDateTime", entity => entity.ColumnDateTime);
 
         [Test]
-        public void WriteEntityReadTimeSpan() => checkRead(GetStore(), "ColumnTimeSpan", entity => entity.ColumnTimeSpan);
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteEntityReadTimeSpan(bool compressed) => checkRead(GetStore(compressed), "ColumnTimeSpan", entity => entity.ColumnTimeSpan);
     }
 }

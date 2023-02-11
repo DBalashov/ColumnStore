@@ -1,12 +1,11 @@
 using System;
-using System.IO;
 using System.Runtime.InteropServices;
 
 namespace ColumnStore;
 
 sealed class ReadWriteHandlerDateTime : ReadWriteBase
 {
-    public override void Pack(Array values, Stream targetStream, Range range)
+    public override void Pack(Array values, IVirtualWriteStream targetStream, Range range)
     {
         var v  = new CDT[range.Length()];
         var dt = (DateTime[]) values;

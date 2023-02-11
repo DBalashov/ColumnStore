@@ -78,9 +78,11 @@ namespace ColumnStore.Tests.Untyped
         }
 
         [Test]
-        public void WriteSingle()
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteSingle(bool compressed)
         {
-            var store = GetStore();
+            var store = GetStore(compressed);
 
             var data = values.ToDictionary(p => p.Key, p => new UntypedColumn(keys, p.Value));
             store.Untyped.Write(data);
@@ -97,9 +99,11 @@ namespace ColumnStore.Tests.Untyped
         }
 
         [Test]
-        public void WriteMerge()
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteMerge(bool compressed)
         {
-            var store = GetStore();
+            var store = GetStore(compressed);
 
             var data = values.ToDictionary(p => p.Key, p => new UntypedColumn(keys, p.Value));
             store.Untyped.Write(data);
