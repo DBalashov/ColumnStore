@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using SpanByteExtenders;
 
 namespace ColumnStore;
 
@@ -30,17 +31,15 @@ sealed class ReadWriteHandlerGuid : ReadWriteBase
         poolBytes.Return(buff);
     }
 
-    public override Array Unpack(Span<byte> buff, int count)
+    public override Array Unpack(Span<byte> span, int count)
     {
-        var dictionaryValuesCount = BitConverter.ToUInt16(buff);
-
-        var dictionaryValues = MemoryMarshal.Cast<byte, Guid>(buff.Slice(2)).Slice(0, dictionaryValuesCount);
-        buff = buff.Slice(2 + dictionaryValuesCount * 16);
+        var dictionaryValuesCount = span.ReadUInt16();
+        var dictionaryValues      = span.ReadGuids(dictionaryValuesCount);
 
         var values      = new Guid[count];
-        var compactType = (CompactType) buff[0];
+        var compactType = (CompactType) span.ReadByte();
 
-        var indexes = buff.Slice(1).UncompactValues(count, compactType);
+        var indexes = span.UncompactValues(count, compactType);
         for (var i = 0; i < indexes.Length; i++)
             values[i] = dictionaryValues[indexes[i]];
         return values;

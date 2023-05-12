@@ -1,9 +1,11 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 #pragma warning disable 659
 
 namespace Examples
 {
+    [ExcludeFromCodeCoverage]
     public class SimpleEntity
     {
         public int      ColumnInt      { get; set; }

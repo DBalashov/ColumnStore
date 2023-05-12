@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using SpanByteExtenders;
 
 namespace ColumnStore;
 
@@ -27,7 +28,7 @@ sealed class ReadWriteHandlerDouble : ReadWriteBase
 
     public override Array Unpack(Span<byte> buff, int count)
     {
-        var span = MemoryMarshal.Cast<byte, float>(buff.Slice(0, count * 4));
+        var span = buff.ReadFloats(count);
         var r    = new double[count];
         for (var i = 0; i < count; i++)
             r[i] = span[i];

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using SpanByteExtenders;
 
 namespace ColumnStore;
 
@@ -39,29 +40,21 @@ sealed class ReadWriteHandlerString : ReadWriteBase
         poolBytes.Return(buffIndexes);
     }
 
-    public override Array Unpack(Span<byte> buff, int count)
+    public override Array Unpack(Span<byte> span, int count)
     {
         // read dictionary values
-        var dictionaryValuesCount = BitConverter.ToUInt16(buff);
-        var offset                = 2;
+        var dictionaryValuesCount = span.ReadUInt16();
 
         var dictionaryValues = new string?[dictionaryValuesCount];
         for (var i = 0; i < dictionaryValuesCount; i++)
         {
-            var length = BitConverter.ToInt16(buff.Slice(offset));
-            offset += 2;
-
-            if (length >= 0)
-            {
-                dictionaryValues[i] =  Encoding.UTF8.GetString(buff.Slice(offset, length));
-                offset              += length;
-            }
-            else dictionaryValues[i] = null;
+            var length = span.ReadInt16();
+            dictionaryValues[i] = length >= 0 ? Encoding.UTF8.GetString(span.ReadBytes(length)) : null;
         }
 
         // read value indexes
-        var compactType = (CompactType) buff[offset++];
-        var indexes     = buff.Slice(offset).UncompactValues(count, compactType);
+        var compactType = (CompactType) span.ReadByte();
+        var indexes     = span.UncompactValues(count, compactType);
 
         var values = new string?[count];
         for (var i = 0; i < count; i++)

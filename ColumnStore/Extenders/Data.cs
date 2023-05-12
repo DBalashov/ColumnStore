@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using SpanByteExtenders;
 
 namespace ColumnStore;
 
@@ -106,9 +107,9 @@ public static class Extenders
 
     internal static Array UnpackData(this Span<byte> data)
     {
-        var count    = BitConverter.ToInt32(data);
-        var dataType = (StoredDataType) BitConverter.ToUInt16(data.Slice(4));
-        return readWriteHandlers[dataType].Unpack(data.Slice(6), count);
+        var count    = data.ReadInt32();
+        var dataType = (StoredDataType) data.ReadUInt16();
+        return readWriteHandlers[dataType].Unpack(data, count);
     }
 
     internal static void PackData(this Array values, IVirtualWriteStream targetStream, Range range)

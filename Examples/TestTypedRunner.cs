@@ -1,11 +1,13 @@
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using ColumnStore;
 using FileContainer;
 
 namespace Examples
 {
+    [ExcludeFromCodeCoverage]
     sealed class TestTypedRunner : TestAbstractRunner
     {
         public void Run(bool compressedContainer)

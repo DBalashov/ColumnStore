@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using ColumnStore;
@@ -62,6 +63,7 @@ namespace CSCLI
         }
     }
 
+    [ExcludeFromCodeCoverage]
     [Verb("dir", HelpText = "Show directory of container")]
     public class ActionDirParams
     {

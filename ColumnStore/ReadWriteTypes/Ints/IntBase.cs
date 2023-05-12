@@ -1,11 +1,13 @@
 using System;
 using System.Buffers;
+using System.Runtime.InteropServices;
+using SpanByteExtenders;
 
 namespace ColumnStore;
 
 abstract class IntBase : ReadWriteBase
 {
-    protected void packIntXX<T>(Array values, IVirtualWriteStream targetStream, Range range, DictionarizeResult<T> r, int elementSize)
+    protected void packIntXX<T>(Array values, IVirtualWriteStream targetStream, Range range, DictionarizeResult<T> r, int elementSize) where T : struct
     {
         var compactType = r.Values.Length.GetCompactType();
         if (compactType <= CompactType.Short)
@@ -44,29 +46,28 @@ abstract class IntBase : ReadWriteBase
         }
     }
 
-    protected Array unpackIntXX<T>(Span<byte> buff, int count, ArrayPool<T> pool, int elementSize)
+    protected Array unpackIntXX<T>(Span<byte> span, int count, ArrayPool<T> pool, int elementSize) where T : struct
     {
-        var dictionaryValuesCount = BitConverter.ToUInt16(buff);
-        var offset                = 2;
+        var dictionaryValuesCount = span.ReadUInt16();
 
         var dictionaryValues = pool.Rent(dictionaryValuesCount);
-        Buffer.BlockCopy(buff.Slice(offset, dictionaryValuesCount * elementSize).ToArray(), 0,
-                         dictionaryValues, 0, dictionaryValuesCount * elementSize);
-        offset += dictionaryValuesCount * elementSize;
+        var length           = dictionaryValuesCount * elementSize;
+        span.Slice(0, length).CopyTo(MemoryMarshal.Cast<T, byte>(dictionaryValues.AsSpan(0, dictionaryValuesCount)));
 
-        var compactType = (CompactType) buff[offset++];
+        span = span.Slice(length);
+
+        var compactType = (CompactType) span.ReadByte();
         var values      = new T[count];
 
         if (compactType <= CompactType.Short)
         {
-            var indexes = buff.Slice(offset).UncompactValues(count, compactType);
+            var indexes = span.UncompactValues(count, compactType);
             for (var i = 0; i < indexes.Length; i++)
                 values[i] = dictionaryValues[indexes[i]];
         }
         else
         {
-            Buffer.BlockCopy(buff.Slice(offset, count * elementSize).ToArray(), 0,
-                             values, 0, count * elementSize);
+            span.Slice(0, count*elementSize).CopyTo(MemoryMarshal.Cast<T, byte>(values.AsSpan(0, count)));
         }
 
         pool.Return(dictionaryValues);

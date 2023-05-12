@@ -50,14 +50,7 @@ static class EntityExtenders
 
         var getValue = prop.getActionGet<K, V>();
         foreach (var newValue in newData)
-        {
-            var key = newValue.Key;
-
-            var value = getValue(newValue.Value);
-            if (!r.ContainsKey(key))
-                r.Add(key, value);
-            else r[key] = value;
-        }
+            r[newValue.Key] = getValue(newValue.Value);
 
         return r;
     }

@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using SpanByteExtenders;
 
 namespace ColumnStore;
 
@@ -18,7 +19,7 @@ sealed class ReadWriteHandlerDateTime : ReadWriteBase
     public override Array Unpack(Span<byte> buff, int count)
     {
         var r    = new DateTime[count];
-        var span = MemoryMarshal.Cast<byte, CDT>(buff.Slice(0, count * 4));
+        var span = buff.ReadStructs<CDT>(count);
         for (var i = 0; i < r.Length; i++)
             r[i] = span[i];
         return r;

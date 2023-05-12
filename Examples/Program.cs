@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using ColumnStore;
 using FileContainer;
 
 namespace Examples
 {
+    [ExcludeFromCodeCoverage]
     class Program
     {
         static void Main(string[] args)

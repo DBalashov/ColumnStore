@@ -11,7 +11,7 @@
 
     <ItemGroup>
       <PackageReference Include="CommandLineParser" Version="2.9.1" />
-      <PackageReference Include="FileContainer" Version="2023.2.9" />
+      <PackageReference Include="FileContainer" Version="2023.5.11" />
     </ItemGroup>
 
 </Project>

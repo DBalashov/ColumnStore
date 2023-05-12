@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using SpanByteExtenders;
 
 namespace ColumnStore;
 
@@ -11,11 +12,6 @@ sealed class ReadWriteHandlerSByte : ReadWriteBase
         targetStream.Write(MemoryMarshal.Cast<sbyte, byte>(span));
     }
 
-    public override Array Unpack(Span<byte> buff, int count)
-    {
-        var values     = new sbyte[count];
-        var valuesSpan = MemoryMarshal.Cast<sbyte, byte>(values);
-        buff.Slice(0, count).CopyTo(valuesSpan);
-        return values;
-    }
+    public override Array Unpack(Span<byte> buff, int count) =>
+        buff.ReadSBytes(count).ToArray();
 }

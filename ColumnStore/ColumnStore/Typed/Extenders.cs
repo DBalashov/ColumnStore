@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using SpanByteExtenders;
 
 namespace ColumnStore;
 
@@ -38,16 +39,12 @@ static class ColumnTypedExtenders
 
     internal static Dictionary<int, V> Unpack<V>(this byte[] buff, bool withDecompression)
     {
-        if (withDecompression)
-            buff = new StreamDecompress(buff).GetBytes();
+        var span = (withDecompression ? new StreamDecompress(buff).GetBytes() : buff).AsSpan();
 
-        var count  = BitConverter.ToInt32(buff, 0);
-        var offset = 4;
+        var count = span.ReadInt32();
+        var keys  = span.ReadInt32s(count);
 
-        var keys = MemoryMarshal.Cast<byte, int>(buff.AsSpan(offset, count * 4));
-        offset += count * 4;
-
-        var values = (V[]) buff.AsSpan(offset, buff.Length - offset).UnpackData();
+        var values = (V[]) span.UnpackData();
         var r      = new Dictionary<int, V>(count);
         for (var i = 0; i < count; i++)
             r.Add(keys[i], values[i]);
@@ -64,12 +61,7 @@ static class ColumnTypedExtenders
             r.Add(value.Key, value.Value);
 
         foreach (var newValue in newData)
-        {
-            var key = newValue.Key;
-            if (!r.ContainsKey(key))
-                r.Add(key, newValue.Value);
-            else r[key] = newValue.Value;
-        }
+            r[newValue.Key] = newValue.Value;
 
         return r;
     }

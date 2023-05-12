@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using SpanByteExtenders;
 
 namespace ColumnStore;
 
@@ -17,7 +18,7 @@ sealed class ReadWriteHandlerTimeSpan : ReadWriteBase
 
     public override Array Unpack(Span<byte> buff, int count)
     {
-        var span = MemoryMarshal.Cast<byte, int>(buff.Slice(0, count * 4));
+        var span = buff.ReadInt32s(count);
         var r    = new TimeSpan[count];
         for (var i = 0; i < count; i++)
             r[i] = TimeSpan.FromSeconds(span[i]);
