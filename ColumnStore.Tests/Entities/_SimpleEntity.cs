@@ -73,7 +73,7 @@ namespace ColumnStore.Tests
         {
         }
 
-        internal SimpleEntity(DateTime d)
+        public SimpleEntity(DateTime d)
         {
             ColumnByte  = ColumnByte2  = ColumnByte3 = ColumnByte4 = ColumnByte5 = (byte) (d.Minute + d.Second + d.Day);
             ColumnSByte = ColumnSByte2 = (sbyte) (d.Second + d.Day);
