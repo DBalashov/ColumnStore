@@ -15,7 +15,7 @@ partial class ColumnStoreTyped : IColumnStoreTyped
         if (from >= to)
             throw new ArgumentException($"Invalid values: {from} >= {to}");
         if (string.IsNullOrEmpty(columnName))
-            throw new ArgumentException("Can't be empty", nameof(columnName));
+            throw new ArgumentNullException(nameof(columnName));
 
         var r = new Dictionary<CDT, V>();
 

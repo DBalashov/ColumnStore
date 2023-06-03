@@ -15,40 +15,35 @@ abstract class IntBase : ReadWriteBase
             var requireBytes = 2 + r.Values.Length * elementSize +
                                1 + range.Length()  * (1 << (int) compactType);
 
-            var buff   = poolBytes.Rent(requireBytes);
-            var offset = 0;
+            var buff = poolBytes.Rent(requireBytes);
+            var span = buff.AsSpan();
 
-            // write dictionary values
-            Buffer.BlockCopy(BitConverter.GetBytes((ushort) r.Values.Length), 0, buff, offset, 2);
-            offset += 2;
+            span.Write((ushort) r.Values.Length);
+            span.Write<T>(r.Values);
+            span.Write((byte) compactType);
 
-            Buffer.BlockCopy(r.Values, 0, buff, offset, r.Values.Length * elementSize);
-            offset += r.Values.Length * elementSize;
-
-            // write value indexes
-            buff[offset++] = (byte) compactType;
-            r.Indexes.CompactValues(buff.AsSpan(offset, requireBytes - offset), compactType);
-            targetStream.Write(buff.AsSpan(0,           requireBytes));
+            r.Indexes.CompactValues(span, compactType);
+            targetStream.Write(buff.AsSpan(0, requireBytes));
             poolBytes.Return(buff);
         }
         else
         {
             var requireBytes = 1 + elementSize * range.Length();
             var buff         = poolBytes.Rent(requireBytes);
+            var span         = buff.AsSpan();
 
-            int offset = 0;
-            buff[offset++] = (byte) compactType;
+            span.Write((byte) compactType);
 
-            // write values
-            Buffer.BlockCopy(values, range.Start.Value * elementSize, buff, offset, range.Length() * elementSize);
+            Buffer.BlockCopy(values, range.Start.Value * elementSize, buff, 1, range.Length() * elementSize);
             targetStream.Write(buff.AsSpan(0, requireBytes));
+
             poolBytes.Return(buff);
         }
     }
 
     protected Array unpackIntXX<T>(Span<byte> span, int count, ArrayPool<T> pool, int elementSize) where T : struct
     {
-        var dictionaryValuesCount = span.ReadUInt16();
+        var dictionaryValuesCount = span.Read<ushort>();
 
         var dictionaryValues = pool.Rent(dictionaryValuesCount);
         var length           = dictionaryValuesCount * elementSize;
@@ -56,7 +51,7 @@ abstract class IntBase : ReadWriteBase
 
         span = span.Slice(length);
 
-        var compactType = (CompactType) span.ReadByte();
+        var compactType = (CompactType) span.Read<byte>();
         var values      = new T[count];
 
         if (compactType <= CompactType.Short)
@@ -67,7 +62,7 @@ abstract class IntBase : ReadWriteBase
         }
         else
         {
-            span.Slice(0, count*elementSize).CopyTo(MemoryMarshal.Cast<T, byte>(values.AsSpan(0, count)));
+            span.Slice(0, count * elementSize).CopyTo(MemoryMarshal.Cast<T, byte>(values.AsSpan(0, count)));
         }
 
         pool.Return(dictionaryValues);

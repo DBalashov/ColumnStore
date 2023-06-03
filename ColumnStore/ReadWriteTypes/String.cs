@@ -10,8 +10,6 @@ sealed class ReadWriteHandlerString : ReadWriteBase
 {
     public override void Pack(Array values, IVirtualWriteStream targetStream, Range range)
     {
-        //using var bw = new BinaryWriter(targetStream.GetUnderlyingStreamn(), Encoding.UTF8, true);
-
         var r = values.Dictionarize(range, "");
 
         // write dictionary values
@@ -43,17 +41,17 @@ sealed class ReadWriteHandlerString : ReadWriteBase
     public override Array Unpack(Span<byte> span, int count)
     {
         // read dictionary values
-        var dictionaryValuesCount = span.ReadUInt16();
+        var dictionaryValuesCount = span.Read<ushort>();
 
         var dictionaryValues = new string?[dictionaryValuesCount];
         for (var i = 0; i < dictionaryValuesCount; i++)
         {
-            var length = span.ReadInt16();
-            dictionaryValues[i] = length >= 0 ? Encoding.UTF8.GetString(span.ReadBytes(length)) : null;
+            var s = span.ReadPrefixedString(ReadStringPrefix.Short);
+            dictionaryValues[i] = string.IsNullOrEmpty(s) ? null : s;
         }
 
         // read value indexes
-        var compactType = (CompactType) span.ReadByte();
+        var compactType = (CompactType) span.Read<byte>();
         var indexes     = span.UncompactValues(count, compactType);
 
         var values = new string?[count];

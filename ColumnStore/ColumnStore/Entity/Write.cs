@@ -10,8 +10,7 @@ partial class ColumnStoreEntity
 {
     public void Write<E>(Dictionary<CDT, E> entities) where E : class
     {
-        if (entities == null)
-            throw new ArgumentException("Can't be null", nameof(entities));
+        ArgumentNullException.ThrowIfNull(entities);
         if (!entities.Any())
             throw new ArgumentException("Can't be empty", nameof(entities));
 

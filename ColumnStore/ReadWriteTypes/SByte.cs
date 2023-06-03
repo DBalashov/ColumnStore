@@ -13,5 +13,5 @@ sealed class ReadWriteHandlerSByte : ReadWriteBase
     }
 
     public override Array Unpack(Span<byte> buff, int count) =>
-        buff.ReadSBytes(count).ToArray();
+        buff.Read<sbyte>(count).ToArray();
 }

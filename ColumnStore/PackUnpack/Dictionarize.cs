@@ -8,8 +8,9 @@ static class DictionarizeExtenders
 {
     internal static DictionarizeResult<T> Dictionarize<T>(this Array values, Range range, T nullReplaceTo = default(T)!) where T : notnull
     {
-        var v       = (T[]) values;
-        var r       = new Dictionary<T, int>(); // value : index
+        var v = (T[]) values;
+        var r = new Dictionary<T, int>(); // value : index
+
         var indexes = new int[range.Length()];
         for (var i = range.Start.Value; i < range.End.Value; i++)
         {

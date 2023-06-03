@@ -19,7 +19,7 @@ sealed class ReadWriteHandlerDateTime : ReadWriteBase
     public override Array Unpack(Span<byte> buff, int count)
     {
         var r    = new DateTime[count];
-        var span = buff.ReadStructs<CDT>(count);
+        var span = buff.Read<CDT>(count);
         for (var i = 0; i < r.Length; i++)
             r[i] = span[i];
         return r;

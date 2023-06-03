@@ -41,8 +41,8 @@ static class ColumnTypedExtenders
     {
         var span = (withDecompression ? new StreamDecompress(buff).GetBytes() : buff).AsSpan();
 
-        var count = span.ReadInt32();
-        var keys  = span.ReadInt32s(count);
+        var count = span.Read<int>();
+        var keys  = span.Read<int>(count);
 
         var values = (V[]) span.UnpackData();
         var r      = new Dictionary<int, V>(count);

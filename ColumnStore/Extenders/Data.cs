@@ -107,8 +107,8 @@ public static class Extenders
 
     internal static Array UnpackData(this Span<byte> data)
     {
-        var count    = data.ReadInt32();
-        var dataType = (StoredDataType) data.ReadUInt16();
+        var count    = data.Read<int>();
+        var dataType = (StoredDataType) data.Read<ushort>();
         return readWriteHandlers[dataType].Unpack(data, count);
     }
 
@@ -116,8 +116,8 @@ public static class Extenders
     {
         var dataType = values.DetectDataType();
 
-        targetStream.Write(BitConverter.GetBytes(range.Length()).AsSpan());
-        targetStream.Write(BitConverter.GetBytes((ushort) dataType).AsSpan());
+        targetStream.Write(BitConverter.GetBytes(range.Length()));
+        targetStream.Write(BitConverter.GetBytes((ushort) dataType));
 
         readWriteHandlers[dataType].Pack(values, targetStream, range);
     }

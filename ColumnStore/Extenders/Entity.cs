@@ -16,7 +16,7 @@ static class EntityExtenders
     {
         using var stm = withCompression ? (IVirtualWriteStream) new StreamCompress(new MemoryStream()) : new StreamRaw(new MemoryStream());
 
-        stm.Write(BitConverter.GetBytes(newData.Length).AsSpan());
+        stm.Write(BitConverter.GetBytes(newData.Length));
 
         var getValue     = prop.getActionGet<K, V>();
         var storedKeys   = poolInts.Rent(newData.Length);

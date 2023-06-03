@@ -8,12 +8,11 @@ partial class ColumnStoreTyped
 {
     public void Write<V>(string columnName, Dictionary<CDT, V> values)
     {
-        if (values == null)
-            throw new ArgumentException("Can't be null", nameof(values));
+        ArgumentNullException.ThrowIfNull(values);
         if (!values.Any())
-            throw new ArgumentException("Can't be empty", nameof(values));
+            throw new ArgumentException(nameof(values), "Can't be empty");
         if (string.IsNullOrEmpty(columnName))
-            throw new ArgumentException("Can't be empty", nameof(columnName));
+            throw new ArgumentNullException(nameof(columnName));
 
         var entries = new Dictionary<string, byte[]>();
         foreach (var range in values.GroupToDictionary(p => p.Trunc(ps.Unit).Value))

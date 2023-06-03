@@ -18,14 +18,12 @@ sealed class ReadWriteHandlerGuid : ReadWriteBase
         var buff = poolBytes.Rent(requireBytes);
         var span = buff.AsSpan(0, requireBytes);
 
-        BitConverter.TryWriteBytes(span, (ushort) r.Values.Length);
-        var spanValues = MemoryMarshal.Cast<Guid, byte>(r.Values);
-        spanValues.CopyTo(span.Slice(2));
+        span.Write((ushort) r.Values.Length);
+        MemoryMarshal.Cast<Guid, byte>(r.Values).CopyTo(span);
+        span = span.Slice(16 * r.Values.Length);
 
-        span    = span.Slice(2 + spanValues.Length);
-        span[0] = (byte) type;
-
-        r.Indexes.CompactValues(span.Slice(1), type);
+        span.Write((byte) type);
+        r.Indexes.CompactValues(span, type);
 
         targetStream.Write(buff.AsSpan(0, requireBytes));
         poolBytes.Return(buff);
@@ -33,11 +31,11 @@ sealed class ReadWriteHandlerGuid : ReadWriteBase
 
     public override Array Unpack(Span<byte> span, int count)
     {
-        var dictionaryValuesCount = span.ReadUInt16();
-        var dictionaryValues      = span.ReadGuids(dictionaryValuesCount);
+        var dictionaryValuesCount = span.Read<ushort>();
+        var dictionaryValues      = span.Read<Guid>(dictionaryValuesCount);
 
         var values      = new Guid[count];
-        var compactType = (CompactType) span.ReadByte();
+        var compactType = (CompactType) span.Read<byte>();
 
         var indexes = span.UncompactValues(count, compactType);
         for (var i = 0; i < indexes.Length; i++)
