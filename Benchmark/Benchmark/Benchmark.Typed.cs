@@ -19,7 +19,9 @@ public partial class MainTest
     readonly Dictionary<CDT, string>   dataStrings   = Keys.ToDictionary(p => (CDT) p, p => "Item Address " + p.ToString("yyyyMMdd") + "/" + p.Month + "/" + p.Minute + "/" + p.Day);
     readonly Dictionary<CDT, Guid>     dataGuids     = Keys.ToDictionary(p => (CDT) p, p => new Guid((uint) p.Year, 0, 0, (byte) p.Year, (byte) p.Month, (byte) p.Day, (byte) p.Hour, 0, 0, 0, 0));
     readonly Dictionary<CDT, DateTime> dataDateTimes = Keys.ToDictionary(p => (CDT) p, p => p);
-    
+    readonly Dictionary<CDT, decimal>  dataDecimals  = Keys.ToDictionary(p => (CDT) p, p => (decimal) p.TimeOfDay.TotalMilliseconds);
+    readonly Dictionary<CDT, Half>     dataHalfs     = Keys.ToDictionary(p => (CDT) p, p => (Half) (p.TimeOfDay.TotalMilliseconds / (double) Half.MaxValue));
+
     #region TypedWrite
 
     [IterationSetup(Target = nameof(TypedWrite))]
@@ -61,6 +63,8 @@ public partial class MainTest
         store.Typed.Write("Strings",   dataStrings);
         store.Typed.Write("Guids",     dataGuids);
         store.Typed.Write("DateTimes", dataDateTimes);
+        store.Typed.Write("Decimals",  dataDecimals);
+        store.Typed.Write("Halfs",     dataHalfs);
     }
 
     [Benchmark]
@@ -74,6 +78,8 @@ public partial class MainTest
         store.Typed.Write("Strings",   dataStrings);
         store.Typed.Write("Guids",     dataGuids);
         store.Typed.Write("DateTimes", dataDateTimes);
+        store.Typed.Write("Decimals",  dataDecimals);
+        store.Typed.Write("Halfs",     dataHalfs);
         benchmarkData = new BenchmarkData((int) container.Length, container.Length / (Keys.Length * 8.0));
     }
 
@@ -98,6 +104,9 @@ public partial class MainTest
         var valueStrings   = store.Typed.Read<string>(readFrom, readTo, "Strings");
         var valueGuids     = store.Typed.Read<Guid>(readFrom, readTo, "Guids");
         var valueDateTimes = store.Typed.Read<DateTime>(readFrom, readTo, "DateTimes");
+        var valueDecimal   = store.Typed.Read<decimal>(readFrom, readTo, "Decimals");
+        var valueHalf      = store.Typed.Read<Half>(readFrom, readTo, "Halfs");
+
         benchmarkData = new BenchmarkData((int) container.Length, container.Length / (Keys.Length * 8.0));
     }
 

@@ -19,10 +19,12 @@ public enum StoredDataType
     Byte     = 8,
     Boolean  = 9,
 
-    SByte  = 10,
-    UInt   = 11,
-    UInt16 = 12,
-    UInt64 = 13
+    SByte   = 10,
+    UInt    = 11,
+    UInt16  = 12,
+    UInt64  = 13,
+    Half    = 14,
+    Decimal = 15
 }
 
 public enum StoredPackType
@@ -65,6 +67,8 @@ public static class Extenders
         if (type == typeof(Guid)) return StoredDataType.Guid;
         if (type == typeof(DateTime)) return StoredDataType.DateTime;
         if (type == typeof(TimeSpan)) return StoredDataType.TimeSpan;
+        if (type == typeof(decimal)) return StoredDataType.Decimal;
+        if (type == typeof(Half)) return StoredDataType.Half;
 
         throw new NotSupportedException(type.Name + " not supported");
     }
@@ -74,7 +78,7 @@ public static class Extenders
                                                                                       [StoredDataType.Boolean] = new ReadWriteHandlerBoolean(),
 
                                                                                       [StoredDataType.Byte]  = new ReadWriteHandlerByte(),
-                                                                                      [StoredDataType.SByte] = new ReadWriteHandlerSByte(),
+                                                                                      [StoredDataType.SByte] = new ReadWriteHandlerGeneric<sbyte>(),
 
                                                                                       [StoredDataType.Int]  = new ReadWriteHandlerInt(),
                                                                                       [StoredDataType.UInt] = new ReadWriteHandlerUInt(),
@@ -85,11 +89,13 @@ public static class Extenders
                                                                                       [StoredDataType.Int64]  = new ReadWriteHandlerInt64(),
                                                                                       [StoredDataType.UInt64] = new ReadWriteHandlerUInt64(),
 
-                                                                                      [StoredDataType.Double]         = new ReadWriteHandlerDouble(),
-                                                                                      [StoredDataType.DateTime]       = new ReadWriteHandlerDateTime(),
-                                                                                      [StoredDataType.Guid]           = new ReadWriteHandlerGuid(),
-                                                                                      [StoredDataType.String]         = new ReadWriteHandlerString(),
-                                                                                      [StoredDataType.TimeSpan]       = new ReadWriteHandlerTimeSpan(),
+                                                                                      [StoredDataType.Double]   = new ReadWriteHandlerDouble(),
+                                                                                      [StoredDataType.DateTime] = new ReadWriteHandlerDateTime(),
+                                                                                      [StoredDataType.Guid]     = new ReadWriteHandlerGuid(),
+                                                                                      [StoredDataType.String]   = new ReadWriteHandlerString(),
+                                                                                      [StoredDataType.TimeSpan] = new ReadWriteHandlerTimeSpan(),
+                                                                                      [StoredDataType.Half]     = new ReadWriteHandlerGeneric<Half>(),
+                                                                                      [StoredDataType.Decimal]  = new ReadWriteHandlerGeneric<decimal>()
                                                                                   };
 
     internal static CompactType GetCompactType(this int count) =>

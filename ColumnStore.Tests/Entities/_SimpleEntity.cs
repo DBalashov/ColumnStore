@@ -20,6 +20,8 @@ namespace ColumnStore.Tests
         public byte     ColumnByte     { get; set; }
         public sbyte    ColumnSByte    { get; set; }
         public bool     ColumnBool     { get; set; }
+        public Half     ColumnHalf     { get; set; }
+        public Decimal  ColumnDecimal  { get; set; }
 
         public int      ColumnInt2      { get; set; }
         public uint     ColumnUInt2     { get; set; }
@@ -35,6 +37,8 @@ namespace ColumnStore.Tests
         public byte     ColumnByte2     { get; set; }
         public sbyte    ColumnSByte2    { get; set; }
         public bool     ColumnBool2     { get; set; }
+        public Half     ColumnHalf2     { get; set; }
+        public Decimal  ColumnDecimal2  { get; set; }
 
         public int      ColumnInt3      { get; set; }
         public short    ColumnInt16_3   { get; set; }
@@ -46,6 +50,8 @@ namespace ColumnStore.Tests
         public double   ColumnDouble3   { get; set; }
         public byte     ColumnByte3     { get; set; }
         public bool     ColumnBool3     { get; set; }
+        public Half     ColumnHalf3     { get; set; }
+        public Decimal  ColumnDecimal3  { get; set; }
 
         public int      ColumnInt4      { get; set; }
         public short    ColumnInt16_4   { get; set; }
@@ -57,6 +63,8 @@ namespace ColumnStore.Tests
         public double   ColumnDouble4   { get; set; }
         public byte     ColumnByte4     { get; set; }
         public bool     ColumnBool4     { get; set; }
+        public Half     ColumnHalf4     { get; set; }
+        public Decimal  ColumnDecimal4  { get; set; }
 
         public int      ColumnInt5      { get; set; }
         public short    ColumnInt16_5   { get; set; }
@@ -68,6 +76,8 @@ namespace ColumnStore.Tests
         public double   ColumnDouble5   { get; set; }
         public byte     ColumnByte5     { get; set; }
         public bool     ColumnBool5     { get; set; }
+        public Half     ColumnHalf5     { get; set; }
+        public Decimal  ColumnDecimal5  { get; set; }
 
         public SimpleEntity()
         {
@@ -78,10 +88,12 @@ namespace ColumnStore.Tests
             ColumnByte  = ColumnByte2  = ColumnByte3 = ColumnByte4 = ColumnByte5 = (byte) (d.Minute + d.Second + d.Day);
             ColumnSByte = ColumnSByte2 = (sbyte) (d.Second + d.Day);
 
-            ColumnDouble = ColumnDouble2 = ColumnDouble3 = ColumnDouble4 = ColumnDouble5 = d.TimeOfDay.TotalMilliseconds;
+            ColumnDouble  = ColumnDouble2  = ColumnDouble3  = ColumnDouble4  = ColumnDouble5  = d.TimeOfDay.TotalMilliseconds;
+            ColumnHalf    = ColumnHalf2    = ColumnHalf3    = ColumnHalf4    = ColumnHalf5    = (Half) (d.TimeOfDay.TotalMilliseconds    / (double) Half.MaxValue);
+            ColumnDecimal = ColumnDecimal2 = ColumnDecimal3 = ColumnDecimal4 = ColumnDecimal5 = (decimal) (d.TimeOfDay.TotalMilliseconds / 2.123);
             ColumnGuid = ColumnGuid2 = ColumnGuid3 = ColumnGuid4 = ColumnGuid5 = new Guid((uint) d.Year, 0, 0, (byte) d.Year, (byte) d.Month, (byte) d.Day, (byte) d.Hour, 0, 0, 0,
                                                                                           0);
-            ColumnString = ColumnString2 = ColumnString3 = ColumnString4 = ColumnString5 = "Item Address " + d.ToString("yyyyMMdd") + "/" + d.Month + "/" + d.Minute + "/" + d.Day;
+            ColumnString   = ColumnString2   = ColumnString3   = ColumnString4   = ColumnString5   = "Item Address " + d.ToString("yyyyMMdd") + "/" + d.Month + "/" + d.Minute + "/" + d.Day;
             ColumnTimeSpan = ColumnTimeSpan2 = ColumnTimeSpan3 = ColumnTimeSpan4 = ColumnTimeSpan5 = d.TimeOfDay;
             ColumnDateTime = ColumnDateTime2 = ColumnDateTime3 = ColumnDateTime4 = ColumnDateTime5 = d;
 
@@ -101,6 +113,7 @@ namespace ColumnStore.Tests
         public override bool Equals(object obj)
         {
             const double EPSILON = 0.00001;
+            //const Half   EPSILON_HALF = Half.Epsilon;
 
             if (!(obj is SimpleEntity o)) return false;
 
@@ -147,21 +160,31 @@ namespace ColumnStore.Tests
                    ((ColumnString3 == null && o.ColumnString3 == null) || string.Compare(ColumnString3, o.ColumnString3, StringComparison.InvariantCulture) == 0) &&
                    ((ColumnString4 == null && o.ColumnString4 == null) || string.Compare(ColumnString4, o.ColumnString4, StringComparison.InvariantCulture) == 0) &&
                    ((ColumnString5 == null && o.ColumnString5 == null) || string.Compare(ColumnString5, o.ColumnString5, StringComparison.InvariantCulture) == 0) &&
-                   ColumnGuid      == o.ColumnGuid                                                                                                                &&
-                   ColumnGuid2     == o.ColumnGuid2                                                                                                               &&
-                   ColumnGuid3     == o.ColumnGuid3                                                                                                               &&
-                   ColumnGuid4     == o.ColumnGuid4                                                                                                               &&
-                   ColumnGuid5     == o.ColumnGuid5                                                                                                               &&
-                   ColumnDateTime  == o.ColumnDateTime                                                                                                            &&
-                   ColumnDateTime2 == o.ColumnDateTime2                                                                                                           &&
-                   ColumnDateTime3 == o.ColumnDateTime3                                                                                                           &&
-                   ColumnDateTime4 == o.ColumnDateTime4                                                                                                           &&
-                   ColumnDateTime5 == o.ColumnDateTime5                                                                                                           &&
-                   ColumnTimeSpan  == o.ColumnTimeSpan                                                                                                            &&
-                   ColumnTimeSpan2 == o.ColumnTimeSpan2                                                                                                           &&
-                   ColumnTimeSpan3 == o.ColumnTimeSpan3                                                                                                           &&
-                   ColumnTimeSpan4 == o.ColumnTimeSpan4                                                                                                           &&
-                   ColumnTimeSpan5 == o.ColumnTimeSpan5;
+                   ColumnGuid                                              == o.ColumnGuid                                                                        &&
+                   ColumnGuid2                                             == o.ColumnGuid2                                                                       &&
+                   ColumnGuid3                                             == o.ColumnGuid3                                                                       &&
+                   ColumnGuid4                                             == o.ColumnGuid4                                                                       &&
+                   ColumnGuid5                                             == o.ColumnGuid5                                                                       &&
+                   ColumnDateTime                                          == o.ColumnDateTime                                                                    &&
+                   ColumnDateTime2                                         == o.ColumnDateTime2                                                                   &&
+                   ColumnDateTime3                                         == o.ColumnDateTime3                                                                   &&
+                   ColumnDateTime4                                         == o.ColumnDateTime4                                                                   &&
+                   ColumnDateTime5                                         == o.ColumnDateTime5                                                                   &&
+                   ColumnTimeSpan                                          == o.ColumnTimeSpan                                                                    &&
+                   ColumnTimeSpan2                                         == o.ColumnTimeSpan2                                                                   &&
+                   ColumnTimeSpan3                                         == o.ColumnTimeSpan3                                                                   &&
+                   ColumnTimeSpan4                                         == o.ColumnTimeSpan4                                                                   &&
+                   ColumnTimeSpan5                                         == o.ColumnTimeSpan5                                                                   &&
+                   ColumnDecimal                                           == o.ColumnDecimal                                                                     &&
+                   ColumnDecimal2                                          == o.ColumnDecimal2                                                                    &&
+                   ColumnDecimal3                                          == o.ColumnDecimal3                                                                    &&
+                   ColumnDecimal4                                          == o.ColumnDecimal4                                                                    &&
+                   ColumnDecimal5                                          == o.ColumnDecimal5                                                                    &&
+                   Math.Abs((double) ColumnHalf  - (double) o.ColumnHalf)  < (double) Half.Epsilon                                                                &&
+                   Math.Abs((double) ColumnHalf2 - (double) o.ColumnHalf2) < (double) Half.Epsilon                                                                &&
+                   Math.Abs((double) ColumnHalf3 - (double) o.ColumnHalf3) < (double) Half.Epsilon                                                                &&
+                   Math.Abs((double) ColumnHalf4 - (double) o.ColumnHalf4) < (double) Half.Epsilon                                                                &&
+                   Math.Abs((double) ColumnHalf5 - (double) o.ColumnHalf5) < (double) Half.Epsilon;
         }
     }
 }

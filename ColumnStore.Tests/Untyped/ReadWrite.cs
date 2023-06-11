@@ -40,6 +40,7 @@ namespace ColumnStore.Tests.Untyped
             var vStrings   = keys.Convert().ToDictionary(p => (CDT) p, p => "Item Address " + p.ToString("yyyyMMdd") + "/" + p.Month + "/" + p.Minute + "/" + p.Day);
             var vGuids     = keys.Convert().ToDictionary(p => (CDT) p, p => new Guid((uint) p.Year, 0, 0, (byte) p.Year, (byte) p.Month, (byte) p.Day, (byte) p.Hour, 0, 0, 0, 0));
             var vDateTimes = keys.Convert().ToDictionary(p => (CDT) p, p => p);
+            var vHalfs     = keys.Convert().ToDictionary(p => (CDT) p, p => (Half) (p.TimeOfDay.TotalMilliseconds / 2.123));
             for (var i = 0; i < 2; i++)
             {
                 values.Add("Ints_"      + i, vInts.Values.ToArray());
@@ -56,6 +57,7 @@ namespace ColumnStore.Tests.Untyped
                 values.Add("DateTimes_" + i, vDateTimes.Values.ToArray());
                 values.Add("TimeSpans_" + i, vTimeSpans.Values.ToArray());
                 values.Add("Boolean_"   + i, vBooleans.Values.ToArray());
+                values.Add("Half_"      + i, vHalfs.Values.ToArray());
             }
 
             TestContext.WriteLine($"Keys: {keys.Length}");

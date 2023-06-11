@@ -11,7 +11,7 @@ sealed class ReadWriteHandlerTimeSpan : ReadWriteBase
         var ts = (TimeSpan[]) values;
         var v  = new int[range.Length()];
         for (var i = range.Start.Value; i < range.End.Value; i++)
-            v[i - range.Start.Value] = (int) ts[i].TotalSeconds;
+            v[i - range.Start.Value] = (int) (ts[i].TotalSeconds * 1000);
 
         targetStream.Write(MemoryMarshal.Cast<int, byte>(v));
     }
@@ -21,7 +21,7 @@ sealed class ReadWriteHandlerTimeSpan : ReadWriteBase
         var span = buff.Read<int>(count);
         var r    = new TimeSpan[count];
         for (var i = 0; i < count; i++)
-            r[i] = TimeSpan.FromSeconds(span[i]);
+            r[i] = TimeSpan.FromSeconds(span[i] / 1000.0);
         return r;
     }
 }

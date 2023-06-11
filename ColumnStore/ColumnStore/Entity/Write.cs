@@ -37,12 +37,14 @@ partial class ColumnStoreEntity
                 else if (prop.Value.PropertyType == typeof(byte)) buff  = pack<E, byte>(data, range.Value, prop.Value);
                 else if (prop.Value.PropertyType == typeof(sbyte)) buff = pack<E, sbyte>(data, range.Value, prop.Value);
 
-                else if (prop.Value.PropertyType == typeof(bool)) buff           = pack<E, bool>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(double)) buff         = pack<E, double>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(string)) buff         = pack<E, string>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(Guid)) buff           = pack<E, Guid>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(TimeSpan)) buff       = pack<E, TimeSpan>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(DateTime)) buff       = pack<E, DateTime>(data, range.Value, prop.Value);
+                else if (prop.Value.PropertyType == typeof(bool)) buff     = pack<E, bool>(data, range.Value, prop.Value);
+                else if (prop.Value.PropertyType == typeof(double)) buff   = pack<E, double>(data, range.Value, prop.Value);
+                else if (prop.Value.PropertyType == typeof(string)) buff   = pack<E, string>(data, range.Value, prop.Value);
+                else if (prop.Value.PropertyType == typeof(Guid)) buff     = pack<E, Guid>(data, range.Value, prop.Value);
+                else if (prop.Value.PropertyType == typeof(TimeSpan)) buff = pack<E, TimeSpan>(data, range.Value, prop.Value);
+                else if (prop.Value.PropertyType == typeof(DateTime)) buff = pack<E, DateTime>(data, range.Value, prop.Value);
+                else if (prop.Value.PropertyType == typeof(decimal)) buff  = pack<E, decimal>(data, range.Value, prop.Value);
+                else if (prop.Value.PropertyType == typeof(Half)) buff     = pack<E, Half>(data, range.Value, prop.Value);
 
                 else throw new NotSupportedException(prop.Value.PropertyType + " not supported");
 
