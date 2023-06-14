@@ -8,12 +8,12 @@ sealed class ReadWriteHandlerDateTime : ReadWriteBase
 {
     public override void Pack(Array values, IVirtualWriteStream targetStream, Range range)
     {
-        var v  = new CDT[range.Length()];
-        var dt = (DateTime[]) values;
-        for (var i = range.Start.Value; i < range.End.Value; i++)
-            v[i - range.Start.Value] = dt[i];
+        var buff      = new CDT[range.Length()];
+        var dateTimes = (DateTime[]) values;
+        for (int i = range.Start.Value, k = 0; i < range.End.Value; i++, k++)
+            buff[k] = dateTimes[i];
 
-        targetStream.Write(MemoryMarshal.Cast<CDT, byte>(v));
+        targetStream.Write(MemoryMarshal.Cast<CDT, byte>(buff));
     }
 
     public override Array Unpack(Span<byte> buff, int count)

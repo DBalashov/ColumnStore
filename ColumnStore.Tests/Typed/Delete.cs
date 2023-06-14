@@ -104,7 +104,22 @@ namespace ColumnStore.Tests.Typed
         [TestCase(false)]
         [TestCase(true)]
         public void DeleteString(bool compressed) => delete(compressed, () => GetStrings(keys), (sd, ed) => GetStrings(keys, sd, ed));
+        
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void DeleteDateOnly(bool compressed) => delete(compressed, () => GetDateOnlys(keys), (sd, ed) => GetDateOnlys(keys, sd, ed));
 
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void DeleteTimeOnly(bool compressed) => delete(compressed, () => GetTimeOnlys(keys), (sd, ed) => GetTimeOnlys(keys, sd, ed));
+        
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void DeleteDecimal(bool compressed) => delete(compressed, () => GetDecimals(keys), (sd, ed) => GetDecimals(keys, sd, ed));
+        
         [Test]
         [TestCase(false)]
         [TestCase(true)]

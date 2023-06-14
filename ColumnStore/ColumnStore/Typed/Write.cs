@@ -10,7 +10,7 @@ partial class ColumnStoreTyped
     {
         ArgumentNullException.ThrowIfNull(values);
         if (!values.Any())
-            throw new ArgumentException(nameof(values), "Can't be empty");
+            throw new ArgumentException("Can't be empty", nameof(values));
         if (string.IsNullOrEmpty(columnName))
             throw new ArgumentNullException(nameof(columnName));
 

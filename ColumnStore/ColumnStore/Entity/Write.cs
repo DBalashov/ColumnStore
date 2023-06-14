@@ -45,6 +45,8 @@ partial class ColumnStoreEntity
                 else if (prop.Value.PropertyType == typeof(DateTime)) buff = pack<E, DateTime>(data, range.Value, prop.Value);
                 else if (prop.Value.PropertyType == typeof(decimal)) buff  = pack<E, decimal>(data, range.Value, prop.Value);
                 else if (prop.Value.PropertyType == typeof(Half)) buff     = pack<E, Half>(data, range.Value, prop.Value);
+                else if (prop.Value.PropertyType == typeof(TimeOnly)) buff = pack<E, TimeOnly>(data, range.Value, prop.Value);
+                else if (prop.Value.PropertyType == typeof(DateOnly)) buff = pack<E, DateOnly>(data, range.Value, prop.Value);
 
                 else throw new NotSupportedException(prop.Value.PropertyType + " not supported");
 

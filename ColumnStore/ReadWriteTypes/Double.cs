@@ -11,12 +11,12 @@ sealed class ReadWriteHandlerDouble : ReadWriteBase
         if (values.GetValue(range.Start.Value) is double)
         {
             var doubles = (double[]) values;
-            var v       = poolFloats.Rent(range.Length());
-            for (var i = range.Start.Value; i < range.End.Value; i++)
-                v[i - range.Start.Value] = (float) doubles[i];
+            var buff    = poolFloats.Rent(range.Length());
+            for (int i = range.Start.Value, k = 0; i < range.End.Value; i++, k++)
+                buff[k] = (float) doubles[i];
 
-            targetStream.Write(MemoryMarshal.Cast<float, byte>(v));
-            poolFloats.Return(v);
+            targetStream.Write(MemoryMarshal.Cast<float, byte>(buff));
+            poolFloats.Return(buff);
         }
         else if (values.GetValue(range.Start.Value) is float)
         {

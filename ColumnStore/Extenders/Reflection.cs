@@ -25,7 +25,9 @@ static class ReflectionExtenders
         typeof(double),
         typeof(string),
         typeof(decimal),
-        typeof(Half)
+        typeof(Half),
+        typeof(DateOnly),
+        typeof(TimeOnly)
     };
 
     internal static Dictionary<string, PropertyInfo> GetProps(this Type type) =>

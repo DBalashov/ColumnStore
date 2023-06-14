@@ -8,9 +8,7 @@ partial class ColumnStoreUntyped
 {
     public void Write(string columnName, UntypedColumn newData)
     {
-        if (newData == null)
-            throw new ArgumentException("Can't be null", nameof(newData));
-
+        ArgumentNullException.ThrowIfNull(newData);
         var entries = new Dictionary<string, byte[]>();
 
         foreach (var range in newData.Keys.GetRange(ps.Unit))
@@ -28,11 +26,10 @@ partial class ColumnStoreUntyped
 
     public void Write(Dictionary<string, UntypedColumn> newData)
     {
-        if (newData == null)
-            throw new ArgumentException("Can't be null", nameof(newData));
+        ArgumentNullException.ThrowIfNull(newData);
         if (!newData.Any())
             throw new ArgumentException("Can't be empty", nameof(newData));
-        if (newData.Any(c => c.Value == null))
+        if (newData.Any(c => c.Value == null!))
             throw new ArgumentException("Value can't be null", nameof(newData));
 
         foreach (var newDataItem in newData)

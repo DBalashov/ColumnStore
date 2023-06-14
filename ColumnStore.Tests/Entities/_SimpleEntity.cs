@@ -22,6 +22,8 @@ namespace ColumnStore.Tests
         public bool     ColumnBool     { get; set; }
         public Half     ColumnHalf     { get; set; }
         public Decimal  ColumnDecimal  { get; set; }
+        public DateOnly ColumnDateOnly { get; set; }
+        public TimeOnly ColumnTimeOnly { get; set; }
 
         public int      ColumnInt2      { get; set; }
         public uint     ColumnUInt2     { get; set; }
@@ -39,6 +41,8 @@ namespace ColumnStore.Tests
         public bool     ColumnBool2     { get; set; }
         public Half     ColumnHalf2     { get; set; }
         public Decimal  ColumnDecimal2  { get; set; }
+        public DateOnly ColumnDateOnly2 { get; set; }
+        public TimeOnly ColumnTimeOnly2 { get; set; }
 
         public int      ColumnInt3      { get; set; }
         public short    ColumnInt16_3   { get; set; }
@@ -52,6 +56,8 @@ namespace ColumnStore.Tests
         public bool     ColumnBool3     { get; set; }
         public Half     ColumnHalf3     { get; set; }
         public Decimal  ColumnDecimal3  { get; set; }
+        public DateOnly ColumnDateOnly3 { get; set; }
+        public TimeOnly ColumnTimeOnly3 { get; set; }
 
         public int      ColumnInt4      { get; set; }
         public short    ColumnInt16_4   { get; set; }
@@ -65,6 +71,8 @@ namespace ColumnStore.Tests
         public bool     ColumnBool4     { get; set; }
         public Half     ColumnHalf4     { get; set; }
         public Decimal  ColumnDecimal4  { get; set; }
+        public DateOnly ColumnDateOnly4 { get; set; }
+        public TimeOnly ColumnTimeOnly4 { get; set; }
 
         public int      ColumnInt5      { get; set; }
         public short    ColumnInt16_5   { get; set; }
@@ -78,6 +86,8 @@ namespace ColumnStore.Tests
         public bool     ColumnBool5     { get; set; }
         public Half     ColumnHalf5     { get; set; }
         public Decimal  ColumnDecimal5  { get; set; }
+        public DateOnly ColumnDateOnly5 { get; set; }
+        public TimeOnly ColumnTimeOnly5 { get; set; }
 
         public SimpleEntity()
         {
@@ -107,17 +117,17 @@ namespace ColumnStore.Tests
             ColumnInt64  = ColumnInt64_2  = ColumnInt64_3 = ColumnInt64_4 = ColumnInt64_5 = x | ((x + 2) << 32);
             ColumnUInt64 = ColumnUInt64_2 = (UInt64) (x | ((x + 2) << 32));
 
-            ColumnBool = ColumnBool2 = ColumnBool3 = ColumnBool4 = ColumnBool5 = (d.Minute + d.Second + d.Day) % d.Day > 0;
+            ColumnBool     = ColumnBool2     = ColumnBool3     = ColumnBool4     = ColumnBool5     = (d.Minute + d.Second + d.Day) % d.Day > 0;
+            ColumnDecimal  = ColumnDecimal2  = ColumnDecimal3  = ColumnDecimal4  = ColumnDecimal5  = (decimal) (d.TimeOfDay.TotalMilliseconds / 2.123);
+            ColumnTimeOnly = ColumnTimeOnly2 = ColumnTimeOnly3 = ColumnTimeOnly4 = ColumnTimeOnly5 = TimeOnly.FromTimeSpan(d.TimeOfDay);
+            ColumnDateOnly = ColumnDateOnly2 = ColumnDateOnly3 = ColumnDateOnly4 = ColumnDateOnly5 = new DateOnly(d.Year, d.Month, d.Day);
         }
 
         public override bool Equals(object obj)
         {
             const double EPSILON = 0.00001;
-            //const Half   EPSILON_HALF = Half.Epsilon;
-
-            if (!(obj is SimpleEntity o)) return false;
-
-            return ColumnByte                                == o.ColumnByte                                                                                      &&
+            return obj is SimpleEntity o                                                                                                                          &&
+                   ColumnByte                                == o.ColumnByte                                                                                      &&
                    ColumnByte2                               == o.ColumnByte2                                                                                     &&
                    ColumnByte3                               == o.ColumnByte3                                                                                     &&
                    ColumnByte4                               == o.ColumnByte4                                                                                     &&
@@ -184,7 +194,22 @@ namespace ColumnStore.Tests
                    Math.Abs((double) ColumnHalf2 - (double) o.ColumnHalf2) < (double) Half.Epsilon                                                                &&
                    Math.Abs((double) ColumnHalf3 - (double) o.ColumnHalf3) < (double) Half.Epsilon                                                                &&
                    Math.Abs((double) ColumnHalf4 - (double) o.ColumnHalf4) < (double) Half.Epsilon                                                                &&
-                   Math.Abs((double) ColumnHalf5 - (double) o.ColumnHalf5) < (double) Half.Epsilon;
+                   Math.Abs((double) ColumnHalf5 - (double) o.ColumnHalf5) < (double) Half.Epsilon                                                                &&
+                   Math.Abs((double) (ColumnDecimal  - o.ColumnDecimal))   < EPSILON                                                                              &&
+                   Math.Abs((double) (ColumnDecimal2 - o.ColumnDecimal2))  < EPSILON                                                                              &&
+                   Math.Abs((double) (ColumnDecimal3 - o.ColumnDecimal3))  < EPSILON                                                                              &&
+                   Math.Abs((double) (ColumnDecimal4 - o.ColumnDecimal4))  < EPSILON                                                                              &&
+                   Math.Abs((double) (ColumnDecimal5 - o.ColumnDecimal5))  < EPSILON                                                                              &&
+                   ColumnTimeOnly                                          == o.ColumnTimeOnly                                                                    &&
+                   ColumnTimeOnly2                                         == o.ColumnTimeOnly2                                                                   &&
+                   ColumnTimeOnly3                                         == o.ColumnTimeOnly3                                                                   &&
+                   ColumnTimeOnly4                                         == o.ColumnTimeOnly4                                                                   &&
+                   ColumnTimeOnly5                                         == o.ColumnTimeOnly5                                                                   &&
+                   ColumnDateOnly                                          == o.ColumnDateOnly                                                                    &&
+                   ColumnDateOnly2                                         == o.ColumnDateOnly2                                                                   &&
+                   ColumnDateOnly3                                         == o.ColumnDateOnly3                                                                   &&
+                   ColumnDateOnly4                                         == o.ColumnDateOnly4                                                                   &&
+                   ColumnDateOnly5                                         == o.ColumnDateOnly5;
         }
     }
 }

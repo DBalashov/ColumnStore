@@ -129,5 +129,30 @@ namespace ColumnStore.Tests.Typed
         [TestCase(false)]
         [TestCase(true)]
         public void WriteTimeSpan(bool compressed) => writeRead(compressed, () => GetTimeSpans(keys), (sd, ed) => GetTimeSpans(keys, sd, ed));
+        
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteDates(bool compressed) => writeRead(compressed, () => GetDateOnlys(keys), (sd, ed) => GetDateOnlys(keys, sd, ed));
+        
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteTimeOnlys(bool compressed) => writeRead(compressed, () => GetTimeOnlys(keys), (sd, ed) => GetTimeOnlys(keys, sd, ed));
+        
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteDateOnlys(bool compressed) => writeRead(compressed, () => GetDateOnlys(keys), (sd, ed) => GetDateOnlys(keys, sd, ed));
+        
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteDecimals(bool compressed) => writeRead(compressed, () => GetDecimals(keys), (sd, ed) => GetDecimals(keys, sd, ed));
+        
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WriteHalfs(bool compressed) => writeRead(compressed, () => GetHalfs(keys), (sd, ed) => GetHalfs(keys, sd, ed));
     }
 }

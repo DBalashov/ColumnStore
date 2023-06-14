@@ -1,14 +1,18 @@
 using System;
 using System.Buffers;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using SpanByteExtenders;
 
 namespace ColumnStore;
 
-abstract class IntBase : ReadWriteBase
+class ReadWriteHandlerGenericInt<T> : ReadWriteBase where T : struct
 {
-    protected void packIntXX<T>(Array values, IVirtualWriteStream targetStream, Range range, DictionarizeResult<T> r, int elementSize) where T : struct
+    public override void Pack(Array values, IVirtualWriteStream targetStream, Range range)
     {
+        var elementSize = Unsafe.SizeOf<T>();
+        var r           = values.Dictionarize<T>(range);
+
         var compactType = r.Values.Length.GetCompactType();
         if (compactType <= CompactType.Short)
         {
@@ -41,11 +45,13 @@ abstract class IntBase : ReadWriteBase
         }
     }
 
-    protected Array unpackIntXX<T>(Span<byte> span, int count, ArrayPool<T> pool, int elementSize) where T : struct
+    public override Array Unpack(Span<byte> span, int count)
     {
+        var elementSize = Unsafe.SizeOf<T>();
+
         var dictionaryValuesCount = span.Read<ushort>();
 
-        var dictionaryValues = pool.Rent(dictionaryValuesCount);
+        var dictionaryValues = ArrayPool<T>.Shared.Rent(dictionaryValuesCount);
         var length           = dictionaryValuesCount * elementSize;
         span.Slice(0, length).CopyTo(MemoryMarshal.Cast<T, byte>(dictionaryValues.AsSpan(0, dictionaryValuesCount)));
 
@@ -65,7 +71,7 @@ abstract class IntBase : ReadWriteBase
             span.Slice(0, count * elementSize).CopyTo(MemoryMarshal.Cast<T, byte>(values.AsSpan(0, count)));
         }
 
-        pool.Return(dictionaryValues);
+        ArrayPool<T>.Shared.Return(dictionaryValues);
 
         return values;
     }

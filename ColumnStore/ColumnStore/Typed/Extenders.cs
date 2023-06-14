@@ -30,7 +30,7 @@ static class ColumnTypedExtenders
         stm.Write(MemoryMarshal.Cast<int, byte>(storedKeys.AsSpan(0, values.Count)));
         ArrayPool<int>.Shared.Return(storedKeys);
 
-        storedValues.PackData(stm, new Range(0, storedValues.Length));
+        storedValues.PackData(stm, new Range(0, values.Count));
 
         ArrayPool<V>.Shared.Return(storedValues);
 

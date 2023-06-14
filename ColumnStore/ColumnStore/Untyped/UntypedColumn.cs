@@ -19,8 +19,11 @@ public sealed class UntypedColumn
     /// <exception cref="ArgumentException"></exception>
     public UntypedColumn(CDT[] keys, Array values)
     {
-        Keys   = keys   ?? throw new ArgumentException("Can't be null", nameof(keys));
-        Values = values ?? throw new ArgumentException("Can't be null", nameof(values));
+        ArgumentNullException.ThrowIfNull(keys, nameof(keys));
+        ArgumentNullException.ThrowIfNull(values, nameof(values));
+        
+        Keys   = keys;
+        Values = values;
 
         if (Keys.Length != Values.Length)
             throw new ArgumentException($"Keys.Length != Values.Length ({Keys.Length} != {Values.Length})");

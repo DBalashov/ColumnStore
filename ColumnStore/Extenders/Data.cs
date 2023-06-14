@@ -19,12 +19,14 @@ public enum StoredDataType
     Byte     = 8,
     Boolean  = 9,
 
-    SByte   = 10,
-    UInt    = 11,
-    UInt16  = 12,
-    UInt64  = 13,
-    Half    = 14,
-    Decimal = 15
+    SByte    = 10,
+    UInt     = 11,
+    UInt16   = 12,
+    UInt64   = 13,
+    Half     = 14,
+    Decimal  = 15,
+    DateOnly = 16,
+    TimeOnly = 17
 }
 
 public enum StoredPackType
@@ -43,10 +45,11 @@ internal enum CompactType
 
 public static class Extenders
 {
-    public static StoredDataType DetectDataType(this Array a)
+    public static StoredDataType DetectDataType(this Array arr)
     {
-        var v    = a.GetValue(0)!;
-        var type = v.GetType();
+        if (arr.Length == 0) throw new InvalidDataException("Array is empty");
+
+        var type = arr.GetValue(0)!.GetType();
 
         if (type == typeof(bool)) return StoredDataType.Boolean;
 
@@ -69,6 +72,8 @@ public static class Extenders
         if (type == typeof(TimeSpan)) return StoredDataType.TimeSpan;
         if (type == typeof(decimal)) return StoredDataType.Decimal;
         if (type == typeof(Half)) return StoredDataType.Half;
+        if (type == typeof(DateOnly)) return StoredDataType.DateOnly;
+        if (type == typeof(TimeOnly)) return StoredDataType.TimeOnly;
 
         throw new NotSupportedException(type.Name + " not supported");
     }
@@ -80,14 +85,14 @@ public static class Extenders
                                                                                       [StoredDataType.Byte]  = new ReadWriteHandlerByte(),
                                                                                       [StoredDataType.SByte] = new ReadWriteHandlerGeneric<sbyte>(),
 
-                                                                                      [StoredDataType.Int]  = new ReadWriteHandlerInt(),
-                                                                                      [StoredDataType.UInt] = new ReadWriteHandlerUInt(),
+                                                                                      [StoredDataType.Int]  = new ReadWriteHandlerGenericInt<int>(),
+                                                                                      [StoredDataType.UInt] = new ReadWriteHandlerGenericInt<uint>(),
 
-                                                                                      [StoredDataType.Int16]  = new ReadWriteHandlerInt16(),
-                                                                                      [StoredDataType.UInt16] = new ReadWriteHandlerUInt16(),
+                                                                                      [StoredDataType.Int16]  = new ReadWriteHandlerGenericInt<short>(),
+                                                                                      [StoredDataType.UInt16] = new ReadWriteHandlerGenericInt<ushort>(),
 
-                                                                                      [StoredDataType.Int64]  = new ReadWriteHandlerInt64(),
-                                                                                      [StoredDataType.UInt64] = new ReadWriteHandlerUInt64(),
+                                                                                      [StoredDataType.Int64]  = new ReadWriteHandlerGenericInt<Int64>(),
+                                                                                      [StoredDataType.UInt64] = new ReadWriteHandlerGenericInt<UInt64>(),
 
                                                                                       [StoredDataType.Double]   = new ReadWriteHandlerDouble(),
                                                                                       [StoredDataType.DateTime] = new ReadWriteHandlerDateTime(),
@@ -95,7 +100,9 @@ public static class Extenders
                                                                                       [StoredDataType.String]   = new ReadWriteHandlerString(),
                                                                                       [StoredDataType.TimeSpan] = new ReadWriteHandlerTimeSpan(),
                                                                                       [StoredDataType.Half]     = new ReadWriteHandlerGeneric<Half>(),
-                                                                                      [StoredDataType.Decimal]  = new ReadWriteHandlerGeneric<decimal>()
+                                                                                      [StoredDataType.Decimal]  = new ReadWriteHandlerGeneric<decimal>(),
+                                                                                      [StoredDataType.DateOnly] = new ReadWriteHandlerGeneric<DateOnly>(),
+                                                                                      [StoredDataType.TimeOnly] = new ReadWriteHandlerTimeOnly()
                                                                                   };
 
     internal static CompactType GetCompactType(this int count) =>

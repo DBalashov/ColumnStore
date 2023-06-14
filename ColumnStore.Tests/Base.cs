@@ -139,27 +139,51 @@ namespace ColumnStore.Tests
                .ToDictionary(p => p,
                              p => ((DateTime) p).TimeOfDay.TotalMilliseconds);
 
+        protected Dictionary<CDT, decimal> GetDecimals(CDT[] keys, CDT? from = null, CDT? to = null) =>
+            filter(keys, from, to)
+               .ToDictionary(p => p,
+                             p => (decimal) ((DateTime) p).TimeOfDay.TotalMilliseconds);
+
         protected Dictionary<CDT, TimeSpan> GetTimeSpans(CDT[] keys, CDT? from = null, CDT? to = null) =>
             filter(keys, from, to)
                .ToDictionary(p => p,
                              p => ((DateTime) p).TimeOfDay);
+
+        protected Dictionary<CDT, DateOnly> GetDateOnlys(CDT[] keys, CDT? from = null, CDT? to = null) =>
+            filter(keys, from, to)
+               .ToDictionary(p => p,
+                             p => DateOnly.FromDateTime(p));
+
+        protected Dictionary<CDT, TimeOnly> GetTimeOnlys(CDT[] keys, CDT? from = null, CDT? to = null) =>
+            filter(keys, from, to)
+               .ToDictionary(p => p,
+                             p =>
+                             {
+                                 var ts = ((DateTime) p).TimeOfDay;
+                                 return new TimeOnly(ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
+                             });
+
+        protected Dictionary<CDT, Half> GetHalfs(CDT[] keys, CDT? from = null, CDT? to = null) =>
+            filter(keys, from, to)
+               .ToDictionary(p => p,
+                             p => (Half) ((DateTime) p).TimeOfDay.TotalMilliseconds);
 
         protected Dictionary<CDT, DateTime> GetDateTimes(CDT[] keys, CDT? from = null, CDT? to = null) =>
             filter(keys, from, to)
                .ToDictionary(p => p,
                              p => (DateTime) p);
 
-        protected void AssertIsEqual<T>(Dictionary<CDT, T> a1, Dictionary<CDT, T> a2)
+        protected void AssertIsEqual<T>(Dictionary<CDT, T> result, Dictionary<CDT, T> originalValues)
         {
-            Assert.IsTrue(a1.Count == a2.Count, "Length mismatch: {0} vs {1}", a1.Count, a2.Count);
+            Assert.IsTrue(result.Count == originalValues.Count, "Length mismatch: result.Count={0} vs originalValues.Count={1}", result.Count, originalValues.Count);
 
-            foreach (var item in a1)
+            foreach (var item in result)
             {
-                if (!a2.TryGetValue(item.Key, out var second))
-                    Assert.Fail("Key not found: {0}", item.Key);
+                if (!originalValues.TryGetValue(item.Key, out var second))
+                    Assert.Fail("Key not found in result: {0}", item.Key);
 
                 if (Equals(item.Value, default) && Equals(second, default)) continue;
-                Assert.IsTrue(Equals(item.Value, second), "Elements is not equal [{0:s}]: {1} vs {2}", (DateTime) new CDT(item.Key), item.Value, second);
+                Assert.IsTrue(Equals(item.Value, second), "Elements is not equal [{0:s}]: claimed={1} vs original={2}", (DateTime) new CDT(item.Key), item.Value, second);
             }
         }
     }

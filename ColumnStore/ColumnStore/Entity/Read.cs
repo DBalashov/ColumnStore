@@ -48,6 +48,8 @@ partial class ColumnStoreEntity : IColumnStoreEntity
                 else if (prop.Value.PropertyType == typeof(DateTime)) unpack<E, DateTime>(data, range, r, prop.Value);
                 else if (prop.Value.PropertyType == typeof(decimal)) unpack<E, decimal>(data, range, r, prop.Value);
                 else if (prop.Value.PropertyType == typeof(Half)) unpack<E, Half>(data, range, r, prop.Value);
+                else if (prop.Value.PropertyType == typeof(TimeOnly)) unpack<E, TimeOnly>(data, range, r, prop.Value);
+                else if (prop.Value.PropertyType == typeof(DateOnly)) unpack<E, DateOnly>(data, range, r, prop.Value);
 
                 else throw new NotSupportedException(prop.Value.PropertyType + " not supported");
             }

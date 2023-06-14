@@ -71,6 +71,18 @@ namespace ColumnStore.Tests.Typed
         public void WriteDateTime() => writeWithMerge(() => GetDateTimes(keys));
 
         [Test]
+        public void WriteDateOnlys() => writeWithMerge(() => GetDateOnlys(keys));
+        
+        [Test]
+        public void WriteTimeOnlys() => writeWithMerge(() => GetTimeOnlys(keys));
+        
+        [Test]
+        public void WriteDecimals() => writeWithMerge(() => GetDecimals(keys));
+        
+        [Test]
         public void WriteTimeSpan() => writeWithMerge(() => GetTimeSpans(keys));
+        
+        [Test]
+        public void WriteHalfs() => writeWithMerge(() => GetHalfs(keys));
     }
 }
