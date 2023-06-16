@@ -12,13 +12,13 @@ static class EntityExtenders
 {
     static readonly ArrayPool<int> poolInts = ArrayPool<int>.Shared;
 
-    internal static byte[] Pack<K, V>(this KeyValue<K>[] newData, PropertyInfo prop, bool withCompression)
+    internal static byte[] Pack<K, V>(this KeyValue<K>[] newData, CSPropertyInfo prop, bool withCompression)
     {
         using var stm = withCompression ? (IVirtualWriteStream) new StreamCompress(new MemoryStream()) : new StreamRaw(new MemoryStream());
 
         stm.Write(BitConverter.GetBytes(newData.Length));
 
-        var getValue     = prop.getActionGet<K, V>();
+        var getValue     = (Func<K, V>) prop.Getter;
         var storedKeys   = poolInts.Rent(newData.Length);
         var storedValues = new V[newData.Length];
 
@@ -38,7 +38,7 @@ static class EntityExtenders
 
     internal static Dictionary<int, V> MergeWithReplace<K, V>(this Dictionary<int, V> existing,
                                                               KeyValue<K>[]           newData,
-                                                              PropertyInfo            prop)
+                                                              CSPropertyInfo          prop)
     {
         var range = new CDTRange(new CDT(newData.First().Key), new CDT(newData.Last().Key));
 
@@ -48,7 +48,7 @@ static class EntityExtenders
             if (!range.InRange(value.Key))
                 r.Add(value.Key, value.Value);
 
-        var getValue = prop.getActionGet<K, V>();
+        var getValue = (Func<K, V>) prop.Getter;
         foreach (var newValue in newData)
             r[newValue.Key] = getValue(newValue.Value);
 

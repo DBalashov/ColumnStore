@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace ColumnStore;
@@ -14,7 +13,7 @@ partial class ColumnStoreEntity
         if (!entities.Any())
             throw new ArgumentException("Can't be empty", nameof(entities));
 
-        var props        = typeof(E).GetProps();
+        var props        = ReflectionExtenders.GetProps<E>();
         var writeEntries = new Dictionary<string, byte[]>();
 
         foreach (var range in entities.GroupToDictionary(p => p.Trunc(ps.Unit).Value))
@@ -24,31 +23,33 @@ partial class ColumnStoreEntity
                 var sectionName = ps.Path.BuildSectionName(prop.Key, range.Key);
                 var data        = ps.Container[sectionName];
 
-                byte[] buff;
-                if (prop.Value.PropertyType      == typeof(int)) buff  = pack<E, int>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(uint)) buff = pack<E, uint>(data, range.Value, prop.Value);
+                var buff = prop.Value.DataType switch
+                           {
+                               StoredDataType.Int  => pack<E, int>(data, range.Value, prop.Value),
+                               StoredDataType.UInt => pack<E, uint>(data, range.Value, prop.Value),
 
-                else if (prop.Value.PropertyType == typeof(short)) buff  = pack<E, short>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(ushort)) buff = pack<E, ushort>(data, range.Value, prop.Value);
+                               StoredDataType.Int16  => pack<E, short>(data, range.Value, prop.Value),
+                               StoredDataType.UInt16 => pack<E, ushort>(data, range.Value, prop.Value),
 
-                else if (prop.Value.PropertyType == typeof(Int64)) buff  = pack<E, Int64>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(UInt64)) buff = pack<E, UInt64>(data, range.Value, prop.Value);
+                               StoredDataType.Int64  => pack<E, Int64>(data, range.Value, prop.Value),
+                               StoredDataType.UInt64 => pack<E, UInt64>(data, range.Value, prop.Value),
 
-                else if (prop.Value.PropertyType == typeof(byte)) buff  = pack<E, byte>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(sbyte)) buff = pack<E, sbyte>(data, range.Value, prop.Value);
+                               StoredDataType.Byte  => pack<E, byte>(data, range.Value, prop.Value),
+                               StoredDataType.SByte => pack<E, sbyte>(data, range.Value, prop.Value),
 
-                else if (prop.Value.PropertyType == typeof(bool)) buff     = pack<E, bool>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(double)) buff   = pack<E, double>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(string)) buff   = pack<E, string>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(Guid)) buff     = pack<E, Guid>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(TimeSpan)) buff = pack<E, TimeSpan>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(DateTime)) buff = pack<E, DateTime>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(decimal)) buff  = pack<E, decimal>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(Half)) buff     = pack<E, Half>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(TimeOnly)) buff = pack<E, TimeOnly>(data, range.Value, prop.Value);
-                else if (prop.Value.PropertyType == typeof(DateOnly)) buff = pack<E, DateOnly>(data, range.Value, prop.Value);
+                               StoredDataType.Boolean  => pack<E, bool>(data, range.Value, prop.Value),
+                               StoredDataType.Double   => pack<E, double>(data, range.Value, prop.Value),
+                               StoredDataType.String   => pack<E, string>(data, range.Value, prop.Value),
+                               StoredDataType.Guid     => pack<E, Guid>(data, range.Value, prop.Value),
+                               StoredDataType.TimeSpan => pack<E, TimeSpan>(data, range.Value, prop.Value),
+                               StoredDataType.DateTime => pack<E, DateTime>(data, range.Value, prop.Value),
+                               StoredDataType.Decimal  => pack<E, decimal>(data, range.Value, prop.Value),
+                               StoredDataType.Half     => pack<E, Half>(data, range.Value, prop.Value),
+                               StoredDataType.TimeOnly => pack<E, TimeOnly>(data, range.Value, prop.Value),
+                               StoredDataType.DateOnly => pack<E, DateOnly>(data, range.Value, prop.Value),
+                               _                       => throw new NotSupportedException(prop.Value + " not supported")
+                           };
 
-                else throw new NotSupportedException(prop.Value.PropertyType + " not supported");
 
                 writeEntries.Add(sectionName, buff);
             }
@@ -58,7 +59,7 @@ partial class ColumnStoreEntity
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    byte[] pack<E, V>(byte[]? data, KeyValue<E>[] newData, PropertyInfo prop) =>
+    byte[] pack<E, V>(byte[]? data, KeyValue<E>[] newData, CSPropertyInfo prop) =>
         data != null
             ? data.Unpack<V>(ps.Compressed).MergeWithReplace(newData, prop).Pack(ps.Compressed)
             : newData.Pack<E, V>(prop, ps.Compressed);

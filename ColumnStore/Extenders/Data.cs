@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using SpanByteExtenders;
@@ -50,61 +49,11 @@ public static class Extenders
         if (arr.Length == 0) throw new InvalidDataException("Array is empty");
 
         var type = arr.GetValue(0)!.GetType();
-
-        if (type == typeof(bool)) return StoredDataType.Boolean;
-
-        if (type == typeof(byte)) return StoredDataType.Byte;
-        if (type == typeof(sbyte)) return StoredDataType.SByte;
-
-        if (type == typeof(int)) return StoredDataType.Int;
-        if (type == typeof(uint)) return StoredDataType.UInt;
-
-        if (type == typeof(short)) return StoredDataType.Int16;
-        if (type == typeof(ushort)) return StoredDataType.UInt16;
-
-        if (type == typeof(Int64)) return StoredDataType.Int64;
-        if (type == typeof(UInt64)) return StoredDataType.UInt64;
-
-        if (type == typeof(string)) return StoredDataType.String;
-        if (type == typeof(double)) return StoredDataType.Double;
-        if (type == typeof(Guid)) return StoredDataType.Guid;
-        if (type == typeof(DateTime)) return StoredDataType.DateTime;
-        if (type == typeof(TimeSpan)) return StoredDataType.TimeSpan;
-        if (type == typeof(decimal)) return StoredDataType.Decimal;
-        if (type == typeof(Half)) return StoredDataType.Half;
-        if (type == typeof(DateOnly)) return StoredDataType.DateOnly;
-        if (type == typeof(TimeOnly)) return StoredDataType.TimeOnly;
-
-        throw new NotSupportedException(type.Name + " not supported");
+        return ReflectionExtenders.TryDetectDataType(type, out var dataType)
+                   ? dataType
+                   : throw new NotSupportedException(type.Name + " not supported");
     }
-
-    static readonly Dictionary<StoredDataType, ReadWriteBase> readWriteHandlers = new()
-                                                                                  {
-                                                                                      [StoredDataType.Boolean] = new ReadWriteHandlerBoolean(),
-
-                                                                                      [StoredDataType.Byte]  = new ReadWriteHandlerByte(),
-                                                                                      [StoredDataType.SByte] = new ReadWriteHandlerGeneric<sbyte>(),
-
-                                                                                      [StoredDataType.Int]  = new ReadWriteHandlerGenericInt<int>(),
-                                                                                      [StoredDataType.UInt] = new ReadWriteHandlerGenericInt<uint>(),
-
-                                                                                      [StoredDataType.Int16]  = new ReadWriteHandlerGenericInt<short>(),
-                                                                                      [StoredDataType.UInt16] = new ReadWriteHandlerGenericInt<ushort>(),
-
-                                                                                      [StoredDataType.Int64]  = new ReadWriteHandlerGenericInt<Int64>(),
-                                                                                      [StoredDataType.UInt64] = new ReadWriteHandlerGenericInt<UInt64>(),
-
-                                                                                      [StoredDataType.Double]   = new ReadWriteHandlerDouble(),
-                                                                                      [StoredDataType.DateTime] = new ReadWriteHandlerDateTime(),
-                                                                                      [StoredDataType.Guid]     = new ReadWriteHandlerGuid(),
-                                                                                      [StoredDataType.String]   = new ReadWriteHandlerString(),
-                                                                                      [StoredDataType.TimeSpan] = new ReadWriteHandlerTimeSpan(),
-                                                                                      [StoredDataType.Half]     = new ReadWriteHandlerGeneric<Half>(),
-                                                                                      [StoredDataType.Decimal]  = new ReadWriteHandlerGeneric<decimal>(),
-                                                                                      [StoredDataType.DateOnly] = new ReadWriteHandlerGeneric<DateOnly>(),
-                                                                                      [StoredDataType.TimeOnly] = new ReadWriteHandlerTimeOnly()
-                                                                                  };
-
+    
     internal static CompactType GetCompactType(this int count) =>
         count switch
         {
@@ -122,7 +71,7 @@ public static class Extenders
     {
         var count    = data.Read<int>();
         var dataType = (StoredDataType) data.Read<ushort>();
-        return readWriteHandlers[dataType].Unpack(data, count);
+        return dataType.GetHandler().Unpack(data, count);
     }
 
     internal static void PackData(this Array values, IVirtualWriteStream targetStream, Range range)
@@ -132,7 +81,7 @@ public static class Extenders
         targetStream.Write(BitConverter.GetBytes(range.Length()));
         targetStream.Write(BitConverter.GetBytes((ushort) dataType));
 
-        readWriteHandlers[dataType].Pack(values, targetStream, range);
+        dataType.GetHandler().Pack(values, targetStream, range);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

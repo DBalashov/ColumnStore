@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 
 namespace ColumnStore;
 
@@ -19,7 +17,7 @@ partial class ColumnStoreEntity : IColumnStoreEntity
 
         var r = new Dictionary<CDT, E>();
 
-        var props = typeof(E).GetProps();
+        var props = ReflectionExtenders.GetProps<E>();
         foreach (var range in new CDTRange(from, to).GetRanges(ps.Unit))
         {
             foreach (var prop in props)
@@ -28,44 +26,75 @@ partial class ColumnStoreEntity : IColumnStoreEntity
                 var data        = ps.Container[sectionName];
                 if (data == null) continue;
 
-                if (prop.Value.PropertyType      == typeof(int)) unpack<E, int>(data, range, r, prop.Value);
-                else if (prop.Value.PropertyType == typeof(uint)) unpack<E, uint>(data, range, r, prop.Value);
-
-                else if (prop.Value.PropertyType == typeof(short)) unpack<E, short>(data, range, r, prop.Value);
-                else if (prop.Value.PropertyType == typeof(ushort)) unpack<E, ushort>(data, range, r, prop.Value);
-
-                else if (prop.Value.PropertyType == typeof(Int64)) unpack<E, Int64>(data, range, r, prop.Value);
-                else if (prop.Value.PropertyType == typeof(UInt64)) unpack<E, UInt64>(data, range, r, prop.Value);
-
-                else if (prop.Value.PropertyType == typeof(byte)) unpack<E, byte>(data, range, r, prop.Value);
-                else if (prop.Value.PropertyType == typeof(sbyte)) unpack<E, sbyte>(data, range, r, prop.Value);
-
-                else if (prop.Value.PropertyType == typeof(bool)) unpack<E, bool>(data, range, r, prop.Value);
-                else if (prop.Value.PropertyType == typeof(double)) unpack<E, double>(data, range, r, prop.Value);
-                else if (prop.Value.PropertyType == typeof(string)) unpack<E, string>(data, range, r, prop.Value);
-                else if (prop.Value.PropertyType == typeof(Guid)) unpack<E, Guid>(data, range, r, prop.Value);
-                else if (prop.Value.PropertyType == typeof(TimeSpan)) unpack<E, TimeSpan>(data, range, r, prop.Value);
-                else if (prop.Value.PropertyType == typeof(DateTime)) unpack<E, DateTime>(data, range, r, prop.Value);
-                else if (prop.Value.PropertyType == typeof(decimal)) unpack<E, decimal>(data, range, r, prop.Value);
-                else if (prop.Value.PropertyType == typeof(Half)) unpack<E, Half>(data, range, r, prop.Value);
-                else if (prop.Value.PropertyType == typeof(TimeOnly)) unpack<E, TimeOnly>(data, range, r, prop.Value);
-                else if (prop.Value.PropertyType == typeof(DateOnly)) unpack<E, DateOnly>(data, range, r, prop.Value);
-
-                else throw new NotSupportedException(prop.Value.PropertyType + " not supported");
+                switch (prop.Value.DataType)
+                {
+                    case StoredDataType.Int:
+                        unpack<E, int>(data, range, r, prop.Value);
+                        break;
+                    case StoredDataType.UInt:
+                        unpack<E, uint>(data, range, r, prop.Value);
+                        break;
+                    case StoredDataType.Int16:
+                        unpack<E, short>(data, range, r, prop.Value);
+                        break;
+                    case StoredDataType.UInt16:
+                        unpack<E, ushort>(data, range, r, prop.Value);
+                        break;
+                    case StoredDataType.Int64:
+                        unpack<E, Int64>(data, range, r, prop.Value);
+                        break;
+                    case StoredDataType.UInt64:
+                        unpack<E, UInt64>(data, range, r, prop.Value);
+                        break;
+                    case StoredDataType.Byte:
+                        unpack<E, byte>(data, range, r, prop.Value);
+                        break;
+                    case StoredDataType.SByte:
+                        unpack<E, sbyte>(data, range, r, prop.Value);
+                        break;
+                    case StoredDataType.Boolean:
+                        unpack<E, bool>(data, range, r, prop.Value);
+                        break;
+                    case StoredDataType.Double:
+                        unpack<E, double>(data, range, r, prop.Value);
+                        break;
+                    case StoredDataType.String:
+                        unpack<E, string>(data, range, r, prop.Value);
+                        break;
+                    case StoredDataType.Guid:
+                        unpack<E, Guid>(data, range, r, prop.Value);
+                        break;
+                    case StoredDataType.DateTime:
+                        unpack<E, DateTime>(data, range, r, prop.Value);
+                        break;
+                    case StoredDataType.TimeSpan:
+                        unpack<E, TimeSpan>(data, range, r, prop.Value);
+                        break;
+                    case StoredDataType.Decimal:
+                        unpack<E, decimal>(data, range, r, prop.Value);
+                        break;
+                    case StoredDataType.Half:
+                        unpack<E, Half>(data, range, r, prop.Value);
+                        break;
+                    case StoredDataType.TimeOnly:
+                        unpack<E, TimeOnly>(data, range, r, prop.Value);
+                        break;
+                    case StoredDataType.DateOnly:
+                        unpack<E, DateOnly>(data, range, r, prop.Value);
+                        break;
+                    default:
+                        throw new NotSupportedException(prop.Value.DataType + " not supported");
+                }
             }
         }
 
         return r;
     }
 
-    void unpack<T, V>(byte[] data, CDTKeyRange keyRange, Dictionary<CDT, T> target, PropertyInfo prop) where T : class, new()
+    void unpack<T, V>(byte[] data, CDTKeyRange keyRange, Dictionary<CDT, T> target, CSPropertyInfo prop) where T : class, new()
     {
-        var setValue = prop.getActionSet<T, V>();
-
-        var ctor          = Expression.New(typeof(T));
-        var memberInit    = Expression.MemberInit(ctor);
-        var createFunctor = Expression.Lambda<Func<T>>(memberInit).Compile();
-
+        var setValue      = (Action<T, V>) prop.Setter;
+        var createFunctor = (Func<T>) prop.InstanceCreator;
         foreach (var item in data.Unpack<V>(ps.Compressed).Where(p => keyRange.Range.InRange(p.Key)))
         {
             var key = new CDT(item.Key);

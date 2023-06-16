@@ -17,7 +17,7 @@ class Config : ManualConfig
 
     private class CustomOrderer : IOrderer
     {
-        public IEnumerable<BenchmarkCase> GetExecutionOrder(ImmutableArray<BenchmarkCase> benchmarksCase, IEnumerable<BenchmarkLogicalGroupRule> order = null) =>
+        public IEnumerable<BenchmarkCase> GetExecutionOrder(ImmutableArray<BenchmarkCase> benchmarksCase, IEnumerable<BenchmarkLogicalGroupRule>? order = null) =>
             benchmarksCase.OrderBy(p => p.Descriptor.WorkloadMethod.Name)
                           .ThenBy(p => (int) p.Parameters["PageSize"]);
 
@@ -31,7 +31,7 @@ class Config : ManualConfig
             benchmarkCase.Job.DisplayInfo + "_" + benchmarkCase.Parameters.DisplayInfo;
 
         public IEnumerable<IGrouping<string, BenchmarkCase>> GetLogicalGroupOrder(IEnumerable<IGrouping<string, BenchmarkCase>> logicalGroups,
-                                                                                  IEnumerable<BenchmarkLogicalGroupRule>        order = null) => logicalGroups.OrderBy(it => it.Key);
+                                                                                  IEnumerable<BenchmarkLogicalGroupRule>?       order = null) => logicalGroups.OrderBy(it => it.Key);
 
         public bool SeparateLogicalGroups => false;
     }
