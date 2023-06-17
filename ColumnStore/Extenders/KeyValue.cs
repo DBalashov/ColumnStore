@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace ColumnStore;
 
+[ExcludeFromCodeCoverage]
 readonly struct KeyValue<V>
 {
     public readonly int Key;

@@ -1,14 +1,14 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
 using ColumnStore;
-using ColumnStore.Tests;
 using FileContainer;
 
 #pragma warning disable CS8618
 
 namespace Benchmark;
 
+[ExcludeFromCodeCoverage]
 [SimpleJob(RuntimeMoniker.Net70, baseline: true)]
 [WarmupCount(3)]
 [IterationCount(3)]

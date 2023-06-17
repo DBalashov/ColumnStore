@@ -83,6 +83,11 @@ namespace ColumnStore.Tests.Typed
         [Test]
         [TestCase(false)]
         [TestCase(true)]
+        public void WriteFloat(bool compressed) => writeRead(compressed, () => GetFloats(keys), (sd, ed) => GetFloats(keys, sd, ed));
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
         public void WriteGuid(bool compressed) => writeRead(compressed, () => GetGuids(keys), (sd, ed) => GetGuids(keys, sd, ed));
 
         [Test]

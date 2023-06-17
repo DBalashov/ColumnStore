@@ -25,7 +25,8 @@ public enum StoredDataType
     Half     = 14,
     Decimal  = 15,
     DateOnly = 16,
-    TimeOnly = 17
+    TimeOnly = 17,
+    Float    = 18
 }
 
 public enum StoredPackType
@@ -53,7 +54,7 @@ public static class Extenders
                    ? dataType
                    : throw new NotSupportedException(type.Name + " not supported");
     }
-    
+
     internal static CompactType GetCompactType(this int count) =>
         count switch
         {

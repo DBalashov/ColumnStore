@@ -5,6 +5,7 @@ using FileContainer;
 
 namespace ColumnStore;
 
+[ExcludeFromCodeCoverage]
 public sealed class ColumnStoreEntry
 {
     public string Name { get; }

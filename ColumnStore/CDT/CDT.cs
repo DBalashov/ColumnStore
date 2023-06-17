@@ -167,6 +167,7 @@ public readonly struct CDT : IComparable<CDT>, IComparable
     public int CompareTo(CDT     other) => Value.CompareTo(other.Value);
 
 #if DEBUG
+    [ExcludeFromCodeCoverage]
     public override string ToString() => ((DateTime) this).ToString("yyyy-MM-dd HH:mm:ss");
 #endif
 }

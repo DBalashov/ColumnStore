@@ -39,6 +39,7 @@ partial class ColumnStoreEntity
 
                                StoredDataType.Boolean  => pack<E, bool>(data, range.Value, prop.Value),
                                StoredDataType.Double   => pack<E, double>(data, range.Value, prop.Value),
+                               StoredDataType.Float    => pack<E, float>(data, range.Value, prop.Value),
                                StoredDataType.String   => pack<E, string>(data, range.Value, prop.Value),
                                StoredDataType.Guid     => pack<E, Guid>(data, range.Value, prop.Value),
                                StoredDataType.TimeSpan => pack<E, TimeSpan>(data, range.Value, prop.Value),

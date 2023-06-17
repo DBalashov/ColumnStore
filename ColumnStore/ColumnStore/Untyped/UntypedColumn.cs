@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace ColumnStore;
@@ -36,6 +37,7 @@ public sealed class UntypedColumn
     }
 
 #if DEBUG
+    [ExcludeFromCodeCoverage]
     public override string ToString() => $"{Keys.First()} - ${Keys.Last()}: {Keys.Length}";
 #endif
 }

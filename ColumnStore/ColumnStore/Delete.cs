@@ -6,7 +6,6 @@ using System.Linq;
 
 namespace ColumnStore;
 
-// todo remove T
 public partial class PersistentColumnStore
 {
     /// <summary> Remove data for specified ranges. Ranges can be overlapped </summary>
@@ -18,7 +17,8 @@ public partial class PersistentColumnStore
         if (string.IsNullOrEmpty(columnName))
             throw new ArgumentException("Can't be null", nameof(columnName));
 
-        var needForWrite = new Dictionary<string, Dictionary<int, T>?>(StringComparer.InvariantCultureIgnoreCase);
+        var needForDelete = new List<string>();
+        var needForWrite  = new Dictionary<string, Dictionary<int, T>?>(StringComparer.InvariantCultureIgnoreCase);
         foreach (var range in ranges)
         {
             foreach (var portion in range.GetRanges(Unit))
@@ -36,19 +36,15 @@ public partial class PersistentColumnStore
                 var newData = new Dictionary<int, T>(existingData.Count);
                 foreach (var item in existingData.Where(p => !portion.Range.InRange(p.Key)))
                     newData.Add(item.Key, item.Value);
-
+                
+                needForWrite[sectionName] = newData.Any() ? newData : null;
                 if (!newData.Any())
-                    newData = null;
-
-                if (needForWrite.ContainsKey(sectionName))
-                    needForWrite[sectionName] = newData;
-                else needForWrite.Add(sectionName, newData);
+                    needForDelete.Add(sectionName);
             }
         }
 
-        var forDelete = needForWrite.Where(p => p.Value == null).Select(p => p.Key).ToArray();
-        if (forDelete.Any())
-            Container.Delete(forDelete);
+        if (needForDelete.Any())
+            Container.Delete(needForDelete.ToArray());
 
         var forWrite = needForWrite.Where(p => p.Value != null).ToDictionary(p => p.Key, p => p.Value.Pack(Compressed));
         if (forWrite.Any())

@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text.Json;
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Reports;
@@ -6,6 +7,7 @@ using BenchmarkDotNet.Running;
 
 namespace Benchmark;
 
+[ExcludeFromCodeCoverage]
 public class ColumnAvgPerValue : IColumn
 {
     public string Id         { get; }

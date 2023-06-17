@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -20,6 +21,7 @@ readonly struct RangeWithKey
     }
 
 #if DEBUG
+    [ExcludeFromCodeCoverage]
     public override string ToString() => $"{Key}: {base.ToString()}";
 #endif
 }

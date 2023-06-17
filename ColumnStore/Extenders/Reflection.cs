@@ -24,6 +24,7 @@ static class ReflectionExtenders
 
                                                                                       [StoredDataType.Int64]  = new ReadWriteHandlerGenericInt<Int64>(),
                                                                                       [StoredDataType.UInt64] = new ReadWriteHandlerGenericInt<UInt64>(),
+                                                                                      [StoredDataType.Float]  = new ReadWriteHandlerGeneric<float>(),
 
                                                                                       [StoredDataType.Double]   = new ReadWriteHandlerDouble(),
                                                                                       [StoredDataType.DateTime] = new ReadWriteHandlerDateTime(),
@@ -111,6 +112,12 @@ static class ReflectionExtenders
             return true;
         }
 
+        if (type == typeof(float))
+        {
+            r = StoredDataType.Float;
+            return true;
+        }
+
         if (type == typeof(Guid))
         {
             r = StoredDataType.Guid;
@@ -180,6 +187,7 @@ static class ReflectionExtenders
             else if (prop.PropertyType == typeof(DateTime)) r.Add(prop.Name, createPropertyInfo<E, DateTime>(StoredDataType.DateTime, prop));
             else if (prop.PropertyType == typeof(TimeSpan)) r.Add(prop.Name, createPropertyInfo<E, TimeSpan>(StoredDataType.TimeSpan, prop));
             else if (prop.PropertyType == typeof(double)) r.Add(prop.Name,   createPropertyInfo<E, double>(StoredDataType.Double, prop));
+            else if (prop.PropertyType == typeof(float)) r.Add(prop.Name,    createPropertyInfo<E, float>(StoredDataType.Float, prop));
             else if (prop.PropertyType == typeof(string)) r.Add(prop.Name,   createPropertyInfo<E, string>(StoredDataType.String, prop));
             else if (prop.PropertyType == typeof(decimal)) r.Add(prop.Name,  createPropertyInfo<E, decimal>(StoredDataType.Decimal, prop));
             else if (prop.PropertyType == typeof(Half)) r.Add(prop.Name,     createPropertyInfo<E, Half>(StoredDataType.Half, prop));
@@ -255,8 +263,8 @@ static class ReflectionExtenders
     #endregion
 }
 
-/// <param name="Getter">Func<E, V></param>
-/// <param name="Setter">Action<E, V></param>
+/// <param name="Getter">Func&lt;E, V&gt;</param>
+/// <param name="Setter">Action&lt;E, V&gt;</param>
 internal record CSPropertyInfo(StoredDataType DataType,
                                object         Getter, object Setter,
                                object         InstanceCreator);

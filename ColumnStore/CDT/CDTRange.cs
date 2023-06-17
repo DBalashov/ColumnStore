@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 // ReSharper disable InconsistentNaming
@@ -40,6 +41,7 @@ public readonly struct CDTRange
     }
 
 #if DEBUG
+    [ExcludeFromCodeCoverage]
     public override string ToString() => From + " - " + To;
 #endif
 }
@@ -56,6 +58,7 @@ public readonly struct CDTKeyRange
     }
 
 #if DEBUG
+    [ExcludeFromCodeCoverage]
     public override string ToString() => Key + ":  " + base.ToString();
 #endif
 }

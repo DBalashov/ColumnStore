@@ -58,6 +58,9 @@ partial class ColumnStoreEntity : IColumnStoreEntity
                     case StoredDataType.Double:
                         unpack<E, double>(data, range, r, prop.Value);
                         break;
+                    case StoredDataType.Float:
+                        unpack<E, float>(data, range, r, prop.Value);
+                        break;
                     case StoredDataType.String:
                         unpack<E, string>(data, range, r, prop.Value);
                         break;

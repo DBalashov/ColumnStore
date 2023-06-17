@@ -135,24 +135,19 @@ namespace ColumnStore.Tests
                              });
 
         protected Dictionary<CDT, double> GetDoubles(CDT[] keys, CDT? from = null, CDT? to = null) =>
-            filter(keys, from, to)
-               .ToDictionary(p => p,
-                             p => ((DateTime) p).TimeOfDay.TotalMilliseconds);
+            filter(keys, from, to).ToDictionary(p => p, p => ((DateTime) p).TimeOfDay.TotalMilliseconds);
+
+        protected Dictionary<CDT, float> GetFloats(CDT[] keys, CDT? from = null, CDT? to = null) =>
+            filter(keys, from, to).ToDictionary(p => p, p => (float) ((DateTime) p).TimeOfDay.TotalMilliseconds);
 
         protected Dictionary<CDT, decimal> GetDecimals(CDT[] keys, CDT? from = null, CDT? to = null) =>
-            filter(keys, from, to)
-               .ToDictionary(p => p,
-                             p => (decimal) ((DateTime) p).TimeOfDay.TotalMilliseconds);
+            filter(keys, from, to).ToDictionary(p => p, p => (decimal) ((DateTime) p).TimeOfDay.TotalMilliseconds);
 
         protected Dictionary<CDT, TimeSpan> GetTimeSpans(CDT[] keys, CDT? from = null, CDT? to = null) =>
-            filter(keys, from, to)
-               .ToDictionary(p => p,
-                             p => ((DateTime) p).TimeOfDay);
+            filter(keys, from, to).ToDictionary(p => p, p => ((DateTime) p).TimeOfDay);
 
         protected Dictionary<CDT, DateOnly> GetDateOnlys(CDT[] keys, CDT? from = null, CDT? to = null) =>
-            filter(keys, from, to)
-               .ToDictionary(p => p,
-                             p => DateOnly.FromDateTime(p));
+            filter(keys, from, to).ToDictionary(p => p, p => DateOnly.FromDateTime(p));
 
         protected Dictionary<CDT, TimeOnly> GetTimeOnlys(CDT[] keys, CDT? from = null, CDT? to = null) =>
             filter(keys, from, to)
@@ -169,9 +164,7 @@ namespace ColumnStore.Tests
                              p => (Half) ((DateTime) p).TimeOfDay.TotalMilliseconds);
 
         protected Dictionary<CDT, DateTime> GetDateTimes(CDT[] keys, CDT? from = null, CDT? to = null) =>
-            filter(keys, from, to)
-               .ToDictionary(p => p,
-                             p => (DateTime) p);
+            filter(keys, from, to).ToDictionary(p => p, p => (DateTime) p);
 
         protected void AssertIsEqual<T>(Dictionary<CDT, T> result, Dictionary<CDT, T> originalValues)
         {
