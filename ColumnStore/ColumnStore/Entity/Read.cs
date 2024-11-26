@@ -26,75 +26,40 @@ partial class ColumnStoreEntity : IColumnStoreEntity
                 var data        = ps.Container[sectionName];
                 if (data == null) continue;
 
-                switch (prop.Value.DataType)
-                {
-                    case StoredDataType.Int:
-                        unpack<E, int>(data, range, r, prop.Value);
-                        break;
-                    case StoredDataType.UInt:
-                        unpack<E, uint>(data, range, r, prop.Value);
-                        break;
-                    case StoredDataType.Int16:
-                        unpack<E, short>(data, range, r, prop.Value);
-                        break;
-                    case StoredDataType.UInt16:
-                        unpack<E, ushort>(data, range, r, prop.Value);
-                        break;
-                    case StoredDataType.Int64:
-                        unpack<E, Int64>(data, range, r, prop.Value);
-                        break;
-                    case StoredDataType.UInt64:
-                        unpack<E, UInt64>(data, range, r, prop.Value);
-                        break;
-                    case StoredDataType.Byte:
-                        unpack<E, byte>(data, range, r, prop.Value);
-                        break;
-                    case StoredDataType.SByte:
-                        unpack<E, sbyte>(data, range, r, prop.Value);
-                        break;
-                    case StoredDataType.Boolean:
-                        unpack<E, bool>(data, range, r, prop.Value);
-                        break;
-                    case StoredDataType.Double:
-                        unpack<E, double>(data, range, r, prop.Value);
-                        break;
-                    case StoredDataType.Float:
-                        unpack<E, float>(data, range, r, prop.Value);
-                        break;
-                    case StoredDataType.String:
-                        unpack<E, string>(data, range, r, prop.Value);
-                        break;
-                    case StoredDataType.Guid:
-                        unpack<E, Guid>(data, range, r, prop.Value);
-                        break;
-                    case StoredDataType.DateTime:
-                        unpack<E, DateTime>(data, range, r, prop.Value);
-                        break;
-                    case StoredDataType.TimeSpan:
-                        unpack<E, TimeSpan>(data, range, r, prop.Value);
-                        break;
-                    case StoredDataType.Decimal:
-                        unpack<E, decimal>(data, range, r, prop.Value);
-                        break;
-                    case StoredDataType.Half:
-                        unpack<E, Half>(data, range, r, prop.Value);
-                        break;
-                    case StoredDataType.TimeOnly:
-                        unpack<E, TimeOnly>(data, range, r, prop.Value);
-                        break;
-                    case StoredDataType.DateOnly:
-                        unpack<E, DateOnly>(data, range, r, prop.Value);
-                        break;
-                    default:
-                        throw new NotSupportedException(prop.Value.DataType + " not supported");
-                }
+                r = prop.Value.DataType switch
+                    {
+                        StoredDataType.Byte  => unpack<E, byte>(data, range, r, prop.Value),
+                        StoredDataType.SByte => unpack<E, sbyte>(data, range, r, prop.Value),
+                        
+                        StoredDataType.Int      => unpack<E, int>(data, range, r, prop.Value),
+                        StoredDataType.UInt     => unpack<E, uint>(data, range, r, prop.Value),
+                        
+                        StoredDataType.Int16    => unpack<E, short>(data, range, r, prop.Value),
+                        StoredDataType.UInt16   => unpack<E, ushort>(data, range, r, prop.Value),
+                        
+                        StoredDataType.Int64    => unpack<E, Int64>(data, range, r, prop.Value),
+                        StoredDataType.UInt64   => unpack<E, UInt64>(data, range, r, prop.Value),
+                        
+                        StoredDataType.Boolean  => unpack<E, bool>(data, range, r, prop.Value),
+                        StoredDataType.Double   => unpack<E, double>(data, range, r, prop.Value),
+                        StoredDataType.Float    => unpack<E, float>(data, range, r, prop.Value),
+                        StoredDataType.String   => unpack<E, string>(data, range, r, prop.Value),
+                        StoredDataType.Guid     => unpack<E, Guid>(data, range, r, prop.Value),
+                        StoredDataType.DateTime => unpack<E, DateTime>(data, range, r, prop.Value),
+                        StoredDataType.TimeSpan => unpack<E, TimeSpan>(data, range, r, prop.Value),
+                        StoredDataType.Decimal  => unpack<E, decimal>(data, range, r, prop.Value),
+                        StoredDataType.Half     => unpack<E, Half>(data, range, r, prop.Value),
+                        StoredDataType.TimeOnly => unpack<E, TimeOnly>(data, range, r, prop.Value),
+                        StoredDataType.DateOnly => unpack<E, DateOnly>(data, range, r, prop.Value),
+                        _                       => throw new NotSupportedException(prop.Value.DataType + " not supported")
+                    };
             }
         }
 
         return r;
     }
 
-    void unpack<T, V>(byte[] data, CDTKeyRange keyRange, Dictionary<CDT, T> target, CSPropertyInfo prop) where T : class, new()
+    Dictionary<CDT, T> unpack<T, V>(byte[] data, CDTKeyRange keyRange, Dictionary<CDT, T> target, CSPropertyInfo prop) where T : class, new()
     {
         var setValue      = (Action<T, V>) prop.Setter;
         var createFunctor = (Func<T>) prop.InstanceCreator;
@@ -106,5 +71,7 @@ partial class ColumnStoreEntity : IColumnStoreEntity
 
             setValue(entity, item.Value);
         }
+
+        return target;
     }
 }

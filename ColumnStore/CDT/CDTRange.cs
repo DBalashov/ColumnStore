@@ -7,16 +7,10 @@ using System.Runtime.CompilerServices;
 
 namespace ColumnStore;
 
-public readonly struct CDTRange
+public readonly struct CDTRange(DateTime sd, DateTime ed)
 {
-    public readonly CDT From;
-    public readonly CDT To;
-
-    public CDTRange(DateTime sd, DateTime ed)
-    {
-        From = sd;
-        To   = ed;
-    }
+    public readonly CDT From = sd;
+    public readonly CDT To   = ed;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool InRange(int value) => From.Value <= value && value < To.Value;
@@ -46,16 +40,10 @@ public readonly struct CDTRange
 #endif
 }
 
-public readonly struct CDTKeyRange
+public readonly struct CDTKeyRange(CDT key, CDT sd, CDT ed)
 {
-    public readonly CDT      Key;
-    public readonly CDTRange Range;
-
-    public CDTKeyRange(CDT key, CDT sd, CDT ed)
-    {
-        Key   = key;
-        Range = new CDTRange(sd, ed);
-    }
+    public readonly CDT      Key   = key;
+    public readonly CDTRange Range = new(sd, ed);
 
 #if DEBUG
     [ExcludeFromCodeCoverage]

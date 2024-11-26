@@ -38,12 +38,11 @@ static class CDTRangeIndexExtenders
         for (var i = 1; i < values.Length; i++)
         {
             var currentKey = values[i].Trunc(unit);
-            if (currentKey != key)
-            {
-                yield return new RangeWithKey(key, startIndex, i);
-                key        = currentKey;
-                startIndex = i;
-            }
+            if (currentKey == key) continue;
+            
+            yield return new RangeWithKey(key, startIndex, i);
+            key        = currentKey;
+            startIndex = i;
         }
 
         yield return new RangeWithKey(key, startIndex, values.Length);
