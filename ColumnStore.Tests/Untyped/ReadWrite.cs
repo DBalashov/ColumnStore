@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
+// ReSharper disable ConditionIsAlwaysTrueOrFalse
+
 namespace ColumnStore.Tests.Untyped
 {
     public class ReadWrite : Base
@@ -73,17 +75,17 @@ namespace ColumnStore.Tests.Untyped
 
         void checkRead(UntypedColumn c, UntypedColumn orig)
         {
-            Assert.IsNotNull(c);
+            Assert.That(c != null);
 
-            Assert.IsTrue(c.Keys.Length == orig.Keys.Length, $"Length mismatch: Expected Length={orig.Keys.Length}, returned Length={c.Keys.Length}");
+            Assert.That(c.Keys.Length == orig.Keys.Length, $"Length mismatch: Expected Length={orig.Keys.Length}, returned Length={c.Keys.Length}");
             for (var i = 0; i < c.Keys.Length; i++)
             {
-                Assert.IsTrue(c.Keys[i] == orig.Keys[i], $"Keys mismatch: Expected: {c.Keys[i]}, returned: {orig.Keys[i]}");
+                Assert.That(c.Keys[i] == orig.Keys[i], $"Keys mismatch: Expected: {c.Keys[i]}, returned: {orig.Keys[i]}");
 
                 var readValue = c.Values.GetValue(i);
                 var origValue = orig.Values.GetValue(i);
                 if (Equals(readValue, default) && Equals(origValue, default)) continue;
-                Assert.IsTrue(Equals(readValue, origValue), "Element mismatch [{0:s}]: Expected: {1}, returned: {2}", (DateTime) c.Keys[i], origValue, readValue);
+                Assert.That(Equals(readValue, origValue), $"Element mismatch [{(DateTime) c.Keys[i]:s}]: Expected: {origValue}, returned: {readValue}");
             }
         }
 
@@ -100,9 +102,9 @@ namespace ColumnStore.Tests.Untyped
 
             var result = store.Untyped.Read(keys.First(), keys.Last().Add(TimeSpan.FromSeconds(1)), values.Keys.ToArray());
 
-            Assert.IsNotNull(result);
-            Assert.IsFalse(result.Keys.Except(values.Keys).Any());
-            Assert.IsFalse(values.Keys.Except(result.Keys).Any());
+            Assert.That(result != null);
+            Assert.That(!result.Keys.Except(values.Keys).Any());
+            Assert.That(!values.Keys.Except(result.Keys).Any());
 
             foreach (var item in result)
                 checkRead(item.Value, data[item.Key]);
@@ -121,9 +123,9 @@ namespace ColumnStore.Tests.Untyped
 
             var result = store.Untyped.Read(keys.First(), keys.Last().Add(TimeSpan.FromSeconds(1)), values.Keys.ToArray());
 
-            Assert.IsNotNull(result);
-            Assert.IsFalse(result.Keys.Except(values.Keys).Any());
-            Assert.IsFalse(values.Keys.Except(result.Keys).Any());
+            Assert.That(result != null);
+            Assert.That(!result.Keys.Except(values.Keys).Any());
+            Assert.That(!values.Keys.Except(result.Keys).Any());
 
             foreach (var item in result)
                 checkRead(item.Value, data[item.Key]);

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
+// ReSharper disable ConditionIsAlwaysTrueOrFalse
+
 namespace ColumnStore.Tests.Entity
 {
     public class WriteColumn_ReadEntity : Base
@@ -24,19 +26,18 @@ namespace ColumnStore.Tests.Entity
             TestContext.WriteLine($"Pages: {store.Container.TotalPages}, Length={store.Container.Length / 1024} KB");
 
             var items = store.Typed.Read<T>(keys.First(), keys.Last().Add(TimeSpan.FromSeconds(1)), columnName);
-            Assert.IsNotNull(items);
-            Assert.IsNotEmpty(items);
-            Assert.IsTrue(items.Count == entities.Count);
-            Assert.IsEmpty(items.Keys.Except(keys), "Keys not matched");
+            Assert.That(items != null);
+            Assert.That(items.Any);
+            Assert.That(items.Count == entities.Count);
+            Assert.That(!items.Keys.Except(keys).Any(), "Keys not matched");
 
             foreach (var entity in entities)
             {
                 if (!items.TryGetValue(entity.Key, out var item))
-                    Assert.Fail("Can't found key [{0:s}]", (DateTime) entity.Key);
+                    Assert.Fail($"Can't found key [{(DateTime) entity.Key:s}]");
 
                 var value = getProperty(entity.Value);
-                Assert.IsNotNull(value, "Entity is null [{0:s}]", (DateTime) entity.Key);
-                Assert.IsTrue(item.Equals(value), "Item not equals [{0:s}]", (DateTime) entity.Key);
+                Assert.That(item.Equals(value), $"Item not equals [{(DateTime) entity.Key:s}]");
             }
         }
 
@@ -44,7 +45,7 @@ namespace ColumnStore.Tests.Entity
         [TestCase(false)]
         [TestCase(true)]
         public void WriteByteReadEntity(bool compressed) => checkRead(GetStore(compressed), "ColumnByte", entity => entity.ColumnByte);
-        
+
         [Test]
         [TestCase(false)]
         [TestCase(true)]
@@ -79,7 +80,7 @@ namespace ColumnStore.Tests.Entity
         [TestCase(false)]
         [TestCase(true)]
         public void WriteInt64ReadEntity(bool compressed) => checkRead(GetStore(compressed), "ColumnInt64", entity => entity.ColumnInt64);
-        
+
         [Test]
         [TestCase(false)]
         [TestCase(true)]
@@ -104,7 +105,7 @@ namespace ColumnStore.Tests.Entity
         [TestCase(false)]
         [TestCase(true)]
         public void WriteDateTimeReadEntity(bool compressed) => checkRead(GetStore(compressed), "ColumnDateTime", entity => entity.ColumnDateTime);
-        
+
         [Test]
         [TestCase(false)]
         [TestCase(true)]

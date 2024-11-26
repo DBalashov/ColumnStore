@@ -168,15 +168,15 @@ namespace ColumnStore.Tests
 
         protected void AssertIsEqual<T>(Dictionary<CDT, T> result, Dictionary<CDT, T> originalValues)
         {
-            Assert.IsTrue(result.Count == originalValues.Count, "Length mismatch: result.Count={0} vs originalValues.Count={1}", result.Count, originalValues.Count);
+            Assert.That(result.Count == originalValues.Count, $"Length mismatch: result.Count={result.Count} vs originalValues.Count={originalValues.Count}");
 
             foreach (var item in result)
             {
                 if (!originalValues.TryGetValue(item.Key, out var second))
-                    Assert.Fail("Key not found in result: {0}", item.Key);
+                    Assert.Fail($"Key not found in result: {item.Key}");
 
                 if (Equals(item.Value, default) && Equals(second, default)) continue;
-                Assert.IsTrue(Equals(item.Value, second), "Elements is not equal [{0:s}]: claimed={1} vs original={2}", (DateTime) new CDT(item.Key), item.Value, second);
+                Assert.That(Equals(item.Value, second), $"Elements is not equal [{(DateTime) new CDT(item.Key):s}]: claimed={item.Value} vs original={second}");
             }
         }
     }

@@ -9,7 +9,7 @@ using FileContainer;
 namespace Benchmark;
 
 [ExcludeFromCodeCoverage]
-[SimpleJob(RuntimeMoniker.Net70, baseline: true)]
+[SimpleJob(RuntimeMoniker.Net90, baseline: true)]
 [WarmupCount(3)]
 [IterationCount(3)]
 // [MemoryDiagnoser]

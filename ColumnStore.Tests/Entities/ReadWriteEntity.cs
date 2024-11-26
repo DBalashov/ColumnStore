@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
+// ReSharper disable ConditionIsAlwaysTrueOrFalse
+
 namespace ColumnStore.Tests.Entity
 {
     public class ReadWriteEntity : Base
@@ -21,18 +23,17 @@ namespace ColumnStore.Tests.Entity
         void checkRead(PersistentColumnStore store)
         {
             var items = store.Entity.Read<SimpleEntity>(keys.First(), keys.Last().Add(TimeSpan.FromSeconds(1)));
-            Assert.IsNotNull(items);
-            Assert.IsNotEmpty(items);
-            Assert.IsTrue(items.Count == entities.Count, $"Count mismatch: {entities.Count} expected, {items.Count} arrived");
-            Assert.IsEmpty(items.Keys.Except(keys), "Keys not matched");
+            Assert.That(items != null);
+            Assert.That(items.Any());
+            Assert.That(items.Count == entities.Count,  $"Count mismatch: {entities.Count} expected, {items.Count} arrived");
+            Assert.That(!items.Keys.Except(keys).Any(), "Keys not matched");
 
             foreach (var item in items)
             {
                 if (!entities.TryGetValue(item.Key, out var entity))
-                    Assert.Fail("Can't found key [{0:s}]", (DateTime) item.Key);
+                    Assert.Fail($"Can't found key [{(DateTime) item.Key:s}]");
 
-                Assert.IsNotNull(item, "Entity is null [{0:s}]", (DateTime) item.Key);
-                Assert.IsTrue(item.Value.Equals(entity), "Item not equals [{0:s}]", (DateTime) item.Key);
+                Assert.That(item.Value.Equals(entity), $"Item not equals [{(DateTime) item.Key:s}]");
             }
         }
 

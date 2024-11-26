@@ -16,8 +16,7 @@
 
     <ItemGroup>
         <PackageReference Include="FileContainer" Version="2023.5.25" />
-        <PackageReference Include="SpanByteExtenders" Version="2024.11.22" />
-        <PackageReference Include="System.Buffers" Version="4.5.1" />
+        <PackageReference Include="SpanByteExtenders" Version="2024.11.26" />
     </ItemGroup>
 
 </Project>

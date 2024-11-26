@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
+// ReSharper disable ConditionIsAlwaysTrueOrFalse
+
 namespace ColumnStore.Tests.Typed
 {
     public class ReadWrite : Base
@@ -36,10 +38,10 @@ namespace ColumnStore.Tests.Typed
             var ed = keys.Last().Add(TimeSpan.FromSeconds(1));
 
             var result = store.Typed.Read<T>(sd, ed, columnName);
-            Assert.IsNotNull(result);
-            Assert.IsNotEmpty(result);
+            Assert.That(result != null);
+            Assert.That(result.Any());
 
-            Assert.IsEmpty(result.Keys.Except(keys), "Keys not matched");
+            Assert.That(!result.Keys.Except(keys).Any(), "Keys not matched");
             AssertIsEqual(result, originalValues);
         }
 
@@ -50,11 +52,11 @@ namespace ColumnStore.Tests.Typed
                                    keys.Skip(keys.Length / 2 + keys.Length / 3).First());
 
             var result = store.Typed.Read<T>(part.First().Key, part.Last().Key.Add(TimeSpan.FromSeconds(1)), columnName);
-            Assert.IsNotNull(result);
-            Assert.IsNotEmpty(result.Keys);
-            Assert.IsNotEmpty(result.Values);
+            Assert.That(result != null);
+            Assert.That(result.Keys.Any());
+            Assert.That(result.Values.Any);
 
-            Assert.IsEmpty(result.Keys.Except(keys), "Keys not matched");
+            Assert.That(!result.Keys.Except(keys).Any(), "Keys not matched");
             AssertIsEqual(result, part);
         }
 
@@ -129,32 +131,32 @@ namespace ColumnStore.Tests.Typed
         [TestCase(false)]
         [TestCase(true)]
         public void WriteDateTime(bool compressed) => writeRead(compressed, () => GetDateTimes(keys), (sd, ed) => GetDateTimes(keys, sd, ed));
-        
+
         [Test]
         [TestCase(false)]
         [TestCase(true)]
         public void WriteTimeSpan(bool compressed) => writeRead(compressed, () => GetTimeSpans(keys), (sd, ed) => GetTimeSpans(keys, sd, ed));
-        
+
         [Test]
         [TestCase(false)]
         [TestCase(true)]
         public void WriteDates(bool compressed) => writeRead(compressed, () => GetDateOnlys(keys), (sd, ed) => GetDateOnlys(keys, sd, ed));
-        
+
         [Test]
         [TestCase(false)]
         [TestCase(true)]
         public void WriteTimeOnlys(bool compressed) => writeRead(compressed, () => GetTimeOnlys(keys), (sd, ed) => GetTimeOnlys(keys, sd, ed));
-        
+
         [Test]
         [TestCase(false)]
         [TestCase(true)]
         public void WriteDateOnlys(bool compressed) => writeRead(compressed, () => GetDateOnlys(keys), (sd, ed) => GetDateOnlys(keys, sd, ed));
-        
+
         [Test]
         [TestCase(false)]
         [TestCase(true)]
         public void WriteDecimals(bool compressed) => writeRead(compressed, () => GetDecimals(keys), (sd, ed) => GetDecimals(keys, sd, ed));
-        
+
         [Test]
         [TestCase(false)]
         [TestCase(true)]
