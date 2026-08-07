@@ -21,7 +21,7 @@ sealed class StreamCompress : IVirtualWriteStream
         stm.Dispose();
     }
 
-    public void Write(Span<byte> buff) => stmCompress.Write(buff);
+    public void Write(ReadOnlySpan<byte> buff) => stmCompress.Write(buff);
 
     public void Write(byte b) => stmCompress.Write(new[] {b});
 

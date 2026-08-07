@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+        <TargetFrameworks>net9.0;net10.0</TargetFrameworks>
         <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
     </PropertyGroup>
@@ -15,8 +15,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FileContainer" Version="2023.5.25" />
-        <PackageReference Include="SpanByteExtenders" Version="2024.11.26" />
+        <PackageReference Include="FileContainer" Version="2026.8.6" />
+        <PackageReference Include="SpanByteExtenders" Version="2025.11.12" />
     </ItemGroup>
 
 </Project>

@@ -11,7 +11,7 @@ sealed class StreamRaw : IVirtualWriteStream
 
     public void Dispose() => stm.Dispose();
 
-    public void Write(Span<byte> buff) => stm.Write(buff);
+    public void Write(ReadOnlySpan<byte> buff) => stm.Write(buff);
 
     public void Write(byte b) => stm.Write(new[] {b});
 

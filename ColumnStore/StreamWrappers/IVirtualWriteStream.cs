@@ -4,7 +4,7 @@ namespace ColumnStore;
 
 interface IVirtualWriteStream : IDisposable
 {
-    void Write(Span<byte> buff);
+    void Write(ReadOnlySpan<byte> buff);
     
     void Write(byte value);
     
